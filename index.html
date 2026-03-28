@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>מסע הגיבורים שלי</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Splash / Home Screen -->
+        <div id="screen-home" class="screen active">
+            <div class="home-hero">
+                <div class="hero-glow"></div>
+                <h1 class="hero-title">מסע הגיבורים שלי</h1>
+                <p class="hero-subtitle">לקראת בר מצווה</p>
+                <div class="xp-bar-container">
+                    <div class="xp-bar">
+                        <div class="xp-fill" id="home-xp-fill"></div>
+                    </div>
+                    <span class="xp-text" id="home-xp-text">0 / 1000 XP</span>
+                </div>
+            </div>
+            <div class="quest-map" id="quest-map">
+                <!-- Quest nodes rendered by JS -->
+            </div>
+        </div>
+
+        <!-- Quest Screen (dynamic) -->
+        <div id="screen-quest" class="screen">
+            <header class="quest-header">
+                <button class="btn-back" onclick="showHome()">→ חזרה</button>
+                <div class="quest-badge" id="quest-badge"></div>
+                <h2 class="quest-title" id="quest-title"></h2>
+            </header>
+            <div class="quest-body" id="quest-body">
+                <!-- Quest content rendered dynamically -->
+            </div>
+            <div class="quest-footer">
+                <button class="btn-complete" id="btn-complete" onclick="completeQuest()">סיימתי את המשימה! ✓</button>
+            </div>
+        </div>
+
+        <!-- Hero Book Screen -->
+        <div id="screen-book" class="screen">
+            <header class="book-header">
+                <button class="btn-back" onclick="showHome()">→ חזרה</button>
+                <h2>ספר הגיבור שלי</h2>
+            </header>
+            <div class="book-body" id="book-body">
+                <!-- Generated from completed quests -->
+            </div>
+            <div class="book-footer">
+                <button class="btn-export" onclick="exportPDF()">📄 ייצוא לPDF</button>
+                <button class="btn-export" onclick="exportPresentation()">🎬 צפייה במצגת</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="quests.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
