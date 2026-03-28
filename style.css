@@ -137,6 +137,8 @@ body::before {
     font-size: 0.85rem;
     color: var(--text-dark);
     white-space: nowrap;
+    direction: ltr;
+    display: inline-block;
 }
 
 /* SVG path layer */
