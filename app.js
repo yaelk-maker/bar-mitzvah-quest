@@ -1,40 +1,27 @@
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
-    // === STEAL A BRAINROT VOXEL CHARACTERS (prominent, larger) ===
-    { img: 'brainrot/sab-tralalero.png', top: '6%',  left: '4%',   size: '90px',  anim: 'brFloat1', delay: '0s' },
-    { img: 'brainrot/sab-blue.png',      top: '42%', right: '4%',  size: '85px',  anim: 'brFloat2', delay: '0.5s' },
-    { img: 'brainrot/sab-67.png',        top: '64%', left: '5%',   size: '80px',  anim: 'brBounce', delay: '1s' },
-    // === CLASSIC BRAINROT MEMES ===
-    // TOP EDGE
-    { img: 'brainrot/skibidi.png',     top: '8%',  right: '5%',  size: '65px',  anim: 'brBounce', delay: '0.4s' },
-    { img: 'brainrot/amongus.png',     top: '14%', left: '48%',  size: '50px',  anim: 'brFloat3', delay: '1s' },
-    // RIGHT EDGE
-    { img: 'brainrot/capybara.png',    top: '22%', right: '5%',  size: '60px',  anim: 'brFloat2', delay: '0.5s' },
-    // LEFT EDGE
-    { img: 'brainrot/moai.png',        top: '28%', left: '3%',   size: '55px',  anim: 'brFloat1', delay: '0s' },
-    // MIDDLE GAPS
-    { img: 'brainrot/doge.png',        top: '32%', left: '32%',  size: '55px',  anim: 'brFloat1', delay: '2s' },
-    { img: 'brainrot/grimace.png',     top: '55%', right: '18%', size: '55px',  anim: 'brFloat3', delay: '0.3s' },
-    // BOTTOM AREA
-    { img: 'brainrot/trollface.png',   top: '58%', right: '5%',  size: '55px',  anim: 'brBounce', delay: '0.5s' },
-    { img: 'brainrot/popcat.png',      top: '72%', right: '10%', size: '50px',  anim: 'brFloat2', delay: '1.5s' },
-    { img: 'brainrot/chillguy.png',    top: '70%', left: '30%',  size: '55px',  anim: 'brFloat3', delay: '0.8s' },
+    // === STEAL A BRAINROT VOXEL CHARACTERS (7 figures, prominent) ===
+    { img: 'brainrot/sab-tralalero.png', top: '6%',  left: '3%',   size: '90px',  anim: 'brFloat1', delay: '0s' },
+    { img: 'brainrot/sab-shark.png',     top: '8%',  right: '3%',  size: '85px',  anim: 'brFloat2', delay: '0.5s' },
+    { img: 'brainrot/sab-spaghetti.png', top: '28%', left: '3%',   size: '80px',  anim: 'brBounce', delay: '1s' },
+    { img: 'brainrot/sab-blue.png',      top: '38%', right: '3%',  size: '80px',  anim: 'brFloat3', delay: '0.3s' },
+    { img: 'brainrot/sab-giftbox.png',   top: '55%', left: '4%',   size: '75px',  anim: 'brFloat1', delay: '0.8s' },
+    { img: 'brainrot/sab-bat.png',       top: '58%', right: '4%',  size: '80px',  anim: 'brFloat2', delay: '1.2s' },
+    { img: 'brainrot/sab-67.png',        top: '72%', left: '8%',   size: '75px',  anim: 'brBounce', delay: '0.5s' },
+    // === CLASSIC MEMES (smaller, fill gaps) ===
+    { img: 'brainrot/doge.png',        top: '18%', left: '42%',  size: '50px',  anim: 'brFloat1', delay: '2s' },
+    { img: 'brainrot/amongus.png',     top: '48%', left: '38%',  size: '45px',  anim: 'brFloat3', delay: '1s' },
+    { img: 'brainrot/skibidi.png',     top: '68%', right: '8%',  size: '50px',  anim: 'brBounce', delay: '0.4s' },
+    { img: 'brainrot/trollface.png',   top: '78%', right: '25%', size: '45px',  anim: 'brFloat2', delay: '1.5s' },
 ];
 
-// ===== Island Decorations (emoji scattered on the map) =====
+// ===== Lava particles (subtle embers floating on the map) =====
 const ISLAND_DECOS = [
-    { emoji: '🌸', top: '18%', left: '8%',   size: '1.2rem', opacity: 0.7 },
-    { emoji: '🍄', top: '35%', left: '6%',   size: '1.4rem', opacity: 0.8 },
-    { emoji: '🌻', top: '55%', right: '8%',  size: '1.1rem', opacity: 0.7 },
-    { emoji: '💎', top: '42%', left: '38%',  size: '1rem',   opacity: 0.6 },
-    { emoji: '🌿', top: '65%', left: '12%',  size: '1.3rem', opacity: 0.65 },
-    { emoji: '🍄', top: '70%', right: '14%', size: '1.2rem', opacity: 0.75 },
-    { emoji: '⭐', top: '15%', left: '55%',  size: '0.9rem', opacity: 0.5 },
-    { emoji: '🌺', top: '40%', right: '4%',  size: '1.1rem', opacity: 0.7 },
-    { emoji: '🪨', top: '58%', left: '42%',  size: '1.3rem', opacity: 0.55 },
-    { emoji: '🌿', top: '25%', right: '12%', size: '1rem',   opacity: 0.6 },
-    { emoji: '✨', top: '32%', left: '18%',  size: '0.8rem', opacity: 0.5 },
-    { emoji: '✨', top: '52%', right: '30%', size: '0.9rem', opacity: 0.45 },
+    { emoji: '🔥', top: '85%', left: '10%',  size: '1rem',   opacity: 0.4 },
+    { emoji: '🔥', top: '88%', right: '15%', size: '0.9rem', opacity: 0.35 },
+    { emoji: '✨', top: '15%', left: '50%',  size: '0.8rem', opacity: 0.3 },
+    { emoji: '✨', top: '45%', right: '40%', size: '0.7rem', opacity: 0.25 },
+    { emoji: '✨', top: '70%', left: '45%',  size: '0.8rem', opacity: 0.3 },
 ];
 
 function renderBrainrotChars() {
@@ -229,32 +216,32 @@ function drawMapPath(svg, allQuests) {
         d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr.x} ${curr.y}`;
     }
 
-    // Outer glow (neon effect)
+    // Outer lava glow
     const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     glow.setAttribute('d', d);
     glow.setAttribute('fill', 'none');
-    glow.setAttribute('stroke', 'rgba(255,214,0,0.25)');
-    glow.setAttribute('stroke-width', '7');
+    glow.setAttribute('stroke', 'rgba(255,120,0,0.3)');
+    glow.setAttribute('stroke-width', '8');
     glow.setAttribute('stroke-linecap', 'round');
     glow.setAttribute('filter', 'url(#pathGlow)');
     svg.appendChild(glow);
 
-    // Dark path outline
+    // Dark outline
     const trailBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     trailBorder.setAttribute('d', d);
     trailBorder.setAttribute('fill', 'none');
-    trailBorder.setAttribute('stroke', '#5d4037');
-    trailBorder.setAttribute('stroke-width', '5');
+    trailBorder.setAttribute('stroke', '#2a1a0a');
+    trailBorder.setAttribute('stroke-width', '5.5');
     trailBorder.setAttribute('stroke-linecap', 'round');
     trailBorder.setAttribute('stroke-linejoin', 'round');
     svg.appendChild(trailBorder);
 
-    // Main bright path (golden/yellow)
+    // Main lava path (orange/amber)
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', d);
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#ffcc02');
-    path.setAttribute('stroke-width', '3.2');
+    path.setAttribute('stroke', '#ff8f00');
+    path.setAttribute('stroke-width', '3.5');
     path.setAttribute('stroke-dasharray', '10 6');
     path.setAttribute('stroke-linecap', 'round');
     svg.appendChild(path);
@@ -275,7 +262,7 @@ function drawMapPath(svg, allQuests) {
             const donePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             donePath.setAttribute('d', cd);
             donePath.setAttribute('fill', 'none');
-            donePath.setAttribute('stroke', '#00e676');
+            donePath.setAttribute('stroke', '#76ff03');
             donePath.setAttribute('stroke-width', '3.5');
             donePath.setAttribute('stroke-linecap', 'round');
             svg.appendChild(donePath);
