@@ -178,13 +178,16 @@ function openQuest(questId) {
                 taskEl.className = 'task-block family-flow-block';
                 const flowMembers = task.members;
                 const flowSaved = state.responses[questId] || {};
-                // Track which person is currently shown
                 let currentIdx = 0;
-                // Find first person without a response to resume from
+                let flowDone = false;
+                // Find first person without a response to resume
                 for (let fi = 0; fi < flowMembers.length; fi++) {
                     if (!flowSaved[`member_${fi}`]) { currentIdx = fi; break; }
-                    if (fi === flowMembers.length - 1) currentIdx = fi;
+                    if (fi === flowMembers.length - 1) { currentIdx = fi; }
                 }
+                // Check if all members have responses -> show tree
+                const allFilled = flowMembers.every((_, fi) => flowSaved[`member_${fi}`]);
+                if (allFilled) { flowDone = true; }
 
                 function renderFlowPerson(idx) {
                     const m = flowMembers[idx];
@@ -192,6 +195,7 @@ function openQuest(questId) {
                     const isLast = idx === flowMembers.length - 1;
                     const prevGen = idx > 0 ? flowMembers[idx-1].generation : null;
                     const showGenHeader = m.generation !== prevGen;
+                    const photoStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
 
                     taskEl.innerHTML = `
                         <div class="flow-progress">
@@ -203,7 +207,7 @@ function openQuest(questId) {
                         ${showGenHeader ? `<div class="flow-generation">${m.generation}</div>` : ''}
                         <div class="flow-person ${isLast ? 'flow-person-hero' : ''}">
                             <div class="flow-photo">
-                                <img src="${m.photo}" alt="${m.name}">
+                                <img src="${m.photo}" alt="${m.name}" style="${photoStyle}">
                             </div>
                             <h3 class="flow-name">${m.name}</h3>
                             <span class="flow-relation">${m.relation}</span>
@@ -224,11 +228,10 @@ function openQuest(questId) {
                         </div>
                         <div class="flow-nav">
                             <button class="flow-btn flow-btn-prev" ${idx === 0 ? 'disabled' : ''}>→ הקודם</button>
-                            <button class="flow-btn flow-btn-next ${isLast ? 'flow-btn-done' : ''}">${isLast ? '✓ סיום' : 'הבא ←'}</button>
+                            <button class="flow-btn flow-btn-next ${isLast ? 'flow-btn-done' : ''}">${isLast ? '🌳 הצג עץ משפחה' : 'הבא ←'}</button>
                         </div>
                     `;
 
-                    // Wire up nav buttons
                     const prevBtn = taskEl.querySelector('.flow-btn-prev');
                     const nextBtn = taskEl.querySelector('.flow-btn-next');
                     const wordInput = taskEl.querySelector('.flow-word-input');
@@ -239,8 +242,6 @@ function openQuest(questId) {
                             state.responses[questId][mKey] = wordInput.value;
                             saveState(state);
                         });
-                        // Focus the input
-                        setTimeout(() => wordInput.focus(), 300);
                     }
 
                     prevBtn.addEventListener('click', () => {
@@ -248,21 +249,84 @@ function openQuest(questId) {
                     });
 
                     nextBtn.addEventListener('click', () => {
-                        // Save current input
                         if (wordInput && wordInput.value.trim()) {
                             if (!state.responses[questId]) state.responses[questId] = {};
                             state.responses[questId][mKey] = wordInput.value;
                             saveState(state);
                         }
-                        if (idx < flowMembers.length - 1) {
+                        if (isLast) {
+                            renderFamilyTree();
+                        } else {
                             currentIdx = idx + 1;
                             renderFlowPerson(currentIdx);
-                            taskEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
                     });
                 }
 
-                renderFlowPerson(currentIdx);
+                function renderFamilyTree() {
+                    const responses = state.responses[questId] || {};
+                    // Group members by generation
+                    const gen1 = flowMembers.filter(m => m.generation.includes('דור 1'));
+                    const gen2 = flowMembers.filter(m => m.generation.includes('דור 2'));
+                    const gen3 = flowMembers.filter(m => m.generation.includes('דור 3'));
+
+                    function memberCard(m, idx) {
+                        const word = responses[`member_${flowMembers.indexOf(m)}`] || '';
+                        const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
+                        const isGuy = m.relation.includes('אתה');
+                        return `
+                            <div class="tree-member ${isGuy ? 'tree-member-hero' : ''}">
+                                <div class="tree-photo">
+                                    <img src="${m.photo}" alt="${m.name}" style="${posStyle}">
+                                </div>
+                                <span class="tree-name">${m.name}</span>
+                                <span class="tree-relation">${m.relation}</span>
+                                ${word ? `<span class="tree-word">"${word}"</span>` : ''}
+                            </div>
+                        `;
+                    }
+
+                    taskEl.innerHTML = `
+                        <div class="family-tree-visual">
+                            <h3 class="tree-title">🌳 עץ המשפחה של גיא</h3>
+
+                            <div class="tree-gen-label">סבים וסבתות</div>
+                            <div class="tree-row tree-row-4">
+                                ${gen1.map(m => memberCard(m)).join('')}
+                            </div>
+
+                            <div class="tree-connector-down"></div>
+
+                            <div class="tree-gen-label">הורים ודודות</div>
+                            <div class="tree-row tree-row-4">
+                                ${gen2.map(m => memberCard(m)).join('')}
+                            </div>
+
+                            <div class="tree-connector-down"></div>
+
+                            <div class="tree-gen-label">הילדים</div>
+                            <div class="tree-row tree-row-3">
+                                ${gen3.map(m => memberCard(m)).join('')}
+                            </div>
+                        </div>
+                        <div class="flow-nav">
+                            <button class="flow-btn flow-btn-prev">→ חזרה לרשימה</button>
+                        </div>
+                    `;
+
+                    taskEl.querySelector('.flow-btn-prev').addEventListener('click', () => {
+                        currentIdx = flowMembers.length - 1;
+                        renderFlowPerson(currentIdx);
+                    });
+
+                    taskEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                if (flowDone) {
+                    renderFamilyTree();
+                } else {
+                    renderFlowPerson(currentIdx);
+                }
                 break;
 
             case 'kahoot-guide':

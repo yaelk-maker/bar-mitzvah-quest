@@ -573,7 +573,7 @@ select.task-select {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 20%;
+    /* object-position set per-photo via inline style */
 }
 
 .flow-person-hero .flow-photo {
@@ -691,6 +691,137 @@ select.task-select {
 
 .flow-btn-done:hover { background: #00c853; }
 .flow-btn-done:active { transform: translateY(2px); box-shadow: 0 2px 0 #00a843; }
+
+/* ===== Family Tree Visualization ===== */
+.family-tree-visual {
+    padding: 10px 0;
+}
+
+.tree-title {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.tree-gen-label {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #fff;
+    background: var(--accent-purple);
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 10px;
+    margin: 0 auto 10px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 0 #9c27b0;
+    letter-spacing: 0.5px;
+}
+
+.tree-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.tree-row-4 { max-width: 100%; }
+.tree-row-3 { max-width: 85%; margin-left: auto; margin-right: auto; }
+
+.tree-connector-down {
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
+    margin: 4px auto;
+    border-radius: 2px;
+}
+
+.tree-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 80px;
+    padding: 8px 4px;
+    background: linear-gradient(135deg, #f3e5f5, #e8eaf6);
+    border-radius: 14px;
+    border: 2px solid #ce93d8;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+}
+
+.tree-member:hover { transform: scale(1.05); }
+
+.tree-member-hero {
+    border-color: var(--accent-orange);
+    background: linear-gradient(135deg, #fff3e0, #fce4ec);
+    box-shadow: 0 0 0 3px rgba(255,145,0,0.2), 0 3px 0 #e65100;
+}
+
+.tree-photo {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--accent-yellow);
+    box-shadow: 0 2px 0 #f9a825;
+    background: #f5f5f5;
+}
+
+.tree-member-hero .tree-photo {
+    width: 60px;
+    height: 60px;
+    border-color: var(--accent-orange);
+    box-shadow: 0 2px 0 #e65100;
+}
+
+.tree-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tree-name {
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.tree-member-hero .tree-name {
+    font-size: 0.8rem;
+    color: var(--accent-orange);
+}
+
+.tree-relation {
+    font-size: 0.55rem;
+    color: var(--text-medium);
+    font-weight: 600;
+    text-align: center;
+}
+
+.tree-word {
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--accent-pink);
+    background: #fce4ec;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-top: 2px;
+    text-align: center;
+}
+
+.tree-member-hero .tree-word {
+    background: #fff3e0;
+    color: var(--accent-orange);
+}
 
 /* ===== Kahoot Guide ===== */
 .kahoot-steps {
