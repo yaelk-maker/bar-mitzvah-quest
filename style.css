@@ -314,35 +314,49 @@ body::before {
     transform: translateY(-1px);
 }
 
-/* Map decorations - Brainrot scattered figures */
-.map-deco {
+/* ===== BRAINROT CHARACTERS - Prominent map figures ===== */
+.brainrot {
     position: absolute;
-    font-size: 2rem;
-    opacity: 0.35;
+    font-size: 3rem;
+    z-index: 1;
     pointer-events: none;
-    z-index: 0;
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+    transition: transform 0.3s;
 }
-/* Big landmarks */
-.map-deco-1  { top: 4%; left: 3%; font-size: 2.8rem; opacity: 0.3; }
-.map-deco-2  { top: 22%; right: 3%; font-size: 2.5rem; opacity: 0.28; }
-.map-deco-3  { top: 58%; left: 2%; font-size: 2.2rem; opacity: 0.22; }
-.map-deco-4  { top: 12%; left: 42%; font-size: 2rem; opacity: 0.25; }
-.map-deco-5  { top: 3%; right: 12%; font-size: 2.4rem; opacity: 0.3; }
-.map-deco-6  { top: 75%; right: 5%; font-size: 1.8rem; opacity: 0.2; }
-.map-deco-7  { top: 38%; left: 6%; font-size: 2rem; opacity: 0.22; }
-.map-deco-8  { top: 88%; left: 8%; font-size: 2.2rem; opacity: 0.25; }
-.map-deco-9  { top: 6%; left: 62%; font-size: 2.5rem; opacity: 0.22; }
-/* Smaller scattered */
-.map-deco-10 { top: 44%; right: 3%; font-size: 2rem; opacity: 0.2; }
-.map-deco-11 { top: 68%; left: 15%; font-size: 1.6rem; opacity: 0.25; }
-.map-deco-12 { top: 30%; left: 18%; font-size: 1.8rem; opacity: 0.2; }
-.map-deco-13 { top: 52%; right: 20%; font-size: 1.5rem; opacity: 0.28; }
-.map-deco-14 { top: 82%; right: 15%; font-size: 1.8rem; opacity: 0.22; }
-.map-deco-15 { top: 16%; right: 35%; font-size: 1.6rem; opacity: 0.18; }
-.map-deco-16 { top: 62%; left: 45%; font-size: 1.5rem; opacity: 0.2; }
-.map-deco-17 { top: 92%; left: 45%; font-size: 1.8rem; opacity: 0.2; }
-.map-deco-18 { top: 35%; right: 40%; font-size: 1.4rem; opacity: 0.18; }
+
+/* Float animation variants */
+@keyframes brFloat1 {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes brFloat2 {
+    0%, 100% { transform: translateY(0) rotate(2deg); }
+    50% { transform: translateY(-6px) rotate(-4deg); }
+}
+@keyframes brFloat3 {
+    0%, 100% { transform: translateY(-4px) rotate(5deg); }
+    50% { transform: translateY(4px) rotate(-2deg); }
+}
+@keyframes brBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.08); }
+}
+
+/* Individual character positions & sizes */
+.br-1  { top: 2%; left: 2%; font-size: 3.5rem; animation: brFloat1 4s ease-in-out infinite; }
+.br-2  { top: 15%; right: 6%; font-size: 3.2rem; animation: brFloat2 3.5s ease-in-out infinite 0.5s; }
+.br-3  { top: 30%; left: 3%; font-size: 4rem; animation: brBounce 5s ease-in-out infinite; }
+.br-4  { top: 8%; left: 60%; font-size: 2.8rem; animation: brFloat3 4.5s ease-in-out infinite 1s; }
+.br-5  { top: 55%; right: 3%; font-size: 3rem; animation: brFloat1 3s ease-in-out infinite 0.3s; }
+.br-6  { top: 72%; left: 3%; font-size: 3.5rem; animation: brFloat2 4s ease-in-out infinite 1.5s; }
+.br-7  { top: 42%; left: 1%; font-size: 2.8rem; animation: brFloat3 3.8s ease-in-out infinite 0.8s; }
+.br-8  { top: 88%; right: 4%; font-size: 3.8rem; animation: brBounce 4.5s ease-in-out infinite 0.5s; }
+.br-9  { top: 62%; right: 8%; font-size: 3rem; animation: brFloat1 4.2s ease-in-out infinite 1.2s; }
+.br-10 { top: 20%; left: 40%; font-size: 2.5rem; animation: brFloat2 3.2s ease-in-out infinite 0.7s; }
+.br-11 { top: 48%; right: 2%; font-size: 2.8rem; animation: brFloat3 3.5s ease-in-out infinite 1.8s; }
+.br-12 { top: 82%; left: 8%; font-size: 2.5rem; animation: brFloat1 4s ease-in-out infinite 2s; }
+.br-13 { top: 35%; right: 2%; font-size: 3rem; animation: brBounce 3.8s ease-in-out infinite 0.4s; }
+.br-14 { top: 92%; left: 42%; font-size: 3.2rem; animation: brFloat2 4.3s ease-in-out infinite 1s; }
 
 /* ===== Quest Screen (centered, max-width for readability) ===== */
 #screen-quest, #screen-book {
@@ -807,31 +821,44 @@ select.task-select {
     color: #fff;
 }
 
-/* CANOPY - green tree crown for grandparents + parents */
+/* CANOPY - lush green tree crown */
 .ftree-canopy {
-    background: radial-gradient(ellipse at 50% 60%, #7cb342 0%, #558b2f 50%, #33691e 90%);
-    border-radius: 50% 50% 8% 8%;
-    padding: 20px 14px 14px;
+    background:
+        radial-gradient(ellipse 60% 40% at 20% 25%, rgba(139,195,74,0.7) 0%, transparent 100%),
+        radial-gradient(ellipse 55% 35% at 80% 20%, rgba(104,159,56,0.6) 0%, transparent 100%),
+        radial-gradient(ellipse 70% 50% at 50% 55%, rgba(85,139,47,0.8) 0%, transparent 100%),
+        radial-gradient(ellipse at 50% 50%, #7cb342 0%, #558b2f 40%, #33691e 75%, #2e7d32 100%);
+    border-radius: 48% 48% 5% 5% / 40% 40% 5% 5%;
+    padding: 24px 16px 16px;
     position: relative;
-    box-shadow: 0 6px 24px rgba(46,125,50,0.35), inset 0 -6px 16px rgba(0,0,0,0.12);
+    box-shadow:
+        0 8px 30px rgba(46,125,50,0.4),
+        inset 0 -8px 20px rgba(0,0,0,0.12),
+        inset 0 8px 20px rgba(255,255,255,0.08);
     border: 3px solid #2e7d32;
 }
 
-/* Leaf decorations */
+/* Leaf bumps on canopy edges */
 .ftree-canopy::before {
-    content: '🍃';
+    content: '';
     position: absolute;
-    top: 10px; left: 18px;
-    font-size: 1.4rem;
-    opacity: 0.4;
+    top: -12px; left: 15%; right: 15%;
+    height: 30px;
+    background:
+        radial-gradient(ellipse 80px 28px at 15% 50%, #6d9b2f 0%, transparent 100%),
+        radial-gradient(ellipse 90px 30px at 50% 40%, #7cb342 0%, transparent 100%),
+        radial-gradient(ellipse 70px 25px at 85% 50%, #689f38 0%, transparent 100%);
+    border-radius: 50%;
+    z-index: -1;
 }
 .ftree-canopy::after {
-    content: '🌿';
+    content: '🍃 🌿 🍃';
     position: absolute;
-    top: 14px; right: 22px;
-    font-size: 1.2rem;
+    top: 6px; left: 50%; transform: translateX(-50%);
+    font-size: 1rem;
     opacity: 0.35;
-    transform: scaleX(-1);
+    letter-spacing: 20px;
+    white-space: nowrap;
 }
 
 /* Row layout */
@@ -898,46 +925,60 @@ select.task-select {
 
 /* TRUNK */
 .ftree-trunk {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(180deg, #6d4c41, #5d4037, #4e342e);
+    width: 60px;
+    height: 55px;
+    background: linear-gradient(90deg, #5d4037 0%, #795548 30%, #8d6e63 50%, #795548 70%, #5d4037 100%);
     margin: 0 auto;
-    border-radius: 6px 6px 12px 12px;
-    box-shadow: inset -5px 0 10px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+    border-radius: 4px 4px 14px 14px;
+    box-shadow: inset -6px 0 12px rgba(0,0,0,0.25), inset 6px 0 12px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.2);
     position: relative;
 }
 
+/* Bark texture */
 .ftree-trunk::before {
     content: '';
     position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    width: 6px; height: 100%;
-    background: rgba(255,255,255,0.06);
-    border-radius: 3px;
+    top: 8px; left: 12px;
+    width: 3px; height: 60%;
+    background: rgba(0,0,0,0.1);
+    border-radius: 2px;
+}
+.ftree-trunk::after {
+    content: '';
+    position: absolute;
+    top: 5px; right: 16px;
+    width: 2px; height: 50%;
+    background: rgba(0,0,0,0.08);
+    border-radius: 2px;
 }
 
 /* BASE - grass area with children */
 .ftree-gen-kids {
-    background: linear-gradient(180deg, #81c784, #66bb6a 30%, #a5d6a7);
-    border-radius: 24px;
-    padding: 16px 12px 22px;
-    margin-top: -4px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    background:
+        radial-gradient(ellipse at 30% 80%, rgba(129,199,132,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 70%, rgba(165,214,167,0.4) 0%, transparent 60%),
+        linear-gradient(180deg, #81c784 0%, #66bb6a 40%, #a5d6a7 100%);
+    border-radius: 50% 50% 24px 24px / 20% 20% 24px 24px;
+    padding: 18px 14px 26px;
+    margin-top: -6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     border: 3px solid #4caf50;
     position: relative;
 }
 
 .ftree-gen-kids::before {
-    content: '🌸 🌺';
+    content: '🌸 🌺 🌻';
     position: absolute;
-    bottom: 6px; left: 14px;
-    font-size: 0.8rem; opacity: 0.5;
+    bottom: 6px; left: 16px;
+    font-size: 0.9rem; opacity: 0.6;
+    letter-spacing: 3px;
 }
 .ftree-gen-kids::after {
-    content: '🌷 🌼';
+    content: '🌷 🌼 🌸';
     position: absolute;
-    bottom: 6px; right: 14px;
-    font-size: 0.8rem; opacity: 0.5;
+    bottom: 6px; right: 16px;
+    font-size: 0.9rem; opacity: 0.6;
+    letter-spacing: 3px;
 }
 
 /* Card for each person */
