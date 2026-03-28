@@ -1,10 +1,25 @@
 // Quest data model - all 10 quests for Guy's Bar Mitzvah journey
+// Map positions for each quest (percentage-based, desktop-first)
+const MAP_POSITIONS = [
+    { x: 12, y: 18 },   // Quest 1 - top left START
+    { x: 30, y: 12 },   // Quest 2
+    { x: 50, y: 22 },   // Quest 3
+    { x: 72, y: 15 },   // Quest 4
+    { x: 85, y: 35 },   // Quest 5
+    { x: 70, y: 52 },   // Quest 6
+    { x: 45, y: 48 },   // Quest 7
+    { x: 22, y: 58 },   // Quest 8
+    { x: 35, y: 76 },   // Quest 9
+    { x: 55, y: 88 },   // Quest 10 - TREASURE
+];
+
 const QUESTS = [
     {
         id: 1,
         name: "שורשים",
         subtitle: "היסטוריה משפחתית",
         icon: "🌳",
+        mapIcon: "🌳",
         xp: 100,
         message: "אני חלק מסיפור גדול",
         color: "#4CAF50",
@@ -43,6 +58,7 @@ const QUESTS = [
         name: "משחק המשפחה",
         subtitle: "אתגר Kahoot",
         icon: "🎮",
+        mapIcon: "🎮",
         xp: 100,
         message: "אני מכיר את המשפחה שלי",
         color: "#9C27B0",
@@ -95,6 +111,7 @@ const QUESTS = [
         name: "הסיפור שלפניי",
         subtitle: "ציפייה ולידה",
         icon: "📖",
+        mapIcon: "📖",
         xp: 100,
         message: "נולדתי עם ייעוד",
         color: "#2196F3",
@@ -140,6 +157,7 @@ const QUESTS = [
         name: "הלוחם הקטן",
         subtitle: "הפגייה והדימום המוחי",
         icon: "⚔️",
+        mapIcon: "⚔️",
         xp: 100,
         message: "כבר בהתחלה הייתי גיבור",
         color: "#F44336",
@@ -184,6 +202,7 @@ const QUESTS = [
         name: "המוח שלי עובד אחרת",
         subtitle: "שיתוק מוחין ואוטיזם",
         icon: "🧠",
+        mapIcon: "🧠",
         xp: 100,
         message: "אני מבין את הגוף והמוח שלי",
         color: "#FF9800",
@@ -219,6 +238,7 @@ const QUESTS = [
         name: "תאום אבל אני",
         subtitle: "אני ומיקה",
         icon: "👫",
+        mapIcon: "👫",
         xp: 100,
         message: "אני תאום ואני גם אני",
         color: "#E91E63",
@@ -261,6 +281,7 @@ const QUESTS = [
         name: "הדרך שעשיתי",
         subtitle: "הישגים אישיים",
         icon: "🏆",
+        mapIcon: "🏆",
         xp: 100,
         message: "ראו כמה רחוק הגעתי",
         color: "#FFC107",
@@ -298,6 +319,7 @@ const QUESTS = [
         name: "הסופרפאוורס שלי",
         subtitle: "כישרונות וכוחות",
         icon: "⚡",
+        mapIcon: "⚡",
         xp: 100,
         message: "יש לי כוחות מיוחדים",
         color: "#673AB7",
@@ -347,6 +369,7 @@ const QUESTS = [
         name: "האנשים שלי",
         subtitle: "רשת תמיכה",
         icon: "🤝",
+        mapIcon: "🤝",
         xp: 100,
         message: "אני לא לבד במסע",
         color: "#00BCD4",
@@ -385,6 +408,7 @@ const QUESTS = [
         name: "מי אני עכשיו",
         subtitle: "מניפסט אישי",
         icon: "🌟",
+        mapIcon: "🌟",
         xp: 100,
         message: "זה אני, בן 13, ואני גאה",
         color: "#FF5722",

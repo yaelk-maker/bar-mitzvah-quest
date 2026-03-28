@@ -10,26 +10,45 @@
     <title>מסע הגיבורים שלי</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&family=Bungee&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
-        <!-- Splash / Home Screen -->
+        <!-- Splash / Home Screen - Treasure Map -->
         <div id="screen-home" class="screen active">
-            <div class="home-hero">
-                <div class="hero-glow"></div>
-                <h1 class="hero-title">מסע הגיבורים שלי</h1>
-                <p class="hero-subtitle">לקראת בר מצווה</p>
-                <div class="xp-bar-container">
-                    <div class="xp-bar">
-                        <div class="xp-fill" id="home-xp-fill"></div>
+            <div class="map-container">
+                <!-- Map title banner -->
+                <div class="map-banner">
+                    <h1 class="map-title">מסע הגיבורים שלי</h1>
+                    <div class="map-xp">
+                        <div class="map-xp-bar"><div class="map-xp-fill" id="home-xp-fill"></div></div>
+                        <span class="map-xp-text" id="home-xp-text">0 / 1000 XP</span>
                     </div>
-                    <span class="xp-text" id="home-xp-text">0 / 1000 XP</span>
                 </div>
-            </div>
-            <div class="quest-map" id="quest-map">
-                <!-- Quest nodes rendered by JS -->
+                <!-- SVG path layer -->
+                <svg class="map-path-svg" id="map-path-svg" preserveAspectRatio="none">
+                    <defs>
+                        <filter id="pathGlow">
+                            <feGaussianBlur stdDeviation="3" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                </svg>
+                <!-- Quest nodes layer -->
+                <div class="quest-map" id="quest-map">
+                    <!-- Quest landmarks rendered by JS -->
+                </div>
+                <!-- Map decorations -->
+                <div class="map-deco map-deco-1">🌴</div>
+                <div class="map-deco map-deco-2">🏔️</div>
+                <div class="map-deco map-deco-3">🌊</div>
+                <div class="map-deco map-deco-4">🦜</div>
+                <div class="map-deco map-deco-5">🌺</div>
+                <div class="map-deco map-deco-6">⭐</div>
+                <div class="map-deco map-deco-7">🎪</div>
+                <div class="map-deco map-deco-8">🗻</div>
+                <div class="map-deco map-deco-9">🌈</div>
             </div>
         </div>
 

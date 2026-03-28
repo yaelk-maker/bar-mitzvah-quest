@@ -38,59 +38,144 @@ function showHome() {
     updateXPBar();
 }
 
-// ===== Quest Map =====
+// ===== Quest Map - Treasure Map =====
 function renderQuestMap() {
     const map = document.getElementById('quest-map');
+    const svg = document.getElementById('map-path-svg');
     map.innerHTML = '';
 
+    // Build visible quest list (completed + next unlocked only)
+    const visibleQuests = [];
     QUESTS.forEach((quest, idx) => {
         const isCompleted = state.completedQuests.includes(quest.id);
         const isUnlocked = idx === 0 || state.completedQuests.includes(QUESTS[idx - 1].id);
         const isNext = isUnlocked && !isCompleted;
-
-        const node = document.createElement('div');
-        node.className = `quest-node ${isCompleted ? 'completed' : ''} ${isNext ? 'next' : ''} ${!isUnlocked ? 'locked' : ''}`;
-        node.style.setProperty('--quest-color', quest.color);
-
-        node.innerHTML = `
-            <div class="quest-node-icon">${isCompleted ? '✓' : (!isUnlocked ? '🔒' : quest.icon)}</div>
-            <div class="quest-node-info">
-                <span class="quest-node-number">משימה ${quest.id}</span>
-                <span class="quest-node-name">${quest.name}</span>
-                <span class="quest-node-subtitle">${quest.subtitle}</span>
-            </div>
-            ${isCompleted ? '<span class="quest-node-xp">+' + quest.xp + ' XP</span>' : ''}
-        `;
-
-        if (isUnlocked) {
-            node.addEventListener('click', () => openQuest(quest.id));
-        }
-
-        // Connector line between nodes
-        if (idx < QUESTS.length - 1) {
-            const connector = document.createElement('div');
-            connector.className = `quest-connector ${isCompleted ? 'completed' : ''}`;
-            map.appendChild(node);
-            map.appendChild(connector);
-        } else {
-            map.appendChild(node);
+        if (isCompleted || isNext) {
+            visibleQuests.push({ quest, idx, isCompleted, isNext });
         }
     });
 
-    // Hero Book button at the end
-    const allDone = state.completedQuests.length === QUESTS.length;
-    if (allDone) {
-        const bookBtn = document.createElement('div');
-        bookBtn.className = 'quest-node completed book-node';
-        bookBtn.innerHTML = `
-            <div class="quest-node-icon">📖</div>
-            <div class="quest-node-info">
-                <span class="quest-node-name">ספר הגיבור שלי</span>
-                <span class="quest-node-subtitle">לחץ לצפייה</span>
+    // Render each visible quest as a map landmark
+    visibleQuests.forEach(({ quest, idx, isCompleted, isNext }) => {
+        const pos = MAP_POSITIONS[idx];
+        const node = document.createElement('div');
+        node.className = `map-node ${isCompleted ? 'map-node-done' : ''} ${isNext ? 'map-node-next' : ''}`;
+        node.style.left = pos.x + '%';
+        node.style.top = pos.y + '%';
+        node.style.setProperty('--node-color', quest.color);
+
+        if (isCompleted) {
+            node.innerHTML = `
+                <div class="map-node-circle map-node-complete-circle">
+                    <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
+                    <span class="map-node-check">✓</span>
+                </div>
+                <div class="map-node-label">${quest.name}</div>
+                <div class="map-node-xp">+${quest.xp} XP</div>
+            `;
+        } else {
+            // Next quest - pulsing, clickable
+            node.innerHTML = `
+                <div class="map-node-circle map-node-next-circle">
+                    <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
+                </div>
+                <div class="map-node-label">${quest.name}</div>
+                <div class="map-node-subtitle">${quest.subtitle}</div>
+                <div class="map-node-start">התחל →</div>
+            `;
+        }
+
+        node.addEventListener('click', () => openQuest(quest.id));
+        map.appendChild(node);
+    });
+
+    // Draw SVG path connecting visible quests
+    drawMapPath(svg, visibleQuests);
+
+    // Hero Book node if all done
+    if (state.completedQuests.length === QUESTS.length) {
+        const bookNode = document.createElement('div');
+        bookNode.className = 'map-node map-node-treasure';
+        bookNode.style.left = '55%';
+        bookNode.style.top = '95%';
+        bookNode.innerHTML = `
+            <div class="map-node-circle map-node-treasure-circle">
+                <span class="map-node-emoji">📖</span>
             </div>
+            <div class="map-node-label">ספר הגיבור שלי</div>
+            <div class="map-node-start">פתח →</div>
         `;
-        bookBtn.addEventListener('click', () => openHeroBook());
-        map.appendChild(bookBtn);
+        bookNode.addEventListener('click', () => openHeroBook());
+        map.appendChild(bookNode);
+    }
+}
+
+function drawMapPath(svg, visibleQuests) {
+    // Set viewBox to percentage space
+    svg.setAttribute('viewBox', '0 0 100 100');
+
+    // Clear existing paths (keep defs at index 0)
+    while (svg.children.length > 1) svg.removeChild(svg.lastChild);
+
+    if (visibleQuests.length < 2) return;
+
+    // Build path through visible quest positions
+    const points = visibleQuests.map(({ idx }) => {
+        const pos = MAP_POSITIONS[idx];
+        return { x: pos.x, y: pos.y };
+    });
+
+    // Create smooth curve through points
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpx1 = prev.x + (curr.x - prev.x) * 0.5;
+        const cpy1 = prev.y;
+        const cpx2 = prev.x + (curr.x - prev.x) * 0.5;
+        const cpy2 = curr.y;
+        d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr.x} ${curr.y}`;
+    }
+
+    // Glow path (behind)
+    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    glow.setAttribute('d', d);
+    glow.setAttribute('fill', 'none');
+    glow.setAttribute('stroke', 'rgba(255,214,0,0.3)');
+    glow.setAttribute('stroke-width', '6');
+    glow.setAttribute('stroke-linecap', 'round');
+    glow.setAttribute('filter', 'url(#pathGlow)');
+    svg.appendChild(glow);
+
+    // Main dotted path
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#8d6e63');
+    path.setAttribute('stroke-width', '3');
+    path.setAttribute('stroke-dasharray', '8 6');
+    path.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(path);
+
+    // Green completed overlay
+    const completedCount = visibleQuests.filter(v => v.isCompleted).length;
+    if (completedCount > 0) {
+        const completedPoints = points.slice(0, completedCount);
+        if (completedPoints.length >= 2) {
+            let cd = `M ${completedPoints[0].x} ${completedPoints[0].y}`;
+            for (let i = 1; i < completedPoints.length; i++) {
+                const prev = completedPoints[i - 1];
+                const curr = completedPoints[i];
+                cd += ` C ${prev.x + (curr.x - prev.x) * 0.5} ${prev.y}, ${prev.x + (curr.x - prev.x) * 0.5} ${curr.y}, ${curr.x} ${curr.y}`;
+            }
+            const donePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            donePath.setAttribute('d', cd);
+            donePath.setAttribute('fill', 'none');
+            donePath.setAttribute('stroke', '#00e676');
+            donePath.setAttribute('stroke-width', '4');
+            donePath.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(donePath);
+        }
     }
 }
 
