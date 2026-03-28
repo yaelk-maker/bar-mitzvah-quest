@@ -1,22 +1,24 @@
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
-    // TOP EDGE — below banner (banner is ~50px ≈ 7vh), inward from edges
-    { img: 'brainrot/skibidi.png',     top: '8%',  left: '3%',   size: '70px',  anim: 'brFloat1', delay: '0s' },
-    { img: 'brainrot/grumpycat.png',   top: '8%',  right: '5%',  size: '65px',  anim: 'brBounce', delay: '0.4s' },
-    { img: 'brainrot/amongus.png',     top: '14%', left: '48%',  size: '55px',  anim: 'brFloat3', delay: '1s' },
-    // RIGHT EDGE — well inside viewport
-    { img: 'brainrot/capybara.png',    top: '22%', right: '5%',  size: '70px',  anim: 'brFloat2', delay: '0.5s' },
-    { img: 'brainrot/grimace.png',     top: '48%', right: '6%',  size: '70px',  anim: 'brFloat1', delay: '0.3s' },
-    // LEFT EDGE — well inside viewport
-    { img: 'brainrot/moai.png',        top: '26%', left: '3%',   size: '65px',  anim: 'brBounce', delay: '0s' },
-    { img: 'brainrot/chillguy.png',    top: '50%', left: '3%',   size: '70px',  anim: 'brFloat3', delay: '0.8s' },
-    // MIDDLE GAPS — positioned between nodes
-    { img: 'brainrot/doge.png',        top: '30%', left: '32%',  size: '60px',  anim: 'brFloat1', delay: '2s' },
-    { img: 'brainrot/tralalero.png',   top: '44%', right: '22%', size: '60px',  anim: 'brFloat2', delay: '1s' },
-    // BOTTOM AREA — safely within viewport
-    { img: 'brainrot/popcat.png',      top: '60%', left: '4%',   size: '60px',  anim: 'brFloat2', delay: '1.5s' },
-    { img: 'brainrot/trollface.png',   top: '60%', right: '6%',  size: '65px',  anim: 'brBounce', delay: '0.5s' },
-    { img: 'brainrot/sigmacat.png',    top: '70%', left: '20%',  size: '55px',  anim: 'brFloat3', delay: '1.2s' },
+    // === STEAL A BRAINROT VOXEL CHARACTERS (prominent, larger) ===
+    { img: 'brainrot/sab-tralalero.png', top: '6%',  left: '4%',   size: '90px',  anim: 'brFloat1', delay: '0s' },
+    { img: 'brainrot/sab-blue.png',      top: '42%', right: '4%',  size: '85px',  anim: 'brFloat2', delay: '0.5s' },
+    { img: 'brainrot/sab-67.png',        top: '64%', left: '5%',   size: '80px',  anim: 'brBounce', delay: '1s' },
+    // === CLASSIC BRAINROT MEMES ===
+    // TOP EDGE
+    { img: 'brainrot/skibidi.png',     top: '8%',  right: '5%',  size: '65px',  anim: 'brBounce', delay: '0.4s' },
+    { img: 'brainrot/amongus.png',     top: '14%', left: '48%',  size: '50px',  anim: 'brFloat3', delay: '1s' },
+    // RIGHT EDGE
+    { img: 'brainrot/capybara.png',    top: '22%', right: '5%',  size: '60px',  anim: 'brFloat2', delay: '0.5s' },
+    // LEFT EDGE
+    { img: 'brainrot/moai.png',        top: '28%', left: '3%',   size: '55px',  anim: 'brFloat1', delay: '0s' },
+    // MIDDLE GAPS
+    { img: 'brainrot/doge.png',        top: '32%', left: '32%',  size: '55px',  anim: 'brFloat1', delay: '2s' },
+    { img: 'brainrot/grimace.png',     top: '55%', right: '18%', size: '55px',  anim: 'brFloat3', delay: '0.3s' },
+    // BOTTOM AREA
+    { img: 'brainrot/trollface.png',   top: '58%', right: '5%',  size: '55px',  anim: 'brBounce', delay: '0.5s' },
+    { img: 'brainrot/popcat.png',      top: '72%', right: '10%', size: '50px',  anim: 'brFloat2', delay: '1.5s' },
+    { img: 'brainrot/chillguy.png',    top: '70%', left: '30%',  size: '55px',  anim: 'brFloat3', delay: '0.8s' },
 ];
 
 // ===== Island Decorations (emoji scattered on the map) =====
