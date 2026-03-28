@@ -19,11 +19,43 @@ const BRAINROT_CHARS = [
     { img: 'brainrot/sigmacat.png',    top: '70%', left: '20%',  size: '55px',  anim: 'brFloat3', delay: '1.2s' },
 ];
 
+// ===== Island Decorations (emoji scattered on the map) =====
+const ISLAND_DECOS = [
+    { emoji: '🌸', top: '18%', left: '8%',   size: '1.2rem', opacity: 0.7 },
+    { emoji: '🍄', top: '35%', left: '6%',   size: '1.4rem', opacity: 0.8 },
+    { emoji: '🌻', top: '55%', right: '8%',  size: '1.1rem', opacity: 0.7 },
+    { emoji: '💎', top: '42%', left: '38%',  size: '1rem',   opacity: 0.6 },
+    { emoji: '🌿', top: '65%', left: '12%',  size: '1.3rem', opacity: 0.65 },
+    { emoji: '🍄', top: '70%', right: '14%', size: '1.2rem', opacity: 0.75 },
+    { emoji: '⭐', top: '15%', left: '55%',  size: '0.9rem', opacity: 0.5 },
+    { emoji: '🌺', top: '40%', right: '4%',  size: '1.1rem', opacity: 0.7 },
+    { emoji: '🪨', top: '58%', left: '42%',  size: '1.3rem', opacity: 0.55 },
+    { emoji: '🌿', top: '25%', right: '12%', size: '1rem',   opacity: 0.6 },
+    { emoji: '✨', top: '32%', left: '18%',  size: '0.8rem', opacity: 0.5 },
+    { emoji: '✨', top: '52%', right: '30%', size: '0.9rem', opacity: 0.45 },
+];
+
 function renderBrainrotChars() {
     const container = document.getElementById('brainrot-container');
     if (!container) return;
     container.innerHTML = '';
 
+    // Render island decorations first
+    ISLAND_DECOS.forEach(deco => {
+        const el = document.createElement('div');
+        el.style.position = 'absolute';
+        el.style.top = deco.top;
+        if (deco.left) el.style.left = deco.left;
+        if (deco.right) el.style.right = deco.right;
+        el.style.fontSize = deco.size;
+        el.style.opacity = deco.opacity;
+        el.style.pointerEvents = 'none';
+        el.style.zIndex = '0';
+        el.textContent = deco.emoji;
+        container.appendChild(el);
+    });
+
+    // Render brainrot characters
     BRAINROT_CHARS.forEach((ch, i) => {
         const el = document.createElement('div');
         el.className = 'brainrot';
@@ -43,7 +75,7 @@ function renderBrainrotChars() {
         img.style.width = '100%';
         img.style.height = '100%';
         img.style.objectFit = 'contain';
-        img.style.filter = 'drop-shadow(3px 5px 8px rgba(0,0,0,0.35))';
+        img.style.filter = 'drop-shadow(3px 5px 10px rgba(0,0,0,0.45)) drop-shadow(0 0 6px rgba(255,255,255,0.2))';
         // If image fails to load, hide this character
         img.onerror = () => { el.style.display = 'none'; };
         el.appendChild(img);
@@ -195,33 +227,33 @@ function drawMapPath(svg, allQuests) {
         d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr.x} ${curr.y}`;
     }
 
-    // Glow path (behind)
+    // Outer glow (neon effect)
     const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     glow.setAttribute('d', d);
     glow.setAttribute('fill', 'none');
-    glow.setAttribute('stroke', 'rgba(255,214,0,0.15)');
-    glow.setAttribute('stroke-width', '5');
+    glow.setAttribute('stroke', 'rgba(255,214,0,0.25)');
+    glow.setAttribute('stroke-width', '7');
     glow.setAttribute('stroke-linecap', 'round');
     glow.setAttribute('filter', 'url(#pathGlow)');
     svg.appendChild(glow);
 
-    // Dirt trail border (darker brown edge for depth)
+    // Dark path outline
     const trailBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     trailBorder.setAttribute('d', d);
     trailBorder.setAttribute('fill', 'none');
-    trailBorder.setAttribute('stroke', '#8d6e63');
-    trailBorder.setAttribute('stroke-width', '4.5');
+    trailBorder.setAttribute('stroke', '#5d4037');
+    trailBorder.setAttribute('stroke-width', '5');
     trailBorder.setAttribute('stroke-linecap', 'round');
     trailBorder.setAttribute('stroke-linejoin', 'round');
     svg.appendChild(trailBorder);
 
-    // Main dirt trail (tan/brown path)
+    // Main bright path (golden/yellow)
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', d);
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#d7ccc8');
-    path.setAttribute('stroke-width', '3');
-    path.setAttribute('stroke-dasharray', '8 5');
+    path.setAttribute('stroke', '#ffcc02');
+    path.setAttribute('stroke-width', '3.2');
+    path.setAttribute('stroke-dasharray', '10 6');
     path.setAttribute('stroke-linecap', 'round');
     svg.appendChild(path);
 
