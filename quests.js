@@ -1,16 +1,16 @@
 // Quest data model - all 10 quests for Guy's Bar Mitzvah journey
 // Map positions for each quest (percentage-based, desktop-first)
 const MAP_POSITIONS = [
-    { x: 14, y: 16 },   // Quest 1 - top left START (below banner)
-    { x: 32, y: 14 },   // Quest 2 - drift right
-    { x: 52, y: 22 },   // Quest 3 - center-right
-    { x: 76, y: 16 },   // Quest 4 - far right
-    { x: 72, y: 34 },   // Quest 5 - right side, drops down
-    { x: 68, y: 46 },   // Quest 6 - curves back left
-    { x: 44, y: 40 },   // Quest 7 - center
-    { x: 18, y: 48 },   // Quest 8 - far left
-    { x: 32, y: 60 },   // Quest 9 - curves right and down
-    { x: 52, y: 72 },   // Quest 10 - TREASURE: bottom-center
+    { x: 14, y: 18 },   // Quest 1 - top left START (well below banner)
+    { x: 32, y: 16 },   // Quest 2 - drift right
+    { x: 54, y: 24 },   // Quest 3 - center-right
+    { x: 74, y: 18 },   // Quest 4 - far right (pulled from edge)
+    { x: 70, y: 36 },   // Quest 5 - right side, drops down
+    { x: 66, y: 48 },   // Quest 6 - curves back left
+    { x: 44, y: 42 },   // Quest 7 - center
+    { x: 20, y: 50 },   // Quest 8 - far left
+    { x: 34, y: 62 },   // Quest 9 - curves right and down
+    { x: 52, y: 74 },   // Quest 10 - TREASURE: bottom-center
 ];
 
 const QUESTS = [

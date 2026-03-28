@@ -1,13 +1,13 @@
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
     // === STEAL A BRAINROT VOXEL CHARACTERS ONLY (from Figures folder) ===
-    { img: 'brainrot/sab-tralalero.png', top: '5%',  left: '2%',   size: '85px',  anim: 'brFloat1', delay: '0s' },
-    { img: 'brainrot/sab-shark.png',     top: '7%',  right: '2%',  size: '80px',  anim: 'brFloat2', delay: '0.5s' },
-    { img: 'brainrot/sab-spaghetti.png', top: '30%', left: '2%',   size: '75px',  anim: 'brBounce', delay: '1s' },
-    { img: 'brainrot/sab-blue.png',      top: '40%', right: '2%',  size: '75px',  anim: 'brFloat3', delay: '0.3s' },
-    { img: 'brainrot/sab-giftbox.png',   top: '55%', left: '3%',   size: '70px',  anim: 'brFloat1', delay: '0.8s' },
-    { img: 'brainrot/sab-bat.png',       top: '60%', right: '3%',  size: '75px',  anim: 'brFloat2', delay: '1.2s' },
-    { img: 'brainrot/sab-67.png',        top: '75%', left: '6%',   size: '70px',  anim: 'brBounce', delay: '0.5s' },
+    { img: 'brainrot/sab-tralalero.png', top: '8%',  left: '2%',   size: '80px',  anim: 'brFloat1', delay: '0s' },
+    { img: 'brainrot/sab-shark.png',     top: '10%', right: '8%',  size: '75px',  anim: 'brFloat2', delay: '0.5s' },
+    { img: 'brainrot/sab-spaghetti.png', top: '32%', left: '2%',   size: '70px',  anim: 'brBounce', delay: '1s' },
+    { img: 'brainrot/sab-blue.png',      top: '38%', right: '8%',  size: '70px',  anim: 'brFloat3', delay: '0.3s' },
+    { img: 'brainrot/sab-giftbox.png',   top: '55%', left: '2%',   size: '65px',  anim: 'brFloat1', delay: '0.8s' },
+    { img: 'brainrot/sab-bat.png',       top: '58%', right: '8%',  size: '70px',  anim: 'brFloat2', delay: '1.2s' },
+    { img: 'brainrot/sab-67.png',        top: '74%', left: '4%',   size: '65px',  anim: 'brBounce', delay: '0.5s' },
 ];
 
 // ===== Lava particles (subtle embers floating on the map) =====
