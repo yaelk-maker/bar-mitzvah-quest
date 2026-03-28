@@ -811,6 +811,7 @@ select.task-select {
 .flow-btn-done:active { transform: translateY(2px); box-shadow: 0 2px 0 #00a843; }
 
 /* ===== Illustrated Family Tree ===== */
+/* ===== ILLUSTRATED FAMILY TREE (Photo Template Overlay) ===== */
 .ftree {
     padding: 0;
     text-align: center;
@@ -822,299 +823,169 @@ select.task-select {
 .ftree-title {
     font-family: 'Bungee', sans-serif;
     font-size: 1.3rem;
-    color: #2e7d32;
-    margin-bottom: 8px;
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+    color: #ffd600;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-/* The tree canopy (green leafy top) */
-.ftree-gen { position: relative; }
-
-.ftree-gen-label {
-    font-size: 0.7rem;
-    font-weight: 900;
-    color: #fff;
-    background: rgba(255,255,255,0.25);
-    display: inline-block;
-    padding: 3px 14px;
-    border-radius: 10px;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-}
-
-.ftree-gen-label-special {
-    background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
-    box-shadow: 0 2px 0 #e65100;
-    font-size: 0.8rem;
-    padding: 4px 18px;
-    color: #fff;
-}
-
-/* CANOPY - lush green tree crown */
-.ftree-canopy {
-    background:
-        radial-gradient(ellipse 60% 40% at 20% 25%, rgba(139,195,74,0.7) 0%, transparent 100%),
-        radial-gradient(ellipse 55% 35% at 80% 20%, rgba(104,159,56,0.6) 0%, transparent 100%),
-        radial-gradient(ellipse 70% 50% at 50% 55%, rgba(85,139,47,0.8) 0%, transparent 100%),
-        radial-gradient(ellipse at 50% 50%, #7cb342 0%, #558b2f 40%, #33691e 75%, #2e7d32 100%);
-    border-radius: 48% 48% 5% 5% / 40% 40% 5% 5%;
-    padding: 24px 16px 16px;
+/* Tree template container */
+.ftree-map {
     position: relative;
-    box-shadow:
-        0 8px 30px rgba(46,125,50,0.4),
-        inset 0 -8px 20px rgba(0,0,0,0.12),
-        inset 0 8px 20px rgba(255,255,255,0.08);
-    border: 3px solid #2e7d32;
-}
-
-/* Leaf bumps on canopy edges */
-.ftree-canopy::before {
-    content: '';
-    position: absolute;
-    top: -12px; left: 15%; right: 15%;
-    height: 30px;
-    background:
-        radial-gradient(ellipse 80px 28px at 15% 50%, #6d9b2f 0%, transparent 100%),
-        radial-gradient(ellipse 90px 30px at 50% 40%, #7cb342 0%, transparent 100%),
-        radial-gradient(ellipse 70px 25px at 85% 50%, #689f38 0%, transparent 100%);
-    border-radius: 50%;
-    z-index: -1;
-}
-.ftree-canopy::after {
-    content: '🍃 🌿 🍃';
-    position: absolute;
-    top: 6px; left: 50%; transform: translateX(-50%);
-    font-size: 1rem;
-    opacity: 0.35;
-    letter-spacing: 20px;
-    white-space: nowrap;
-}
-
-/* Row layout */
-.ftree-row {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.ftree-gp-row {
-    gap: 20px;
-    margin-bottom: 8px;
-}
-
-.ftree-parents-row {
-    gap: 6px;
-    align-items: center;
-}
-
-.ftree-kids-row {
-    align-items: flex-end;
-    gap: 12px;
-}
-
-/* Couple grouping */
-.ftree-couple {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
-
-.ftree-couple-main { gap: 4px; }
-
-.ftree-connector-h {
-    font-size: 0.7rem;
-    line-height: 1;
-}
-
-.ftree-heart-big { font-size: 0.9rem; }
-
-/* Branch lines between generations */
-.ftree-lines {
-    display: flex;
-    justify-content: space-around;
-    padding: 0 60px;
-    height: 14px;
-}
-
-.ftree-lines-single {
-    justify-content: center;
-    padding: 0;
-    height: 0;
-}
-
-.ftree-vline {
-    width: 3px;
-    height: 100%;
-    background: #5d4037;
-    border-radius: 2px;
-    box-shadow: 1px 0 0 rgba(0,0,0,0.1);
-}
-
-/* TRUNK */
-.ftree-trunk {
-    width: 60px;
-    height: 55px;
-    background: linear-gradient(90deg, #5d4037 0%, #795548 30%, #8d6e63 50%, #795548 70%, #5d4037 100%);
+    width: 100%;
+    max-width: 520px;
     margin: 0 auto;
-    border-radius: 4px 4px 14px 14px;
-    box-shadow: inset -6px 0 12px rgba(0,0,0,0.25), inset 6px 0 12px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.2);
-    position: relative;
+    aspect-ratio: 2094 / 2048;
+    background: url('photos/family-tree-bg.png') center center / contain no-repeat;
+    border-radius: 16px;
+    overflow: visible;
 }
 
-/* Bark texture */
-.ftree-trunk::before {
-    content: '';
+/* Each family member positioned on the tree */
+.ftree-member {
     position: absolute;
-    top: 8px; left: 12px;
-    width: 3px; height: 60%;
-    background: rgba(0,0,0,0.1);
-    border-radius: 2px;
-}
-.ftree-trunk::after {
-    content: '';
-    position: absolute;
-    top: 5px; right: 16px;
-    width: 2px; height: 50%;
-    background: rgba(0,0,0,0.08);
-    border-radius: 2px;
-}
-
-/* BASE - grass area with children */
-.ftree-gen-kids {
-    background:
-        radial-gradient(ellipse at 30% 80%, rgba(129,199,132,0.5) 0%, transparent 60%),
-        radial-gradient(ellipse at 70% 70%, rgba(165,214,167,0.4) 0%, transparent 60%),
-        linear-gradient(180deg, #81c784 0%, #66bb6a 40%, #a5d6a7 100%);
-    border-radius: 50% 50% 24px 24px / 20% 20% 24px 24px;
-    padding: 18px 14px 26px;
-    margin-top: -6px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    border: 3px solid #4caf50;
-    position: relative;
-}
-
-.ftree-gen-kids::before {
-    content: '🌸 🌺 🌻';
-    position: absolute;
-    bottom: 6px; left: 16px;
-    font-size: 0.9rem; opacity: 0.6;
-    letter-spacing: 3px;
-}
-.ftree-gen-kids::after {
-    content: '🌷 🌼 🌸';
-    position: absolute;
-    bottom: 6px; right: 16px;
-    font-size: 0.9rem; opacity: 0.6;
-    letter-spacing: 3px;
-}
-
-/* Card for each person */
-.ftree-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    transition: transform 0.15s;
+    transform: translate(-50%, -50%);
+    z-index: 2;
 }
 
-.ftree-card:hover { transform: scale(1.08); }
-
-.ftree-photo {
+.ftree-member-photo {
     border-radius: 50%;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     background: #f5f5f5;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
 }
 
-.ftree-photo img {
+.ftree-member-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-/* Size variants */
-.ftree-sm .ftree-photo { width: 54px; height: 54px; border: 3px solid #fff; }
-
-.ftree-md .ftree-photo { width: 66px; height: 66px; border: 3px solid #fff; }
-
-.ftree-lg .ftree-photo {
-    width: 82px; height: 82px;
+/* Size classes based on generation */
+.ftree-member.ftree-gp .ftree-member-photo {
+    width: 13%;
+    height: auto;
+    aspect-ratio: 1;
+    border: 3px solid #fff;
+}
+.ftree-member.ftree-parent .ftree-member-photo {
+    width: 13%;
+    height: auto;
+    aspect-ratio: 1;
+    border: 3px solid #fff;
+}
+.ftree-member.ftree-child .ftree-member-photo {
+    width: 13%;
+    height: auto;
+    aspect-ratio: 1;
+    border: 3px solid #fff;
+}
+.ftree-member.ftree-hero .ftree-member-photo {
+    width: 14%;
+    height: auto;
+    aspect-ratio: 1;
     border: 4px solid var(--accent-yellow);
-    box-shadow: 0 0 0 3px var(--accent-orange), 0 4px 14px rgba(0,0,0,0.3);
+    box-shadow: 0 0 12px rgba(255,214,0,0.6), 0 0 24px rgba(255,145,0,0.3);
+    animation: heroGlow 1.5s infinite;
 }
 
-.ftree-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
+/* Use pixel sizes since % inside absolute doesn't reference parent well */
+.ftree-member.ftree-gp .ftree-member-photo,
+.ftree-member.ftree-parent .ftree-member-photo,
+.ftree-member.ftree-child .ftree-member-photo {
+    width: 64px;
+    height: 64px;
+}
+.ftree-member.ftree-hero .ftree-member-photo {
+    width: 72px;
+    height: 72px;
 }
 
-/* Name banner (blue ribbon style like reference) */
-.ftree-name {
-    font-size: 0.65rem;
+/* Name label below photo */
+.ftree-member-name {
+    font-size: 0.6rem;
     font-weight: 900;
     color: #fff;
-    background: #5c9fd4;
-    padding: 2px 10px;
+    background: rgba(0,0,0,0.65);
+    padding: 2px 8px;
     border-radius: 8px;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-    line-height: 1.3;
+    margin-top: 2px;
     white-space: nowrap;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+    line-height: 1.3;
+    backdrop-filter: blur(4px);
 }
 
-.ftree-relation {
-    font-size: 0.55rem;
-    color: rgba(255,255,255,0.85);
+/* Relation subtitle */
+.ftree-member-relation {
+    font-size: 0.5rem;
+    color: rgba(255,255,255,0.8);
     font-weight: 700;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.4);
+    padding: 1px 6px;
+    border-radius: 6px;
+    margin-top: 1px;
+    white-space: nowrap;
 }
 
-.ftree-word {
+/* Word Guy wrote */
+.ftree-member-word {
     font-size: 0.6rem;
     font-weight: 700;
     color: var(--accent-yellow);
     font-style: italic;
-    max-width: 80px;
+    margin-top: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    max-width: 90px;
     line-height: 1.2;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
 }
 
-/* Children zone - different colors */
-.ftree-gen-kids .ftree-name {
-    background: #43a047;
-}
-
-.ftree-gen-kids .ftree-relation {
-    color: #1b5e20;
-    text-shadow: none;
-}
-
-.ftree-gen-kids .ftree-word {
-    color: #2e7d32;
-    text-shadow: none;
-    font-size: 0.65rem;
-}
-
-/* Hero card (Guy) */
-.ftree-hero .ftree-photo {
-    animation: heroGlow 1.5s infinite;
-}
-
-.ftree-hero .ftree-name {
-    font-size: 0.8rem;
+/* Hero special styles */
+.ftree-member.ftree-hero .ftree-member-name {
     background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
-    padding: 3px 14px;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 3px 12px;
     box-shadow: 0 2px 0 #e65100;
 }
 
-.ftree-hero .ftree-word {
+.ftree-member.ftree-hero .ftree-member-word {
+    color: #ffd600;
     font-size: 0.7rem;
-    color: #e65100;
+}
+
+/* Responsive scaling for smaller screens */
+@media (max-width: 500px) {
+    .ftree-member.ftree-gp .ftree-member-photo,
+    .ftree-member.ftree-parent .ftree-member-photo,
+    .ftree-member.ftree-child .ftree-member-photo {
+        width: 48px;
+        height: 48px;
+    }
+    .ftree-member.ftree-hero .ftree-member-photo {
+        width: 54px;
+        height: 54px;
+    }
+    .ftree-member-name { font-size: 0.5rem; padding: 1px 5px; }
+    .ftree-member-relation { font-size: 0.45rem; }
+    .ftree-member-word { font-size: 0.5rem; }
+}
+
+@media (max-width: 380px) {
+    .ftree-member.ftree-gp .ftree-member-photo,
+    .ftree-member.ftree-parent .ftree-member-photo,
+    .ftree-member.ftree-child .ftree-member-photo {
+        width: 38px;
+        height: 38px;
+    }
+    .ftree-member.ftree-hero .ftree-member-photo {
+        width: 44px;
+        height: 44px;
+    }
+    .ftree-member-name { font-size: 0.45rem; }
 }
 
 /* ===== Kahoot Guide ===== */

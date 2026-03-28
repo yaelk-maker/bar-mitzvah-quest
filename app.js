@@ -438,91 +438,47 @@ function openQuest(questId) {
                 function renderFamilyTree() {
                     const responses = state.responses[questId] || {};
 
-                    function card(m, size) {
-                        const word = responses[`member_${flowMembers.indexOf(m)}`] || '';
+                    // Position each member on the tree template image
+                    // Positions are percentages matching the circular slots in Family Tree.png
+                    const treePositions = [
+                        // Top row - Grandparents (4 circles in upper crown)
+                        { idx: 0, left: 18,  top: 16, cls: 'ftree-gp' },      // סבא מישה
+                        { idx: 1, left: 37.5, top: 11, cls: 'ftree-gp' },     // סבתא מרינה
+                        { idx: 2, left: 61,  top: 11, cls: 'ftree-gp' },      // סבא אלכס
+                        { idx: 3, left: 80,  top: 16, cls: 'ftree-gp' },      // סבתא סווטה
+                        // Middle row - Parents & Aunts (4 circles + heart)
+                        { idx: 6, left: 10,  top: 40, cls: 'ftree-parent' },  // דודה אירה
+                        { idx: 4, left: 30,  top: 37, cls: 'ftree-parent' },  // אבא איליה
+                        { idx: 5, left: 68,  top: 37, cls: 'ftree-parent' },  // אמא יעל
+                        { idx: 7, left: 88,  top: 40, cls: 'ftree-parent' },  // דודה ג'ני
+                        // Bottom row - Children (3 circles at trunk base)
+                        { idx: 8, left: 27,  top: 64, cls: 'ftree-child' },   // נטע
+                        { idx: 10, left: 49, top: 64, cls: 'ftree-hero' },    // גיא
+                        { idx: 9, left: 71,  top: 64, cls: 'ftree-child' },   // מיקה
+                    ];
+
+                    function memberHTML(pos) {
+                        const m = flowMembers[pos.idx];
+                        const word = responses[`member_${pos.idx}`] || '';
                         const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
-                        const isGuy = m.relation.includes('אתה');
-                        const sz = size || 'sm';
+                        const isHero = pos.cls === 'ftree-hero';
                         return `
-                            <div class="ftree-card ftree-${sz} ${isGuy ? 'ftree-hero' : ''}">
-                                <div class="ftree-photo"><img src="${m.photo}" alt="${m.name}" style="${posStyle}"></div>
-                                <div class="ftree-info">
-                                    <div class="ftree-name">${m.name}</div>
-                                    <div class="ftree-relation">${m.relation}</div>
-                                    ${word ? `<div class="ftree-word">"${word}"</div>` : ''}
+                            <div class="ftree-member ${pos.cls}" style="left: ${pos.left}%; top: ${pos.top}%;">
+                                <div class="ftree-member-photo">
+                                    <img src="${m.photo}" alt="${m.name}" style="${posStyle}">
                                 </div>
+                                <div class="ftree-member-name">${m.name}</div>
+                                <div class="ftree-member-relation">${m.relation}</div>
+                                ${word ? `<div class="ftree-member-word">"${word}"</div>` : ''}
                             </div>
                         `;
                     }
 
-                    // Specific family members
-                    const sM = flowMembers[0];
-                    const sR = flowMembers[1];
-                    const sA = flowMembers[2];
-                    const sS = flowMembers[3];
-                    const dad = flowMembers[4];
-                    const mom = flowMembers[5];
-                    const auntI = flowMembers[6];
-                    const auntJ = flowMembers[7];
-                    const neta = flowMembers[8];
-                    const mika = flowMembers[9];
-                    const guy = flowMembers[10];
-
                     taskEl.innerHTML = `
                         <div class="ftree">
                             <h3 class="ftree-title">🌳 עץ המשפחה של גיא 🌳</h3>
-
-                            <!-- CANOPY: Grandparents + Parents inside the green tree crown -->
-                            <div class="ftree-canopy">
-                                <!-- Grandparents -->
-                                <div class="ftree-gen">
-                                    <div class="ftree-gen-label">סבים וסבתות</div>
-                                    <div class="ftree-row ftree-gp-row">
-                                        <div class="ftree-couple">
-                                            ${card(sM, 'sm')}
-                                            <span class="ftree-connector-h">❤️</span>
-                                            ${card(sR, 'sm')}
-                                        </div>
-                                        <div class="ftree-couple">
-                                            ${card(sA, 'sm')}
-                                            <span class="ftree-connector-h">❤️</span>
-                                            ${card(sS, 'sm')}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Branch lines -->
-                                <div class="ftree-lines">
-                                    <div class="ftree-vline"></div>
-                                    <div class="ftree-vline"></div>
-                                </div>
-
-                                <!-- Parents & Aunts -->
-                                <div class="ftree-gen">
-                                    <div class="ftree-gen-label">הורים ודודות</div>
-                                    <div class="ftree-row ftree-parents-row">
-                                        ${card(auntI, 'sm')}
-                                        <div class="ftree-couple ftree-couple-main">
-                                            ${card(dad, 'md')}
-                                            <span class="ftree-connector-h ftree-heart-big">💕</span>
-                                            ${card(mom, 'md')}
-                                        </div>
-                                        ${card(auntJ, 'sm')}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- TRUNK -->
-                            <div class="ftree-trunk"></div>
-
-                            <!-- BASE: Children on the grass -->
-                            <div class="ftree-gen ftree-gen-kids">
-                                <div class="ftree-gen-label ftree-gen-label-special">הילדים 🌟</div>
-                                <div class="ftree-row ftree-kids-row">
-                                    ${card(neta, 'md')}
-                                    ${card(guy, 'lg')}
-                                    ${card(mika, 'md')}
-                                </div>
+                            <div class="ftree-map">
+                                ${treePositions.map(pos => memberHTML(pos)).join('')}
                             </div>
                         </div>
                         <div class="flow-nav" style="margin-top:16px">
