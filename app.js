@@ -265,51 +265,86 @@ function openQuest(questId) {
 
                 function renderFamilyTree() {
                     const responses = state.responses[questId] || {};
-                    // Group members by generation
-                    const gen1 = flowMembers.filter(m => m.generation.includes('דור 1'));
-                    const gen2 = flowMembers.filter(m => m.generation.includes('דור 2'));
-                    const gen3 = flowMembers.filter(m => m.generation.includes('דור 3'));
 
-                    function memberCard(m, idx) {
+                    function bubble(m, size) {
                         const word = responses[`member_${flowMembers.indexOf(m)}`] || '';
                         const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
                         const isGuy = m.relation.includes('אתה');
+                        const sz = size || 'sm';
                         return `
-                            <div class="tree-member ${isGuy ? 'tree-member-hero' : ''}">
-                                <div class="tree-photo">
-                                    <img src="${m.photo}" alt="${m.name}" style="${posStyle}">
-                                </div>
-                                <span class="tree-name">${m.name}</span>
-                                <span class="tree-relation">${m.relation}</span>
-                                ${word ? `<span class="tree-word">"${word}"</span>` : ''}
+                            <div class="itree-bubble itree-${sz} ${isGuy ? 'itree-hero' : ''}">
+                                <div class="itree-img"><img src="${m.photo}" alt="${m.name}" style="${posStyle}"></div>
+                                <div class="itree-label">${m.name}</div>
+                                ${word ? `<div class="itree-word">"${word}"</div>` : ''}
                             </div>
                         `;
                     }
 
+                    // Specific family members by index in flowMembers
+                    const sM = flowMembers[0]; // סבא מישה
+                    const sR = flowMembers[1]; // סבתא מרינה
+                    const sA = flowMembers[2]; // סבא אלכס
+                    const sS = flowMembers[3]; // סבתא סווטה
+                    const dad = flowMembers[4]; // אבא
+                    const mom = flowMembers[5]; // אמא
+                    const auntI = flowMembers[6]; // דודה אירה
+                    const auntJ = flowMembers[7]; // דודה ג׳ני
+                    const neta = flowMembers[8]; // נטע
+                    const mika = flowMembers[9]; // מיקה
+                    const guy = flowMembers[10]; // גיא
+
                     taskEl.innerHTML = `
-                        <div class="family-tree-visual">
-                            <h3 class="tree-title">🌳 עץ המשפחה של גיא</h3>
+                        <div class="itree">
+                            <h3 class="itree-title">🌳 עץ המשפחה של גיא 🌳</h3>
 
-                            <div class="tree-gen-label">סבים וסבתות</div>
-                            <div class="tree-row tree-row-4">
-                                ${gen1.map(m => memberCard(m)).join('')}
+                            <!-- Tree crown / canopy -->
+                            <div class="itree-canopy">
+                                <!-- Grandparents row - dad's side left, mom's side right -->
+                                <div class="itree-gp-row">
+                                    <div class="itree-couple">
+                                        ${bubble(sM, 'sm')}
+                                        <span class="itree-heart">❤️</span>
+                                        ${bubble(sR, 'sm')}
+                                    </div>
+                                    <div class="itree-couple">
+                                        ${bubble(sA, 'sm')}
+                                        <span class="itree-heart">❤️</span>
+                                        ${bubble(sS, 'sm')}
+                                    </div>
+                                </div>
+
+                                <div class="itree-branch-down">
+                                    <div class="itree-branch-line itree-branch-left"></div>
+                                    <div class="itree-branch-line itree-branch-right"></div>
+                                </div>
+
+                                <!-- Parents + aunts -->
+                                <div class="itree-parents-row">
+                                    <div class="itree-side">${bubble(auntI, 'xs')}</div>
+                                    <div class="itree-couple itree-couple-main">
+                                        ${bubble(dad, 'md')}
+                                        <span class="itree-heart itree-heart-big">💕</span>
+                                        ${bubble(mom, 'md')}
+                                    </div>
+                                    <div class="itree-side">${bubble(auntJ, 'xs')}</div>
+                                </div>
+
+                                <div class="itree-trunk-connector"></div>
                             </div>
 
-                            <div class="tree-connector-down"></div>
+                            <!-- Trunk -->
+                            <div class="itree-trunk"></div>
 
-                            <div class="tree-gen-label">הורים ודודות</div>
-                            <div class="tree-row tree-row-4">
-                                ${gen2.map(m => memberCard(m)).join('')}
-                            </div>
-
-                            <div class="tree-connector-down"></div>
-
-                            <div class="tree-gen-label">הילדים</div>
-                            <div class="tree-row tree-row-3">
-                                ${gen3.map(m => memberCard(m)).join('')}
+                            <!-- Children at base -->
+                            <div class="itree-base">
+                                <div class="itree-children-row">
+                                    ${bubble(neta, 'md')}
+                                    ${bubble(guy, 'lg')}
+                                    ${bubble(mika, 'md')}
+                                </div>
                             </div>
                         </div>
-                        <div class="flow-nav">
+                        <div class="flow-nav" style="margin-top:16px">
                             <button class="flow-btn flow-btn-prev">→ חזרה לרשימה</button>
                         </div>
                     `;

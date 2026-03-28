@@ -692,135 +692,242 @@ select.task-select {
 .flow-btn-done:hover { background: #00c853; }
 .flow-btn-done:active { transform: translateY(2px); box-shadow: 0 2px 0 #00a843; }
 
-/* ===== Family Tree Visualization ===== */
-.family-tree-visual {
-    padding: 10px 0;
-}
-
-.tree-title {
+/* ===== Illustrated Family Tree ===== */
+.itree {
+    padding: 0;
     text-align: center;
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: var(--text-dark);
-    margin-bottom: 20px;
+    animation: bounceIn 0.5s ease;
 }
 
-.tree-gen-label {
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 900;
-    color: #fff;
-    background: var(--accent-purple);
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 10px;
-    margin: 0 auto 10px;
-    display: block;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 2px 0 #9c27b0;
-    letter-spacing: 0.5px;
+.itree-title {
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.2rem;
+    color: #2e7d32;
+    margin-bottom: 12px;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
 }
 
-.tree-row {
+/* Tree canopy - green rounded background */
+.itree-canopy {
+    background: radial-gradient(ellipse at center, #66bb6a 0%, #43a047 40%, #2e7d32 80%, #1b5e20 100%);
+    border-radius: 50% 50% 10% 10%;
+    padding: 20px 10px 16px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(46,125,50,0.3), inset 0 -4px 12px rgba(0,0,0,0.1);
+    border: 3px solid #1b5e20;
+}
+
+/* Leaf texture on canopy */
+.itree-canopy::before {
+    content: '🍃';
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    font-size: 1.2rem;
+    opacity: 0.5;
+}
+.itree-canopy::after {
+    content: '🍃';
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 1rem;
+    opacity: 0.4;
+    transform: scaleX(-1);
+}
+
+/* Grandparents row */
+.itree-gp-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+/* Couple grouping */
+.itree-couple {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.itree-couple-main { gap: 4px; }
+
+.itree-heart {
+    font-size: 0.6rem;
+    line-height: 1;
+}
+
+.itree-heart-big { font-size: 0.9rem; }
+
+/* Branch lines connecting generations */
+.itree-branch-down {
+    display: flex;
+    justify-content: space-around;
+    padding: 0 30px;
+    height: 16px;
+    position: relative;
+}
+
+.itree-branch-line {
+    width: 3px;
+    height: 100%;
+    background: #5d4037;
+    border-radius: 2px;
+    box-shadow: 1px 0 0 rgba(0,0,0,0.1);
+}
+
+/* Parents row */
+.itree-parents-row {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
+    align-items: center;
+    gap: 6px;
 }
 
-.tree-row-4 { max-width: 100%; }
-.tree-row-3 { max-width: 85%; margin-left: auto; margin-right: auto; }
+.itree-side { opacity: 0.9; }
 
-.tree-connector-down {
+.itree-trunk-connector {
     width: 4px;
-    height: 20px;
-    background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
-    margin: 4px auto;
+    height: 12px;
+    background: #5d4037;
+    margin: 4px auto 0;
     border-radius: 2px;
 }
 
-.tree-member {
+/* Trunk */
+.itree-trunk {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(180deg, #6d4c41, #5d4037, #4e342e);
+    margin: 0 auto;
+    border-radius: 4px 4px 8px 8px;
+    box-shadow: inset -4px 0 8px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.itree-trunk::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 100%;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+}
+
+/* Base with grass */
+.itree-base {
+    background: linear-gradient(180deg, #81c784, #66bb6a 30%, #a5d6a7);
+    border-radius: 20px;
+    padding: 16px 10px 20px;
+    margin-top: -4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 3px solid #4caf50;
+    position: relative;
+}
+
+/* Flowers on grass */
+.itree-base::before {
+    content: '🌸 🌺';
+    position: absolute;
+    bottom: 6px;
+    left: 12px;
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+.itree-base::after {
+    content: '🌷 🌼';
+    position: absolute;
+    bottom: 6px;
+    right: 12px;
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+
+.itree-children-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+/* Photo bubbles - sizes */
+.itree-bubble {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    width: 80px;
-    padding: 8px 4px;
-    background: linear-gradient(135deg, #f3e5f5, #e8eaf6);
-    border-radius: 14px;
-    border: 2px solid #ce93d8;
-    box-shadow: 0 2px 0 rgba(0,0,0,0.06);
-    transition: transform 0.2s;
+    gap: 2px;
 }
 
-.tree-member:hover { transform: scale(1.05); }
-
-.tree-member-hero {
-    border-color: var(--accent-orange);
-    background: linear-gradient(135deg, #fff3e0, #fce4ec);
-    box-shadow: 0 0 0 3px rgba(255,145,0,0.2), 0 3px 0 #e65100;
-}
-
-.tree-photo {
-    width: 52px;
-    height: 52px;
+.itree-img {
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid var(--accent-yellow);
-    box-shadow: 0 2px 0 #f9a825;
     background: #f5f5f5;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.tree-member-hero .tree-photo {
-    width: 60px;
-    height: 60px;
-    border-color: var(--accent-orange);
-    box-shadow: 0 2px 0 #e65100;
-}
-
-.tree-photo img {
+.itree-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-.tree-name {
-    font-size: 0.7rem;
+/* Size variants */
+.itree-xs .itree-img { width: 40px; height: 40px; border: 2px solid #fff; }
+.itree-sm .itree-img { width: 48px; height: 48px; border: 3px solid #fff; }
+.itree-md .itree-img { width: 56px; height: 56px; border: 3px solid #fff; }
+.itree-lg .itree-img { width: 72px; height: 72px; border: 4px solid var(--accent-yellow); box-shadow: 0 0 0 3px var(--accent-orange), 0 4px 12px rgba(0,0,0,0.25); }
+
+.itree-label {
+    font-size: 0.6rem;
     font-weight: 900;
-    color: var(--text-dark);
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    line-height: 1.1;
+    max-width: 60px;
     text-align: center;
-    line-height: 1.2;
 }
 
-.tree-member-hero .tree-name {
+.itree-hero .itree-label {
     font-size: 0.8rem;
-    color: var(--accent-orange);
-}
-
-.tree-relation {
-    font-size: 0.55rem;
-    color: var(--text-medium);
-    font-weight: 600;
-    text-align: center;
-}
-
-.tree-word {
-    font-size: 0.7rem;
-    font-weight: 900;
-    color: var(--accent-pink);
-    background: #fce4ec;
+    color: #fff;
+    background: var(--accent-orange);
     padding: 2px 8px;
-    border-radius: 8px;
-    margin-top: 2px;
-    text-align: center;
+    border-radius: 6px;
+    box-shadow: 0 2px 0 #e65100;
+    text-shadow: none;
+    max-width: none;
 }
 
-.tree-member-hero .tree-word {
-    background: #fff3e0;
-    color: var(--accent-orange);
+.itree-word {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    max-width: 60px;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.itree-base .itree-word {
+    color: #2e7d32;
+    text-shadow: none;
+    font-size: 0.65rem;
+}
+
+.itree-base .itree-label {
+    color: #1b5e20;
+    text-shadow: none;
+}
+
+.itree-hero .itree-word {
+    font-size: 0.7rem;
+    color: #e65100;
+    text-shadow: none;
 }
 
 /* ===== Kahoot Guide ===== */
