@@ -29,17 +29,17 @@ const QUESTS = [
                 type: "family-flow",
                 content: "לחץ על החץ כדי להכיר את בן המשפחה הבא:",
                 members: [
-                    { name: "סבא מישה", relation: "סבא מצד אבא", photo: "photos/סבא מישה (מצד אבא).jpg", photoPos: "40% 35%", generation: "דור 1 - סבים וסבתות" },
-                    { name: "סבתא מרינה", relation: "סבתא מצד אבא", photo: "photos/סבתא מרינה (מצד אבא).JPG", photoPos: "center 35%", generation: "דור 1 - סבים וסבתות" },
-                    { name: "סבא אלכס", relation: "סבא מצד אמא", photo: "photos/סבא אלכס (מצד אמא).jpeg", photoPos: "40% 25%", generation: "דור 1 - סבים וסבתות" },
-                    { name: "סבתא סווטה", relation: "סבתא מצד אמא", photo: "photos/סבתא סווטה (מהצד אימא).jpeg", photoPos: "center 20%", generation: "דור 1 - סבים וסבתות" },
-                    { name: "אבא איליה", relation: "אבא", photo: "photos/אבא איליה.jpg", photoPos: "center 30%", generation: "דור 2 - הורים ודודות" },
-                    { name: "אמא יעל", relation: "אמא", photo: "photos/אמא יעל.jpg", photoPos: "center 15%", generation: "דור 2 - הורים ודודות" },
-                    { name: "דודה אירה", relation: "דודה מצד אבא", photo: "photos/דודה מצד אבא - אירה.jpg", photoPos: "center 25%", generation: "דור 2 - הורים ודודות" },
-                    { name: "דודה ג׳ני", relation: "דודה מצד אמא", photo: "photos/דודה מצד אימא - ג'ני.jpeg", photoPos: "center 15%", generation: "דור 2 - הורים ודודות" },
-                    { name: "נטע", relation: "אחות בכורה", photo: "photos/נטע אחות בכורה.jpg", photoPos: "center center", generation: "דור 3 - הילדים" },
-                    { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg", photoPos: "40% 15%", generation: "דור 3 - הילדים" },
-                    { name: "גיא", relation: "זה אתה! 🌟", photo: "photos/גיא ילד יום הולדת.jpg", photoPos: "60% 15%", generation: "דור 3 - הילדים" }
+                    { name: "סבא מישה", relation: "סבא מצד אבא", photo: "photos/סבא מישה (מצד אבא).jpg", photoPos: "center 30%", generation: "דור 1 - סבים וסבתות" },
+                    { name: "סבתא מרינה", relation: "סבתא מצד אבא", photo: "photos/סבתא מרינה (מצד אבא).JPG", photoPos: "center 30%", generation: "דור 1 - סבים וסבתות" },
+                    { name: "סבא אלכס", relation: "סבא מצד אמא", photo: "photos/סבא אלכס (מצד אמא).jpeg", photoPos: "45% 30%", generation: "דור 1 - סבים וסבתות" },
+                    { name: "סבתא סווטה", relation: "סבתא מצד אמא", photo: "photos/סבתא סווטה (מצד אמא).jpeg", photoPos: "center 35%", generation: "דור 1 - סבים וסבתות" },
+                    { name: "אבא איליה", relation: "אבא", photo: "photos/אבא איליה.jpg", photoPos: "center 35%", generation: "דור 2 - הורים ודודות" },
+                    { name: "אמא יעל", relation: "אמא", photo: "photos/אמא יעל.jpg", photoPos: "center 30%", generation: "דור 2 - הורים ודודות" },
+                    { name: "דודה אירה", relation: "דודה מצד אבא", photo: "photos/דודה מצד אבא - אירה.jpg", photoPos: "45% 35%", generation: "דור 2 - הורים ודודות" },
+                    { name: "דודה ג׳ני", relation: "דודה מצד אמא", photo: "photos/דודה מצד אימא - ג'ני.jpeg", photoPos: "center 30%", generation: "דור 2 - הורים ודודות" },
+                    { name: "נטע", relation: "אחות בכורה", photo: "photos/נטע אחות בכורה.jpg", photoPos: "center 35%", generation: "דור 3 - הילדים" },
+                    { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg", photoPos: "center 40%", generation: "דור 3 - הילדים" },
+                    { name: "גיא", relation: "זה אתה! 🌟", photo: "photos/גיא ילד יום הולדת.jpg", photoPos: "center 30%", generation: "דור 3 - הילדים" }
                 ]
             },
             {
