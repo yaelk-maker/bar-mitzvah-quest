@@ -24,7 +24,7 @@ const QUESTS = [
                     { name: "דודה ג׳ני", relation: "דודה מצד אמא", photo: "photos/דודה מצד אימא - ג'ני.jpeg", photoPos: "center 15%", generation: "דור 2 - הורים ודודות" },
                     { name: "נטע", relation: "אחות בכורה", photo: "photos/נטע אחות בכורה.jpg", photoPos: "center center", generation: "דור 3 - הילדים" },
                     { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg", photoPos: "40% 15%", generation: "דור 3 - הילדים" },
-                    { name: "גיא", relation: "זה אתה! 🌟", photo: "photos/גיא ילד יום הולדת.jpg", photoPos: "center 20%", generation: "דור 3 - הילדים" }
+                    { name: "גיא", relation: "זה אתה! 🌟", photo: "photos/גיא ילד יום הולדת.jpg", photoPos: "60% 15%", generation: "דור 3 - הילדים" }
                 ]
             },
             {

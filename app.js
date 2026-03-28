@@ -249,12 +249,14 @@ function openQuest(questId) {
                     });
 
                     nextBtn.addEventListener('click', () => {
-                        if (wordInput && wordInput.value.trim()) {
+                        // Always save the word input
+                        if (wordInput) {
                             if (!state.responses[questId]) state.responses[questId] = {};
                             state.responses[questId][mKey] = wordInput.value;
                             saveState(state);
                         }
                         if (isLast) {
+                            // Show the family tree
                             renderFamilyTree();
                         } else {
                             currentIdx = idx + 1;
@@ -351,8 +353,15 @@ function openQuest(questId) {
 
                     taskEl.querySelector('.flow-btn-prev').addEventListener('click', () => {
                         currentIdx = flowMembers.length - 1;
+                        // Hide complete button again when going back to list
+                        const ft = document.querySelector('.quest-footer');
+                        if (ft) ft.style.display = 'none';
                         renderFlowPerson(currentIdx);
                     });
+
+                    // Show the complete button now that tree is visible
+                    const ft = document.querySelector('.quest-footer');
+                    if (ft) ft.style.display = '';
 
                     taskEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -505,14 +514,23 @@ function openQuest(questId) {
 
     // Show/hide complete button based on completion
     const btn = document.getElementById('btn-complete');
+    const footer = document.querySelector('.quest-footer');
     if (state.completedQuests.includes(questId)) {
         btn.textContent = '✓ המשימה הושלמה!';
         btn.disabled = true;
         btn.classList.add('completed');
+        footer.style.display = '';
     } else {
         btn.textContent = 'סיימתי את המשימה! ✓';
         btn.disabled = false;
         btn.classList.remove('completed');
+        // Hide the complete button for quests with family-flow until tree is shown
+        const hasFlow = quest.tasks.some(t => t.type === 'family-flow');
+        if (hasFlow) {
+            footer.style.display = 'none';
+        } else {
+            footer.style.display = '';
+        }
     }
 
     // Auto-save on input
