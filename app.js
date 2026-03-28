@@ -174,6 +174,97 @@ function openQuest(questId) {
                 taskEl.appendChild(grid);
                 break;
 
+            case 'family-flow':
+                taskEl.className = 'task-block family-flow-block';
+                const flowMembers = task.members;
+                const flowSaved = state.responses[questId] || {};
+                // Track which person is currently shown
+                let currentIdx = 0;
+                // Find first person without a response to resume from
+                for (let fi = 0; fi < flowMembers.length; fi++) {
+                    if (!flowSaved[`member_${fi}`]) { currentIdx = fi; break; }
+                    if (fi === flowMembers.length - 1) currentIdx = fi;
+                }
+
+                function renderFlowPerson(idx) {
+                    const m = flowMembers[idx];
+                    const mKey = `member_${idx}`;
+                    const isLast = idx === flowMembers.length - 1;
+                    const prevGen = idx > 0 ? flowMembers[idx-1].generation : null;
+                    const showGenHeader = m.generation !== prevGen;
+
+                    taskEl.innerHTML = `
+                        <div class="flow-progress">
+                            <div class="flow-progress-bar">
+                                <div class="flow-progress-fill" style="width: ${((idx + 1) / flowMembers.length) * 100}%"></div>
+                            </div>
+                            <span class="flow-progress-text">${idx + 1} / ${flowMembers.length}</span>
+                        </div>
+                        ${showGenHeader ? `<div class="flow-generation">${m.generation}</div>` : ''}
+                        <div class="flow-person ${isLast ? 'flow-person-hero' : ''}">
+                            <div class="flow-photo">
+                                <img src="${m.photo}" alt="${m.name}">
+                            </div>
+                            <h3 class="flow-name">${m.name}</h3>
+                            <span class="flow-relation">${m.relation}</span>
+                            ${!isLast ? `
+                                <label class="flow-input-label">מילה אחת שמתארת את ${m.name}:</label>
+                                <input type="text" class="task-input-small flow-word-input"
+                                    data-quest="${questId}" data-key="${mKey}"
+                                    value="${flowSaved[mKey] || ''}"
+                                    placeholder="מילה אחת...">
+                            ` : `
+                                <div class="flow-hero-message">🎉 זה אתה! סיימת להכיר את כל המשפחה!</div>
+                                <label class="flow-input-label">ומילה אחת שמתארת אותך?</label>
+                                <input type="text" class="task-input-small flow-word-input"
+                                    data-quest="${questId}" data-key="${mKey}"
+                                    value="${flowSaved[mKey] || ''}"
+                                    placeholder="מילה אחת...">
+                            `}
+                        </div>
+                        <div class="flow-nav">
+                            <button class="flow-btn flow-btn-prev" ${idx === 0 ? 'disabled' : ''}>→ הקודם</button>
+                            <button class="flow-btn flow-btn-next ${isLast ? 'flow-btn-done' : ''}">${isLast ? '✓ סיום' : 'הבא ←'}</button>
+                        </div>
+                    `;
+
+                    // Wire up nav buttons
+                    const prevBtn = taskEl.querySelector('.flow-btn-prev');
+                    const nextBtn = taskEl.querySelector('.flow-btn-next');
+                    const wordInput = taskEl.querySelector('.flow-word-input');
+
+                    if (wordInput) {
+                        wordInput.addEventListener('input', () => {
+                            if (!state.responses[questId]) state.responses[questId] = {};
+                            state.responses[questId][mKey] = wordInput.value;
+                            saveState(state);
+                        });
+                        // Focus the input
+                        setTimeout(() => wordInput.focus(), 300);
+                    }
+
+                    prevBtn.addEventListener('click', () => {
+                        if (idx > 0) { currentIdx = idx - 1; renderFlowPerson(currentIdx); }
+                    });
+
+                    nextBtn.addEventListener('click', () => {
+                        // Save current input
+                        if (wordInput && wordInput.value.trim()) {
+                            if (!state.responses[questId]) state.responses[questId] = {};
+                            state.responses[questId][mKey] = wordInput.value;
+                            saveState(state);
+                        }
+                        if (idx < flowMembers.length - 1) {
+                            currentIdx = idx + 1;
+                            renderFlowPerson(currentIdx);
+                            taskEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
+                }
+
+                renderFlowPerson(currentIdx);
+                break;
+
             case 'kahoot-guide':
                 taskEl.innerHTML = `
                     <label class="task-label">${task.content}</label>

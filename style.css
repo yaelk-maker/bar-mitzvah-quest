@@ -491,6 +491,207 @@ select.task-select {
 
 .family-member .task-input-small { text-align: center; font-size: 0.9rem; }
 
+/* ===== Family Flow - One Person at a Time ===== */
+.family-flow-block {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    border: 3px solid rgba(0,0,0,0.05);
+}
+
+.flow-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.flow-progress-bar {
+    flex: 1;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.flow-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+    border-radius: 5px;
+    transition: width 0.4s ease;
+}
+
+.flow-progress-text {
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: var(--text-medium);
+    white-space: nowrap;
+}
+
+.flow-generation {
+    text-align: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: #fff;
+    background: var(--accent-purple);
+    padding: 8px 20px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 0 #9c27b0;
+    letter-spacing: 0.5px;
+}
+
+.flow-person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 16px;
+    animation: flowSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes flowSlideIn {
+    from { opacity: 0; transform: translateX(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.flow-photo {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid var(--accent-yellow);
+    box-shadow: 0 6px 0 #f9a825, 0 10px 30px rgba(0,0,0,0.15);
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flow-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+}
+
+.flow-person-hero .flow-photo {
+    width: 200px;
+    height: 200px;
+    border-color: var(--accent-orange);
+    box-shadow: 0 6px 0 #e65100, 0 0 0 8px rgba(255,145,0,0.2), 0 10px 30px rgba(0,0,0,0.15);
+    animation: heroGlow 1.5s infinite;
+}
+
+@keyframes heroGlow {
+    0%, 100% { box-shadow: 0 6px 0 #e65100, 0 0 0 8px rgba(255,145,0,0.2), 0 10px 30px rgba(0,0,0,0.15); }
+    50% { box-shadow: 0 6px 0 #e65100, 0 0 0 16px rgba(255,145,0,0.1), 0 10px 30px rgba(0,0,0,0.15); }
+}
+
+.flow-name {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--text-dark);
+    margin-top: 4px;
+}
+
+.flow-relation {
+    font-size: 1rem;
+    color: var(--text-medium);
+    font-weight: 700;
+    background: #f3e5f5;
+    padding: 4px 16px;
+    border-radius: 12px;
+}
+
+.flow-person-hero .flow-relation {
+    background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 6px 20px;
+    box-shadow: 0 2px 0 #e65100;
+}
+
+.flow-input-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-top: 8px;
+    text-align: center;
+}
+
+.flow-word-input {
+    max-width: 280px;
+    text-align: center;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    border-color: var(--accent-purple) !important;
+}
+
+.flow-word-input:focus {
+    border-color: var(--accent-pink) !important;
+    box-shadow: 0 0 0 4px rgba(213,0,249,0.15) !important;
+}
+
+.flow-hero-message {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--accent-orange);
+    text-align: center;
+    padding: 12px;
+    background: #fff3e0;
+    border-radius: var(--radius-sm);
+    border: 3px solid var(--accent-yellow);
+    margin-top: 4px;
+}
+
+.flow-nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.flow-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.flow-btn-prev {
+    background: #e0e0e0;
+    color: var(--text-medium);
+    box-shadow: 0 4px 0 #bdbdbd;
+}
+
+.flow-btn-prev:hover:not(:disabled) { background: #d5d5d5; }
+.flow-btn-prev:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #bdbdbd; }
+.flow-btn-prev:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.flow-btn-next {
+    background: var(--accent-blue);
+    color: #fff;
+    box-shadow: 0 4px 0 #1565c0;
+}
+
+.flow-btn-next:hover { background: #2979ff; }
+.flow-btn-next:active { transform: translateY(2px); box-shadow: 0 2px 0 #1565c0; }
+
+.flow-btn-done {
+    background: var(--accent-green);
+    box-shadow: 0 4px 0 #00a843;
+}
+
+.flow-btn-done:hover { background: #00c853; }
+.flow-btn-done:active { transform: translateY(2px); box-shadow: 0 2px 0 #00a843; }
+
 /* ===== Kahoot Guide ===== */
 .kahoot-steps {
     padding-right: 20px;

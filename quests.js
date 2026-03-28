@@ -8,26 +8,23 @@ const QUESTS = [
         xp: 100,
         message: "אני חלק מסיפור גדול",
         color: "#4CAF50",
-        intro: "בואו נגלה את השורשים שלך! במשימה הזו תכיר קרובי משפחה ותכתוב מילה אחת שמתארת כל אחד מהם.",
+        intro: "בואו נגלה את השורשים שלך! תכיר את בני המשפחה אחד אחרי השני - מהסבים ועד... אליך!",
         tasks: [
             {
-                type: "info",
-                content: "לפניך תמונות של קרובי משפחה. לכל אחד יש שם ועובדה מיוחדת. קרא על כל אחד בעיון."
-            },
-            {
-                type: "family-tree",
-                content: "עכשיו תורך! כתוב מילה אחת שמתארת כל קרוב משפחה:",
+                type: "family-flow",
+                content: "לחץ על החץ כדי להכיר את בן המשפחה הבא:",
                 members: [
-                    { name: "אבא איליה", relation: "אבא", photo: "photos/אבא איליה.jpg" },
-                    { name: "אמא יעל", relation: "אמא", photo: "photos/אמא יעל.jpg" },
-                    { name: "נטע", relation: "אחות בכורה", photo: "photos/נטע אחות בכורה.jpg" },
-                    { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg" },
-                    { name: "סבא מישה", relation: "סבא מצד אבא", photo: "photos/סבא מישה (מצד אבא).jpg" },
-                    { name: "סבתא מרינה", relation: "סבתא מצד אבא", photo: "photos/סבתא מרינה (מצד אבא).JPG" },
-                    { name: "סבא אלכס", relation: "סבא מצד אמא", photo: "photos/סבא אלכס (מצד אמא).jpeg" },
-                    { name: "סבתא סווטה", relation: "סבתא מצד אמא", photo: "photos/סבתא סווטה (מהצד אימא).jpeg" },
-                    { name: "דודה אירה", relation: "דודה מצד אבא", photo: "photos/דודה מצד אבא - אירה.jpg" },
-                    { name: "דודה ג׳ני", relation: "דודה מצד אמא", photo: "photos/דודה מצד אימא - ג'ני.jpeg" }
+                    { name: "סבא מישה", relation: "סבא מצד אבא", photo: "photos/סבא מישה (מצד אבא).jpg", generation: "דור 1 - סבים וסבתות" },
+                    { name: "סבתא מרינה", relation: "סבתא מצד אבא", photo: "photos/סבתא מרינה (מצד אבא).JPG", generation: "דור 1 - סבים וסבתות" },
+                    { name: "סבא אלכס", relation: "סבא מצד אמא", photo: "photos/סבא אלכס (מצד אמא).jpeg", generation: "דור 1 - סבים וסבתות" },
+                    { name: "סבתא סווטה", relation: "סבתא מצד אמא", photo: "photos/סבתא סווטה (מהצד אימא).jpeg", generation: "דור 1 - סבים וסבתות" },
+                    { name: "אבא איליה", relation: "אבא", photo: "photos/אבא איליה.jpg", generation: "דור 2 - הורים ודודות" },
+                    { name: "אמא יעל", relation: "אמא", photo: "photos/אמא יעל.jpg", generation: "דור 2 - הורים ודודות" },
+                    { name: "דודה אירה", relation: "דודה מצד אבא", photo: "photos/דודה מצד אבא - אירה.jpg", generation: "דור 2 - הורים ודודות" },
+                    { name: "דודה ג׳ני", relation: "דודה מצד אמא", photo: "photos/דודה מצד אימא - ג'ני.jpeg", generation: "דור 2 - הורים ודודות" },
+                    { name: "נטע", relation: "אחות בכורה", photo: "photos/נטע אחות בכורה.jpg", generation: "דור 3 - הילדים" },
+                    { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg", generation: "דור 3 - הילדים" },
+                    { name: "גיא", relation: "זה אתה! 🌟", photo: "photos/גיא ילד יום הולדת.jpg", generation: "דור 3 - הילדים" }
                 ]
             },
             {
