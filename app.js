@@ -1,22 +1,22 @@
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
-    // TOP EDGE
-    { img: 'brainrot/skibidi.png',     top: '1%',  left: '1%',   size: '100px', anim: 'brFloat1', delay: '0s' },
-    { img: 'brainrot/grumpycat.png',   top: '1%',  right: '2%',  size: '85px',  anim: 'brBounce', delay: '0.4s' },
-    { img: 'brainrot/amongus.png',     top: '10%', left: '42%',  size: '70px',  anim: 'brFloat3', delay: '1s' },
-    // RIGHT EDGE
-    { img: 'brainrot/capybara.png',    top: '18%', right: '1%',  size: '95px',  anim: 'brFloat2', delay: '0.5s' },
-    { img: 'brainrot/grimace.png',     top: '50%', right: '1%',  size: '95px',  anim: 'brFloat1', delay: '0.3s' },
-    // LEFT EDGE
-    { img: 'brainrot/moai.png',        top: '22%', left: '1%',   size: '85px',  anim: 'brBounce', delay: '0s' },
-    { img: 'brainrot/chillguy.png',    top: '55%', left: '1%',   size: '95px',  anim: 'brFloat3', delay: '0.8s' },
-    // MIDDLE GAPS
-    { img: 'brainrot/doge.png',        top: '26%', left: '28%',  size: '80px',  anim: 'brFloat1', delay: '2s' },
-    { img: 'brainrot/tralalero.png',   top: '52%', right: '16%', size: '80px',  anim: 'brFloat2', delay: '1s' },
-    // BOTTOM AREA
-    { img: 'brainrot/popcat.png',      top: '68%', left: '2%',   size: '80px',  anim: 'brFloat2', delay: '1.5s' },
-    { img: 'brainrot/trollface.png',   top: '72%', right: '2%',  size: '85px',  anim: 'brBounce', delay: '0.5s' },
-    { img: 'brainrot/sigmacat.png',    top: '80%', left: '16%',  size: '75px',  anim: 'brFloat3', delay: '1.2s' },
+    // TOP EDGE — pulled inward, smaller to avoid cropping
+    { img: 'brainrot/skibidi.png',     top: '2%',  left: '2%',   size: '75px',  anim: 'brFloat1', delay: '0s' },
+    { img: 'brainrot/grumpycat.png',   top: '2%',  right: '3%',  size: '70px',  anim: 'brBounce', delay: '0.4s' },
+    { img: 'brainrot/amongus.png',     top: '12%', left: '48%',  size: '60px',  anim: 'brFloat3', delay: '1s' },
+    // RIGHT EDGE — reduced size, pulled from edge
+    { img: 'brainrot/capybara.png',    top: '20%', right: '3%',  size: '75px',  anim: 'brFloat2', delay: '0.5s' },
+    { img: 'brainrot/grimace.png',     top: '48%', right: '3%',  size: '75px',  anim: 'brFloat1', delay: '0.3s' },
+    // LEFT EDGE — reduced size, pulled from edge
+    { img: 'brainrot/moai.png',        top: '24%', left: '2%',   size: '70px',  anim: 'brBounce', delay: '0s' },
+    { img: 'brainrot/chillguy.png',    top: '50%', left: '2%',   size: '75px',  anim: 'brFloat3', delay: '0.8s' },
+    // MIDDLE GAPS — positioned between nodes
+    { img: 'brainrot/doge.png',        top: '28%', left: '30%',  size: '65px',  anim: 'brFloat1', delay: '2s' },
+    { img: 'brainrot/tralalero.png',   top: '46%', right: '20%', size: '65px',  anim: 'brFloat2', delay: '1s' },
+    // BOTTOM AREA — moved up to stay in viewport
+    { img: 'brainrot/popcat.png',      top: '60%', left: '3%',   size: '65px',  anim: 'brFloat2', delay: '1.5s' },
+    { img: 'brainrot/trollface.png',   top: '62%', right: '3%',  size: '70px',  anim: 'brBounce', delay: '0.5s' },
+    { img: 'brainrot/sigmacat.png',    top: '72%', left: '18%',  size: '60px',  anim: 'brFloat3', delay: '1.2s' },
 ];
 
 function renderBrainrotChars() {

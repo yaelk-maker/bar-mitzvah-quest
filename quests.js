@@ -5,7 +5,7 @@ const MAP_POSITIONS = [
     { x: 30, y: 6  },   // Quest 2 - drift right, stays high
     { x: 52, y: 14 },   // Quest 3 - center-right, slight dip
     { x: 78, y: 8  },   // Quest 4 - far right, back up (end of first S-curve)
-    { x: 88, y: 28 },   // Quest 5 - right edge, drops down
+    { x: 82, y: 28 },   // Quest 5 - right side, drops down
     { x: 70, y: 40 },   // Quest 6 - curves back left
     { x: 45, y: 36 },   // Quest 7 - center, slight rise
     { x: 18, y: 44 },   // Quest 8 - far left (end of second S-curve)
