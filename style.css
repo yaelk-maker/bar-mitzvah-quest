@@ -64,6 +64,7 @@ body::before {
 
 /* ===== Screen System ===== */
 .screen { display: none; min-height: 100vh; padding-bottom: 40px; }
+#screen-home { padding-bottom: 0; height: 100vh; max-height: 100vh; overflow: hidden; }
 .screen.active { display: block; animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
 @keyframes bounceIn {
@@ -76,13 +77,22 @@ body::before {
 .map-container {
     position: relative;
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     background:
-        /* Parchment texture */
-        radial-gradient(ellipse at 20% 30%, rgba(255,248,225,0.6) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(255,243,224,0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(255,253,231,0.4) 0%, transparent 60%),
-        linear-gradient(180deg, #c8e6c9 0%, #a5d6a7 15%, #e8f5e9 30%, #fff8e1 50%, #ffe0b2 70%, #ffccbc 85%, #b2dfdb 100%);
+        /* Subtle light patches for depth */
+        radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.3) 0%, transparent 40%),
+        radial-gradient(ellipse at 75% 60%, rgba(255,248,225,0.25) 0%, transparent 40%),
+        /* Game world gradient: sky -> meadow -> grass */
+        linear-gradient(180deg,
+            #87CEEB 0%,       /* light sky blue */
+            #a8e6cf 20%,      /* sky meets hills */
+            #c8e6c9 35%,      /* light green meadow */
+            #a5d6a7 50%,      /* mid green */
+            #81c784 65%,      /* richer green */
+            #66bb6a 80%,      /* deep grass */
+            #4caf50 100%      /* forest floor */
+        );
     overflow: hidden;
 }
 
@@ -139,21 +149,19 @@ body::before {
     color: var(--text-dark);
     white-space: nowrap;
     direction: ltr;
-    unicode-bidi: bidi-override;
+    unicode-bidi: isolate;
     display: inline-block;
 }
 
 /* SVG path layer */
 .map-path-svg {
     position: absolute;
-    top: 0;
+    top: 50px; /* offset for banner */
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
     z-index: 1;
     pointer-events: none;
-    /* SVG viewBox set to percentage coordinates */
-    viewBox: 0 0 100 100;
 }
 
 /* ===== Quest Map - Positioned Landmarks ===== */
@@ -314,49 +322,36 @@ body::before {
     transform: translateY(-1px);
 }
 
-/* ===== BRAINROT CHARACTERS - Prominent map figures ===== */
-.brainrot {
+/* ===== BRAINROT CHARACTERS - Actual image figures on map ===== */
+#brainrot-container {
     position: absolute;
-    font-size: 3rem;
+    top: 0; left: 0; right: 0; bottom: 0;
     z-index: 1;
     pointer-events: none;
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-    transition: transform 0.3s;
+    overflow: hidden;
 }
 
-/* Float animation variants */
+.brainrot {
+    pointer-events: none;
+}
+
+/* Float/bounce animations for brainrot characters */
 @keyframes brFloat1 {
     0%, 100% { transform: translateY(0) rotate(-3deg); }
-    50% { transform: translateY(-8px) rotate(3deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
 }
 @keyframes brFloat2 {
     0%, 100% { transform: translateY(0) rotate(2deg); }
-    50% { transform: translateY(-6px) rotate(-4deg); }
+    50% { transform: translateY(-8px) rotate(-4deg); }
 }
 @keyframes brFloat3 {
-    0%, 100% { transform: translateY(-4px) rotate(5deg); }
-    50% { transform: translateY(4px) rotate(-2deg); }
+    0%, 100% { transform: translateY(-5px) rotate(5deg); }
+    50% { transform: translateY(5px) rotate(-2deg); }
 }
 @keyframes brBounce {
     0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-10px) scale(1.08); }
+    50% { transform: translateY(-12px) scale(1.05); }
 }
-
-/* Individual character positions & sizes */
-.br-1  { top: 2%; left: 2%; font-size: 3.5rem; animation: brFloat1 4s ease-in-out infinite; }
-.br-2  { top: 15%; right: 6%; font-size: 3.2rem; animation: brFloat2 3.5s ease-in-out infinite 0.5s; }
-.br-3  { top: 30%; left: 3%; font-size: 4rem; animation: brBounce 5s ease-in-out infinite; }
-.br-4  { top: 8%; left: 60%; font-size: 2.8rem; animation: brFloat3 4.5s ease-in-out infinite 1s; }
-.br-5  { top: 55%; right: 3%; font-size: 3rem; animation: brFloat1 3s ease-in-out infinite 0.3s; }
-.br-6  { top: 72%; left: 3%; font-size: 3.5rem; animation: brFloat2 4s ease-in-out infinite 1.5s; }
-.br-7  { top: 42%; left: 1%; font-size: 2.8rem; animation: brFloat3 3.8s ease-in-out infinite 0.8s; }
-.br-8  { top: 88%; right: 4%; font-size: 3.8rem; animation: brBounce 4.5s ease-in-out infinite 0.5s; }
-.br-9  { top: 62%; right: 8%; font-size: 3rem; animation: brFloat1 4.2s ease-in-out infinite 1.2s; }
-.br-10 { top: 20%; left: 40%; font-size: 2.5rem; animation: brFloat2 3.2s ease-in-out infinite 0.7s; }
-.br-11 { top: 48%; right: 2%; font-size: 2.8rem; animation: brFloat3 3.5s ease-in-out infinite 1.8s; }
-.br-12 { top: 82%; left: 8%; font-size: 2.5rem; animation: brFloat1 4s ease-in-out infinite 2s; }
-.br-13 { top: 35%; right: 2%; font-size: 3rem; animation: brBounce 3.8s ease-in-out infinite 0.4s; }
-.br-14 { top: 92%; left: 42%; font-size: 3.2rem; animation: brFloat2 4.3s ease-in-out infinite 1s; }
 
 /* ===== Quest Screen (centered, max-width for readability) ===== */
 #screen-quest, #screen-book {

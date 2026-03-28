@@ -1,3 +1,56 @@
+// ===== Brainrot Characters - actual images on the map =====
+const BRAINROT_CHARS = [
+    // TOP EDGE
+    { img: 'brainrot/skibidi.png',     top: '1%',  left: '1%',   size: '100px', anim: 'brFloat1', delay: '0s' },
+    { img: 'brainrot/grumpycat.png',   top: '1%',  right: '2%',  size: '85px',  anim: 'brBounce', delay: '0.4s' },
+    { img: 'brainrot/amongus.png',     top: '10%', left: '42%',  size: '70px',  anim: 'brFloat3', delay: '1s' },
+    // RIGHT EDGE
+    { img: 'brainrot/capybara.png',    top: '18%', right: '1%',  size: '95px',  anim: 'brFloat2', delay: '0.5s' },
+    { img: 'brainrot/grimace.png',     top: '50%', right: '1%',  size: '95px',  anim: 'brFloat1', delay: '0.3s' },
+    // LEFT EDGE
+    { img: 'brainrot/moai.png',        top: '22%', left: '1%',   size: '85px',  anim: 'brBounce', delay: '0s' },
+    { img: 'brainrot/chillguy.png',    top: '55%', left: '1%',   size: '95px',  anim: 'brFloat3', delay: '0.8s' },
+    // MIDDLE GAPS
+    { img: 'brainrot/doge.png',        top: '26%', left: '28%',  size: '80px',  anim: 'brFloat1', delay: '2s' },
+    { img: 'brainrot/tralalero.png',   top: '52%', right: '16%', size: '80px',  anim: 'brFloat2', delay: '1s' },
+    // BOTTOM AREA
+    { img: 'brainrot/popcat.png',      top: '68%', left: '2%',   size: '80px',  anim: 'brFloat2', delay: '1.5s' },
+    { img: 'brainrot/trollface.png',   top: '72%', right: '2%',  size: '85px',  anim: 'brBounce', delay: '0.5s' },
+    { img: 'brainrot/sigmacat.png',    top: '80%', left: '16%',  size: '75px',  anim: 'brFloat3', delay: '1.2s' },
+];
+
+function renderBrainrotChars() {
+    const container = document.getElementById('brainrot-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    BRAINROT_CHARS.forEach((ch, i) => {
+        const el = document.createElement('div');
+        el.className = 'brainrot';
+        el.style.position = 'absolute';
+        el.style.top = ch.top;
+        if (ch.left) el.style.left = ch.left;
+        if (ch.right) el.style.right = ch.right;
+        el.style.width = ch.size;
+        el.style.height = ch.size;
+        el.style.animation = `${ch.anim} 4s ease-in-out infinite ${ch.delay}`;
+        el.style.zIndex = '1';
+        el.style.pointerEvents = 'none';
+
+        const img = document.createElement('img');
+        img.src = ch.img;
+        img.alt = '';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'contain';
+        img.style.filter = 'drop-shadow(3px 5px 8px rgba(0,0,0,0.35))';
+        // If image fails to load, hide this character
+        img.onerror = () => { el.style.display = 'none'; };
+        el.appendChild(img);
+        container.appendChild(el);
+    });
+}
+
 // ===== State Management =====
 const STORAGE_KEY = 'bar-mitzvah-quest';
 
@@ -152,13 +205,23 @@ function drawMapPath(svg, allQuests) {
     glow.setAttribute('filter', 'url(#pathGlow)');
     svg.appendChild(glow);
 
-    // Main dotted path (brown trail through whole map)
+    // Dirt trail border (darker brown edge for depth)
+    const trailBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    trailBorder.setAttribute('d', d);
+    trailBorder.setAttribute('fill', 'none');
+    trailBorder.setAttribute('stroke', '#8d6e63');
+    trailBorder.setAttribute('stroke-width', '4.5');
+    trailBorder.setAttribute('stroke-linecap', 'round');
+    trailBorder.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(trailBorder);
+
+    // Main dirt trail (tan/brown path)
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', d);
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#bcaaa4');
-    path.setAttribute('stroke-width', '2.5');
-    path.setAttribute('stroke-dasharray', '6 5');
+    path.setAttribute('stroke', '#d7ccc8');
+    path.setAttribute('stroke-width', '3');
+    path.setAttribute('stroke-dasharray', '8 5');
     path.setAttribute('stroke-linecap', 'round');
     svg.appendChild(path);
 
@@ -779,5 +842,6 @@ function exportPresentation() {
 
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', () => {
+    renderBrainrotChars();
     showHome();
 });
