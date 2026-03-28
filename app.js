@@ -1,18 +1,13 @@
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
-    // === STEAL A BRAINROT VOXEL CHARACTERS (7 figures, prominent) ===
-    { img: 'brainrot/sab-tralalero.png', top: '6%',  left: '3%',   size: '90px',  anim: 'brFloat1', delay: '0s' },
-    { img: 'brainrot/sab-shark.png',     top: '8%',  right: '3%',  size: '85px',  anim: 'brFloat2', delay: '0.5s' },
-    { img: 'brainrot/sab-spaghetti.png', top: '28%', left: '3%',   size: '80px',  anim: 'brBounce', delay: '1s' },
-    { img: 'brainrot/sab-blue.png',      top: '38%', right: '3%',  size: '80px',  anim: 'brFloat3', delay: '0.3s' },
-    { img: 'brainrot/sab-giftbox.png',   top: '55%', left: '4%',   size: '75px',  anim: 'brFloat1', delay: '0.8s' },
-    { img: 'brainrot/sab-bat.png',       top: '58%', right: '4%',  size: '80px',  anim: 'brFloat2', delay: '1.2s' },
-    { img: 'brainrot/sab-67.png',        top: '72%', left: '8%',   size: '75px',  anim: 'brBounce', delay: '0.5s' },
-    // === CLASSIC MEMES (smaller, fill gaps) ===
-    { img: 'brainrot/doge.png',        top: '18%', left: '42%',  size: '50px',  anim: 'brFloat1', delay: '2s' },
-    { img: 'brainrot/amongus.png',     top: '48%', left: '38%',  size: '45px',  anim: 'brFloat3', delay: '1s' },
-    { img: 'brainrot/skibidi.png',     top: '68%', right: '8%',  size: '50px',  anim: 'brBounce', delay: '0.4s' },
-    { img: 'brainrot/trollface.png',   top: '78%', right: '25%', size: '45px',  anim: 'brFloat2', delay: '1.5s' },
+    // === STEAL A BRAINROT VOXEL CHARACTERS ONLY (from Figures folder) ===
+    { img: 'brainrot/sab-tralalero.png', top: '5%',  left: '2%',   size: '85px',  anim: 'brFloat1', delay: '0s' },
+    { img: 'brainrot/sab-shark.png',     top: '7%',  right: '2%',  size: '80px',  anim: 'brFloat2', delay: '0.5s' },
+    { img: 'brainrot/sab-spaghetti.png', top: '30%', left: '2%',   size: '75px',  anim: 'brBounce', delay: '1s' },
+    { img: 'brainrot/sab-blue.png',      top: '40%', right: '2%',  size: '75px',  anim: 'brFloat3', delay: '0.3s' },
+    { img: 'brainrot/sab-giftbox.png',   top: '55%', left: '3%',   size: '70px',  anim: 'brFloat1', delay: '0.8s' },
+    { img: 'brainrot/sab-bat.png',       top: '60%', right: '3%',  size: '75px',  anim: 'brFloat2', delay: '1.2s' },
+    { img: 'brainrot/sab-67.png',        top: '75%', left: '6%',   size: '70px',  anim: 'brBounce', delay: '0.5s' },
 ];
 
 // ===== Lava particles (subtle embers floating on the map) =====
