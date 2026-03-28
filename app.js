@@ -22,7 +22,7 @@ function updateXPBar() {
     const xp = getXP();
     const pct = (xp / TOTAL_XP) * 100;
     document.getElementById('home-xp-fill').style.width = pct + '%';
-    document.getElementById('home-xp-text').textContent = `${xp} / ${TOTAL_XP} XP`;
+    document.getElementById('home-xp-text').textContent = `XP ${xp} / ${TOTAL_XP}`;
 }
 
 // ===== Screen Navigation =====
@@ -44,22 +44,20 @@ function renderQuestMap() {
     const svg = document.getElementById('map-path-svg');
     map.innerHTML = '';
 
-    // Build visible quest list (completed + next unlocked only)
-    const visibleQuests = [];
-    QUESTS.forEach((quest, idx) => {
+    // Build ALL quest statuses
+    const allQuests = QUESTS.map((quest, idx) => {
         const isCompleted = state.completedQuests.includes(quest.id);
         const isUnlocked = idx === 0 || state.completedQuests.includes(QUESTS[idx - 1].id);
         const isNext = isUnlocked && !isCompleted;
-        if (isCompleted || isNext) {
-            visibleQuests.push({ quest, idx, isCompleted, isNext });
-        }
+        const isLocked = !isCompleted && !isNext;
+        return { quest, idx, isCompleted, isNext, isLocked };
     });
 
-    // Render each visible quest as a map landmark
-    visibleQuests.forEach(({ quest, idx, isCompleted, isNext }) => {
+    // Render ALL quest nodes on the map
+    allQuests.forEach(({ quest, idx, isCompleted, isNext, isLocked }) => {
         const pos = MAP_POSITIONS[idx];
         const node = document.createElement('div');
-        node.className = `map-node ${isCompleted ? 'map-node-done' : ''} ${isNext ? 'map-node-next' : ''}`;
+        node.className = `map-node ${isCompleted ? 'map-node-done' : ''} ${isNext ? 'map-node-next' : ''} ${isLocked ? 'map-node-locked' : ''}`;
         node.style.left = pos.x + '%';
         node.style.top = pos.y + '%';
         node.style.setProperty('--node-color', quest.color);
@@ -71,10 +69,10 @@ function renderQuestMap() {
                     <span class="map-node-check">✓</span>
                 </div>
                 <div class="map-node-label">${quest.name}</div>
-                <div class="map-node-xp">+${quest.xp} XP</div>
+                <div class="map-node-xp">XP ${quest.xp}+</div>
             `;
-        } else {
-            // Next quest - pulsing, clickable
+            node.addEventListener('click', () => openQuest(quest.id));
+        } else if (isNext) {
             node.innerHTML = `
                 <div class="map-node-circle map-node-next-circle">
                     <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
@@ -83,14 +81,22 @@ function renderQuestMap() {
                 <div class="map-node-subtitle">${quest.subtitle}</div>
                 <div class="map-node-start">התחל →</div>
             `;
+            node.addEventListener('click', () => openQuest(quest.id));
+        } else {
+            // Locked quest - grey circle with lock, NO name
+            node.innerHTML = `
+                <div class="map-node-circle map-node-locked-circle">
+                    <span class="map-node-emoji">🔒</span>
+                </div>
+                <div class="map-node-step">${idx + 1}</div>
+            `;
         }
 
-        node.addEventListener('click', () => openQuest(quest.id));
         map.appendChild(node);
     });
 
-    // Draw SVG path connecting visible quests
-    drawMapPath(svg, visibleQuests);
+    // Draw SVG path connecting ALL quests
+    drawMapPath(svg, allQuests);
 
     // Hero Book node if all done
     if (state.completedQuests.length === QUESTS.length) {
@@ -110,17 +116,16 @@ function renderQuestMap() {
     }
 }
 
-function drawMapPath(svg, visibleQuests) {
-    // Set viewBox to percentage space
+function drawMapPath(svg, allQuests) {
     svg.setAttribute('viewBox', '0 0 100 100');
 
     // Clear existing paths (keep defs at index 0)
     while (svg.children.length > 1) svg.removeChild(svg.lastChild);
 
-    if (visibleQuests.length < 2) return;
+    if (allQuests.length < 2) return;
 
-    // Build path through visible quest positions
-    const points = visibleQuests.map(({ idx }) => {
+    // Build path through ALL quest positions
+    const points = allQuests.map(({ idx }) => {
         const pos = MAP_POSITIONS[idx];
         return { x: pos.x, y: pos.y };
     });
@@ -141,38 +146,40 @@ function drawMapPath(svg, visibleQuests) {
     const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     glow.setAttribute('d', d);
     glow.setAttribute('fill', 'none');
-    glow.setAttribute('stroke', 'rgba(255,214,0,0.3)');
-    glow.setAttribute('stroke-width', '6');
+    glow.setAttribute('stroke', 'rgba(255,214,0,0.15)');
+    glow.setAttribute('stroke-width', '5');
     glow.setAttribute('stroke-linecap', 'round');
     glow.setAttribute('filter', 'url(#pathGlow)');
     svg.appendChild(glow);
 
-    // Main dotted path
+    // Main dotted path (brown trail through whole map)
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', d);
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#8d6e63');
-    path.setAttribute('stroke-width', '3');
-    path.setAttribute('stroke-dasharray', '8 6');
+    path.setAttribute('stroke', '#bcaaa4');
+    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('stroke-dasharray', '6 5');
     path.setAttribute('stroke-linecap', 'round');
     svg.appendChild(path);
 
-    // Green completed overlay
-    const completedCount = visibleQuests.filter(v => v.isCompleted).length;
-    if (completedCount > 0) {
-        const completedPoints = points.slice(0, completedCount);
-        if (completedPoints.length >= 2) {
-            let cd = `M ${completedPoints[0].x} ${completedPoints[0].y}`;
-            for (let i = 1; i < completedPoints.length; i++) {
-                const prev = completedPoints[i - 1];
-                const curr = completedPoints[i];
+    // Green completed overlay for completed segments
+    const completedCount = allQuests.filter(v => v.isCompleted).length;
+    if (completedCount >= 1) {
+        // Draw solid green from first to last completed + next
+        const greenEnd = Math.min(completedCount, points.length - 1);
+        const greenPoints = points.slice(0, greenEnd + 1);
+        if (greenPoints.length >= 2) {
+            let cd = `M ${greenPoints[0].x} ${greenPoints[0].y}`;
+            for (let i = 1; i < greenPoints.length; i++) {
+                const prev = greenPoints[i - 1];
+                const curr = greenPoints[i];
                 cd += ` C ${prev.x + (curr.x - prev.x) * 0.5} ${prev.y}, ${prev.x + (curr.x - prev.x) * 0.5} ${curr.y}, ${curr.x} ${curr.y}`;
             }
             const donePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             donePath.setAttribute('d', cd);
             donePath.setAttribute('fill', 'none');
             donePath.setAttribute('stroke', '#00e676');
-            donePath.setAttribute('stroke-width', '4');
+            donePath.setAttribute('stroke-width', '3.5');
             donePath.setAttribute('stroke-linecap', 'round');
             svg.appendChild(donePath);
         }
@@ -353,81 +360,89 @@ function openQuest(questId) {
                 function renderFamilyTree() {
                     const responses = state.responses[questId] || {};
 
-                    function bubble(m, size) {
+                    function card(m, size) {
                         const word = responses[`member_${flowMembers.indexOf(m)}`] || '';
                         const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
                         const isGuy = m.relation.includes('אתה');
                         const sz = size || 'sm';
                         return `
-                            <div class="itree-bubble itree-${sz} ${isGuy ? 'itree-hero' : ''}">
-                                <div class="itree-img"><img src="${m.photo}" alt="${m.name}" style="${posStyle}"></div>
-                                <div class="itree-label">${m.name}</div>
-                                ${word ? `<div class="itree-word">"${word}"</div>` : ''}
+                            <div class="ftree-card ftree-${sz} ${isGuy ? 'ftree-hero' : ''}">
+                                <div class="ftree-photo"><img src="${m.photo}" alt="${m.name}" style="${posStyle}"></div>
+                                <div class="ftree-info">
+                                    <div class="ftree-name">${m.name}</div>
+                                    <div class="ftree-relation">${m.relation}</div>
+                                    ${word ? `<div class="ftree-word">"${word}"</div>` : ''}
+                                </div>
                             </div>
                         `;
                     }
 
-                    // Specific family members by index in flowMembers
-                    const sM = flowMembers[0]; // סבא מישה
-                    const sR = flowMembers[1]; // סבתא מרינה
-                    const sA = flowMembers[2]; // סבא אלכס
-                    const sS = flowMembers[3]; // סבתא סווטה
-                    const dad = flowMembers[4]; // אבא
-                    const mom = flowMembers[5]; // אמא
-                    const auntI = flowMembers[6]; // דודה אירה
-                    const auntJ = flowMembers[7]; // דודה ג׳ני
-                    const neta = flowMembers[8]; // נטע
-                    const mika = flowMembers[9]; // מיקה
-                    const guy = flowMembers[10]; // גיא
+                    // Specific family members
+                    const sM = flowMembers[0];
+                    const sR = flowMembers[1];
+                    const sA = flowMembers[2];
+                    const sS = flowMembers[3];
+                    const dad = flowMembers[4];
+                    const mom = flowMembers[5];
+                    const auntI = flowMembers[6];
+                    const auntJ = flowMembers[7];
+                    const neta = flowMembers[8];
+                    const mika = flowMembers[9];
+                    const guy = flowMembers[10];
 
                     taskEl.innerHTML = `
-                        <div class="itree">
-                            <h3 class="itree-title">🌳 עץ המשפחה של גיא 🌳</h3>
+                        <div class="ftree">
+                            <h3 class="ftree-title">🌳 עץ המשפחה של גיא 🌳</h3>
 
-                            <!-- Tree crown / canopy -->
-                            <div class="itree-canopy">
-                                <!-- Grandparents row - dad's side left, mom's side right -->
-                                <div class="itree-gp-row">
-                                    <div class="itree-couple">
-                                        ${bubble(sM, 'sm')}
-                                        <span class="itree-heart">❤️</span>
-                                        ${bubble(sR, 'sm')}
+                            <!-- Generation 1: Grandparents -->
+                            <div class="ftree-gen">
+                                <div class="ftree-gen-label">סבים וסבתות</div>
+                                <div class="ftree-row ftree-gp-row">
+                                    <div class="ftree-couple">
+                                        ${card(sM, 'sm')}
+                                        <span class="ftree-connector-h">❤️</span>
+                                        ${card(sR, 'sm')}
                                     </div>
-                                    <div class="itree-couple">
-                                        ${bubble(sA, 'sm')}
-                                        <span class="itree-heart">❤️</span>
-                                        ${bubble(sS, 'sm')}
+                                    <div class="ftree-couple">
+                                        ${card(sA, 'sm')}
+                                        <span class="ftree-connector-h">❤️</span>
+                                        ${card(sS, 'sm')}
                                     </div>
                                 </div>
-
-                                <div class="itree-branch-down">
-                                    <div class="itree-branch-line itree-branch-left"></div>
-                                    <div class="itree-branch-line itree-branch-right"></div>
-                                </div>
-
-                                <!-- Parents + aunts -->
-                                <div class="itree-parents-row">
-                                    <div class="itree-side">${bubble(auntI, 'xs')}</div>
-                                    <div class="itree-couple itree-couple-main">
-                                        ${bubble(dad, 'md')}
-                                        <span class="itree-heart itree-heart-big">💕</span>
-                                        ${bubble(mom, 'md')}
-                                    </div>
-                                    <div class="itree-side">${bubble(auntJ, 'xs')}</div>
-                                </div>
-
-                                <div class="itree-trunk-connector"></div>
                             </div>
 
-                            <!-- Trunk -->
-                            <div class="itree-trunk"></div>
+                            <!-- Vertical connectors -->
+                            <div class="ftree-lines">
+                                <div class="ftree-vline"></div>
+                                <div class="ftree-vline"></div>
+                            </div>
 
-                            <!-- Children at base -->
-                            <div class="itree-base">
-                                <div class="itree-children-row">
-                                    ${bubble(neta, 'md')}
-                                    ${bubble(guy, 'lg')}
-                                    ${bubble(mika, 'md')}
+                            <!-- Generation 2: Parents & Aunts -->
+                            <div class="ftree-gen">
+                                <div class="ftree-gen-label">הורים ודודות</div>
+                                <div class="ftree-row ftree-parents-row">
+                                    ${card(auntI, 'sm')}
+                                    <div class="ftree-couple ftree-couple-main">
+                                        ${card(dad, 'md')}
+                                        <span class="ftree-connector-h ftree-heart-big">💕</span>
+                                        ${card(mom, 'md')}
+                                    </div>
+                                    ${card(auntJ, 'sm')}
+                                </div>
+                            </div>
+
+                            <!-- Vertical connector -->
+                            <div class="ftree-lines ftree-lines-single">
+                                <div class="ftree-vline"></div>
+                            </div>
+
+                            <!-- Generation 3: Children -->
+                            <div class="ftree-gen ftree-gen-kids">
+                                <div class="ftree-gen-label ftree-gen-label-special">הילדים 🌟</div>
+                                <div class="ftree-row ftree-kids-row">
+                                    ${card(neta, 'md')}
+                                    ${card(guy, 'lg')}
+                                    ${card(mika, 'md')}
                                 </div>
                             </div>
                         </div>
@@ -438,13 +453,11 @@ function openQuest(questId) {
 
                     taskEl.querySelector('.flow-btn-prev').addEventListener('click', () => {
                         currentIdx = flowMembers.length - 1;
-                        // Hide complete button again when going back to list
                         const ft = document.querySelector('.quest-footer');
                         if (ft) ft.style.display = 'none';
                         renderFlowPerson(currentIdx);
                     });
 
-                    // Show the complete button now that tree is visible
                     const ft = document.querySelector('.quest-footer');
                     if (ft) ft.style.display = '';
 

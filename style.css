@@ -96,11 +96,11 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 30px;
-    background: rgba(255,255,255,0.85);
+    padding: 8px 24px;
+    background: rgba(255,255,255,0.88);
     backdrop-filter: blur(10px);
-    border-bottom: 4px solid var(--accent-yellow);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-bottom: 3px solid var(--accent-yellow);
+    box-shadow: 0 3px 16px rgba(0,0,0,0.1);
 }
 
 .map-title {
@@ -134,10 +134,11 @@ body::before {
 
 .map-xp-text {
     font-weight: 900;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-dark);
     white-space: nowrap;
     direction: ltr;
+    unicode-bidi: bidi-override;
     display: inline-block;
 }
 
@@ -158,8 +159,8 @@ body::before {
 .quest-map {
     position: relative;
     width: 100%;
-    min-height: 100vh;
-    padding-top: 80px; /* space for fixed banner */
+    height: 100vh;
+    padding-top: 70px; /* space for fixed banner */
     z-index: 2;
 }
 
@@ -170,21 +171,25 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     cursor: pointer;
     transition: transform 0.2s;
     z-index: 3;
 }
 
-.map-node:hover {
+.map-node:hover:not(.map-node-locked) {
     transform: translate(-50%, -50%) scale(1.1);
     z-index: 5;
 }
 
+.map-node-locked {
+    cursor: default;
+}
+
 /* Circle - base style */
 .map-node-circle {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -239,17 +244,38 @@ body::before {
     animation: mapNodePulse 2s infinite;
 }
 
+/* Locked quest circle */
+.map-node-locked-circle {
+    background: linear-gradient(135deg, #eceff1, #cfd8dc);
+    border: 4px solid #b0bec5;
+    box-shadow: 0 3px 0 #90a4ae, 0 6px 14px rgba(0,0,0,0.1);
+}
+
+.map-node-locked .map-node-emoji {
+    font-size: 1.4rem;
+    opacity: 0.6;
+}
+
+.map-node-step {
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: var(--locked-text);
+    background: rgba(255,255,255,0.7);
+    padding: 1px 8px;
+    border-radius: 8px;
+}
+
 .map-node-emoji {
-    font-size: 2.4rem;
+    font-size: 2rem;
 }
 
 .map-node-label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 900;
     color: var(--text-dark);
-    background: rgba(255,255,255,0.9);
-    padding: 3px 12px;
-    border-radius: 10px;
+    background: rgba(255,255,255,0.92);
+    padding: 2px 10px;
+    border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     white-space: nowrap;
 }
@@ -728,184 +754,129 @@ select.task-select {
 .flow-btn-done:hover { background: #00c853; }
 .flow-btn-done:active { transform: translateY(2px); box-shadow: 0 2px 0 #00a843; }
 
-/* ===== Illustrated Family Tree ===== */
-.itree {
+/* ===== Family Tree - Card Layout ===== */
+.ftree {
     padding: 0;
     text-align: center;
     animation: bounceIn 0.5s ease;
 }
 
-.itree-title {
+.ftree-title {
     font-family: 'Bungee', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: #2e7d32;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
     text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
 }
 
-/* Tree canopy - green rounded background */
-.itree-canopy {
-    background: radial-gradient(ellipse at center, #66bb6a 0%, #43a047 40%, #2e7d32 80%, #1b5e20 100%);
-    border-radius: 50% 50% 10% 10%;
-    padding: 20px 10px 16px;
-    position: relative;
-    box-shadow: 0 4px 20px rgba(46,125,50,0.3), inset 0 -4px 12px rgba(0,0,0,0.1);
-    border: 3px solid #1b5e20;
+/* Generation block */
+.ftree-gen {
+    margin-bottom: 4px;
 }
 
-/* Leaf texture on canopy */
-.itree-canopy::before {
-    content: '🍃';
-    position: absolute;
-    top: 8px;
-    left: 16px;
-    font-size: 1.2rem;
-    opacity: 0.5;
-}
-.itree-canopy::after {
-    content: '🍃';
-    position: absolute;
-    top: 12px;
-    right: 20px;
-    font-size: 1rem;
-    opacity: 0.4;
-    transform: scaleX(-1);
-}
-
-/* Grandparents row */
-.itree-gp-row {
-    display: flex;
-    justify-content: space-around;
-    gap: 6px;
+.ftree-gen-label {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #fff;
+    background: linear-gradient(135deg, #66bb6a, #43a047);
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 12px;
     margin-bottom: 10px;
+    box-shadow: 0 2px 0 #2e7d32;
+    letter-spacing: 0.5px;
+}
+
+.ftree-gen-label-special {
+    background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+    box-shadow: 0 2px 0 #e65100;
+    font-size: 0.85rem;
+    padding: 5px 20px;
+}
+
+/* Row layout */
+.ftree-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ftree-gp-row {
+    gap: 24px;
+}
+
+.ftree-parents-row {
+    gap: 10px;
+    align-items: center;
+}
+
+.ftree-kids-row {
+    align-items: flex-end;
 }
 
 /* Couple grouping */
-.itree-couple {
+.ftree-couple {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
 }
 
-.itree-couple-main { gap: 4px; }
+.ftree-couple-main { gap: 6px; }
 
-.itree-heart {
-    font-size: 0.6rem;
+.ftree-connector-h {
+    font-size: 0.8rem;
     line-height: 1;
 }
 
-.itree-heart-big { font-size: 0.9rem; }
+.ftree-heart-big { font-size: 1rem; }
 
-/* Branch lines connecting generations */
-.itree-branch-down {
+/* Vertical lines between generations */
+.ftree-lines {
     display: flex;
     justify-content: space-around;
-    padding: 0 30px;
-    height: 16px;
-    position: relative;
+    padding: 0 80px;
+    height: 20px;
 }
 
-.itree-branch-line {
+.ftree-lines-single {
+    justify-content: center;
+    padding: 0;
+}
+
+.ftree-vline {
     width: 3px;
     height: 100%;
-    background: #5d4037;
-    border-radius: 2px;
-    box-shadow: 1px 0 0 rgba(0,0,0,0.1);
-}
-
-/* Parents row */
-.itree-parents-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-}
-
-.itree-side { opacity: 0.9; }
-
-.itree-trunk-connector {
-    width: 4px;
-    height: 12px;
-    background: #5d4037;
-    margin: 4px auto 0;
+    background: linear-gradient(180deg, #a5d6a7, #66bb6a);
     border-radius: 2px;
 }
 
-/* Trunk */
-.itree-trunk {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(180deg, #6d4c41, #5d4037, #4e342e);
-    margin: 0 auto;
-    border-radius: 4px 4px 8px 8px;
-    box-shadow: inset -4px 0 8px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
-    position: relative;
-}
-
-.itree-trunk::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 100%;
-    background: rgba(255,255,255,0.08);
-    border-radius: 3px;
-}
-
-/* Base with grass */
-.itree-base {
-    background: linear-gradient(180deg, #81c784, #66bb6a 30%, #a5d6a7);
-    border-radius: 20px;
-    padding: 16px 10px 20px;
-    margin-top: -4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border: 3px solid #4caf50;
-    position: relative;
-}
-
-/* Flowers on grass */
-.itree-base::before {
-    content: '🌸 🌺';
-    position: absolute;
-    bottom: 6px;
-    left: 12px;
-    font-size: 0.7rem;
-    opacity: 0.6;
-}
-.itree-base::after {
-    content: '🌷 🌼';
-    position: absolute;
-    bottom: 6px;
-    right: 12px;
-    font-size: 0.7rem;
-    opacity: 0.6;
-}
-
-.itree-children-row {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 8px;
-}
-
-/* Photo bubbles - sizes */
-.itree-bubble {
+/* Card style for each person */
+.ftree-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 8px 6px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 6px 16px rgba(0,0,0,0.06);
+    border: 2px solid #e0e0e0;
+    transition: transform 0.15s;
+    min-width: 70px;
 }
 
-.itree-img {
+.ftree-card:hover { transform: scale(1.05); }
+
+.ftree-photo {
     border-radius: 50%;
     overflow: hidden;
     background: #f5f5f5;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.itree-img img {
+.ftree-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -913,57 +884,64 @@ select.task-select {
 }
 
 /* Size variants */
-.itree-xs .itree-img { width: 40px; height: 40px; border: 2px solid #fff; }
-.itree-sm .itree-img { width: 48px; height: 48px; border: 3px solid #fff; }
-.itree-md .itree-img { width: 56px; height: 56px; border: 3px solid #fff; }
-.itree-lg .itree-img { width: 72px; height: 72px; border: 4px solid var(--accent-yellow); box-shadow: 0 0 0 3px var(--accent-orange), 0 4px 12px rgba(0,0,0,0.25); }
+.ftree-sm .ftree-photo { width: 52px; height: 52px; border: 3px solid #a5d6a7; }
+.ftree-sm { min-width: 65px; }
 
-.itree-label {
-    font-size: 0.6rem;
+.ftree-md .ftree-photo { width: 64px; height: 64px; border: 3px solid var(--accent-blue); }
+.ftree-md { min-width: 75px; }
+
+.ftree-lg .ftree-photo {
+    width: 80px; height: 80px;
+    border: 4px solid var(--accent-yellow);
+    box-shadow: 0 0 0 3px var(--accent-orange), 0 4px 12px rgba(0,0,0,0.2);
+}
+.ftree-lg { min-width: 90px; }
+
+.ftree-name {
+    font-size: 0.75rem;
     font-weight: 900;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
-    line-height: 1.1;
-    max-width: 60px;
-    text-align: center;
+    color: var(--text-dark);
+    line-height: 1.2;
 }
 
-.itree-hero .itree-label {
-    font-size: 0.8rem;
-    color: #fff;
-    background: var(--accent-orange);
-    padding: 2px 8px;
-    border-radius: 6px;
-    box-shadow: 0 2px 0 #e65100;
-    text-shadow: none;
-    max-width: none;
+.ftree-relation {
+    font-size: 0.6rem;
+    color: var(--text-medium);
+    font-weight: 600;
 }
 
-.itree-word {
-    font-size: 0.55rem;
-    font-weight: 700;
-    color: var(--accent-yellow);
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-    max-width: 60px;
-    text-align: center;
-    line-height: 1.1;
-}
-
-.itree-base .itree-word {
-    color: #2e7d32;
-    text-shadow: none;
+.ftree-word {
     font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    font-style: italic;
+    max-width: 80px;
+    line-height: 1.2;
 }
 
-.itree-base .itree-label {
-    color: #1b5e20;
-    text-shadow: none;
+/* Hero card (Guy) */
+.ftree-hero {
+    border: 3px solid var(--accent-orange);
+    background: linear-gradient(135deg, #fff8e1, #fff3e0);
+    box-shadow: 0 4px 0 #e65100, 0 8px 20px rgba(0,0,0,0.1);
+    animation: heroGlow 1.5s infinite;
 }
 
-.itree-hero .itree-word {
-    font-size: 0.7rem;
+.ftree-hero .ftree-name {
+    font-size: 0.9rem;
+    color: var(--accent-orange);
+}
+
+.ftree-hero .ftree-word {
+    font-size: 0.75rem;
     color: #e65100;
-    text-shadow: none;
+}
+
+.ftree-gen-kids {
+    background: linear-gradient(180deg, rgba(165,214,167,0.3), rgba(200,230,201,0.2));
+    border-radius: 20px;
+    padding: 14px 10px 18px;
+    border: 2px dashed #a5d6a7;
 }
 
 /* ===== Kahoot Guide ===== */
