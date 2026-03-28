@@ -156,10 +156,14 @@ function openQuest(questId) {
                 grid.className = 'family-grid';
                 task.members.forEach((member, mIdx) => {
                     const mKey = `member_${mIdx}`;
+                    const avatarContent = member.photo
+                        ? `<img src="${member.photo}" alt="${member.name}">`
+                        : member.name.charAt(0);
                     grid.innerHTML += `
                         <div class="family-member">
-                            <div class="member-avatar">${member.name.charAt(0)}</div>
+                            <div class="member-avatar">${avatarContent}</div>
                             <span class="member-name">${member.name}</span>
+                            ${member.relation ? `<span class="member-relation">${member.relation}</span>` : ''}
                             <input type="text" class="task-input-small"
                                 data-quest="${questId}" data-key="${mKey}"
                                 value="${savedResponses[mKey] || ''}"

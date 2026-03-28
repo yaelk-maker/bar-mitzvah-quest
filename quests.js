@@ -18,12 +18,16 @@ const QUESTS = [
                 type: "family-tree",
                 content: "עכשיו תורך! כתוב מילה אחת שמתארת כל קרוב משפחה:",
                 members: [
-                    { name: "סבא", photo: "" },
-                    { name: "סבתא", photo: "" },
-                    { name: "אבא", photo: "" },
-                    { name: "אמא", photo: "" },
-                    { name: "נטע", photo: "" },
-                    { name: "מיקה", photo: "" }
+                    { name: "אבא איליה", relation: "אבא", photo: "photos/אבא איליה.jpg" },
+                    { name: "אמא יעל", relation: "אמא", photo: "photos/אמא יעל.jpg" },
+                    { name: "נטע", relation: "אחות בכורה", photo: "photos/נטע אחות בכורה.jpg" },
+                    { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg" },
+                    { name: "סבא מישה", relation: "סבא מצד אבא", photo: "photos/סבא מישה (מצד אבא).jpg" },
+                    { name: "סבתא מרינה", relation: "סבתא מצד אבא", photo: "photos/סבתא מרינה (מצד אבא).JPG" },
+                    { name: "סבא אלכס", relation: "סבא מצד אמא", photo: "photos/סבא אלכס (מצד אמא).jpeg" },
+                    { name: "סבתא סווטה", relation: "סבתא מצד אמא", photo: "photos/סבתא סווטה (מהצד אימא).jpeg" },
+                    { name: "דודה אירה", relation: "דודה מצד אבא", photo: "photos/דודה מצד אבא - אירה.jpg" },
+                    { name: "דודה ג׳ני", relation: "דודה מצד אמא", photo: "photos/דודה מצד אימא - ג'ני.jpeg" }
                 ]
             },
             {
