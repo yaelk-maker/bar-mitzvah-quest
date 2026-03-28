@@ -96,16 +96,17 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 24px;
-    background: rgba(255,255,255,0.88);
+    padding: 6px 24px;
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(10px);
     border-bottom: 3px solid var(--accent-yellow);
     box-shadow: 0 3px 16px rgba(0,0,0,0.1);
+    height: 50px;
 }
 
 .map-title {
     font-family: 'Bungee', sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     color: var(--accent-orange);
     text-shadow: 2px 2px 0 var(--accent-yellow);
 }
@@ -159,8 +160,8 @@ body::before {
 .quest-map {
     position: relative;
     width: 100%;
-    height: 100vh;
-    padding-top: 70px; /* space for fixed banner */
+    height: calc(100vh - 50px);
+    margin-top: 50px; /* space for fixed banner */
     z-index: 2;
 }
 
@@ -313,23 +314,35 @@ body::before {
     transform: translateY(-1px);
 }
 
-/* Map decorations - scattered emoji */
+/* Map decorations - Brainrot scattered figures */
 .map-deco {
     position: absolute;
     font-size: 2rem;
-    opacity: 0.3;
+    opacity: 0.35;
     pointer-events: none;
     z-index: 0;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
 }
-.map-deco-1 { top: 8%; left: 5%; font-size: 3rem; opacity: 0.25; }
-.map-deco-2 { top: 30%; right: 5%; font-size: 2.5rem; opacity: 0.2; }
-.map-deco-3 { top: 60%; left: 3%; font-size: 2rem; opacity: 0.2; }
-.map-deco-4 { top: 15%; right: 15%; font-size: 1.8rem; opacity: 0.25; }
-.map-deco-5 { top: 45%; left: 8%; font-size: 1.5rem; opacity: 0.2; }
-.map-deco-6 { top: 70%; right: 8%; font-size: 2.2rem; opacity: 0.15; }
-.map-deco-7 { top: 25%; left: 45%; font-size: 1.8rem; opacity: 0.15; }
-.map-deco-8 { top: 85%; left: 10%; font-size: 2rem; opacity: 0.2; }
-.map-deco-9 { top: 5%; left: 55%; font-size: 2.5rem; opacity: 0.2; }
+/* Big landmarks */
+.map-deco-1  { top: 4%; left: 3%; font-size: 2.8rem; opacity: 0.3; }
+.map-deco-2  { top: 22%; right: 3%; font-size: 2.5rem; opacity: 0.28; }
+.map-deco-3  { top: 58%; left: 2%; font-size: 2.2rem; opacity: 0.22; }
+.map-deco-4  { top: 12%; left: 42%; font-size: 2rem; opacity: 0.25; }
+.map-deco-5  { top: 3%; right: 12%; font-size: 2.4rem; opacity: 0.3; }
+.map-deco-6  { top: 75%; right: 5%; font-size: 1.8rem; opacity: 0.2; }
+.map-deco-7  { top: 38%; left: 6%; font-size: 2rem; opacity: 0.22; }
+.map-deco-8  { top: 88%; left: 8%; font-size: 2.2rem; opacity: 0.25; }
+.map-deco-9  { top: 6%; left: 62%; font-size: 2.5rem; opacity: 0.22; }
+/* Smaller scattered */
+.map-deco-10 { top: 44%; right: 3%; font-size: 2rem; opacity: 0.2; }
+.map-deco-11 { top: 68%; left: 15%; font-size: 1.6rem; opacity: 0.25; }
+.map-deco-12 { top: 30%; left: 18%; font-size: 1.8rem; opacity: 0.2; }
+.map-deco-13 { top: 52%; right: 20%; font-size: 1.5rem; opacity: 0.28; }
+.map-deco-14 { top: 82%; right: 15%; font-size: 1.8rem; opacity: 0.22; }
+.map-deco-15 { top: 16%; right: 35%; font-size: 1.6rem; opacity: 0.18; }
+.map-deco-16 { top: 62%; left: 45%; font-size: 1.5rem; opacity: 0.2; }
+.map-deco-17 { top: 92%; left: 45%; font-size: 1.8rem; opacity: 0.2; }
+.map-deco-18 { top: 35%; right: 40%; font-size: 1.4rem; opacity: 0.18; }
 
 /* ===== Quest Screen (centered, max-width for readability) ===== */
 #screen-quest, #screen-book {
@@ -754,44 +767,71 @@ select.task-select {
 .flow-btn-done:hover { background: #00c853; }
 .flow-btn-done:active { transform: translateY(2px); box-shadow: 0 2px 0 #00a843; }
 
-/* ===== Family Tree - Card Layout ===== */
+/* ===== Illustrated Family Tree ===== */
 .ftree {
     padding: 0;
     text-align: center;
     animation: bounceIn 0.5s ease;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .ftree-title {
     font-family: 'Bungee', sans-serif;
     font-size: 1.3rem;
     color: #2e7d32;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
 }
 
-/* Generation block */
-.ftree-gen {
-    margin-bottom: 4px;
-}
+/* The tree canopy (green leafy top) */
+.ftree-gen { position: relative; }
 
 .ftree-gen-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 900;
     color: #fff;
-    background: linear-gradient(135deg, #66bb6a, #43a047);
+    background: rgba(255,255,255,0.25);
     display: inline-block;
-    padding: 4px 16px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 0 #2e7d32;
+    padding: 3px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
     letter-spacing: 0.5px;
 }
 
 .ftree-gen-label-special {
     background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
     box-shadow: 0 2px 0 #e65100;
-    font-size: 0.85rem;
-    padding: 5px 20px;
+    font-size: 0.8rem;
+    padding: 4px 18px;
+    color: #fff;
+}
+
+/* CANOPY - green tree crown for grandparents + parents */
+.ftree-canopy {
+    background: radial-gradient(ellipse at 50% 60%, #7cb342 0%, #558b2f 50%, #33691e 90%);
+    border-radius: 50% 50% 8% 8%;
+    padding: 20px 14px 14px;
+    position: relative;
+    box-shadow: 0 6px 24px rgba(46,125,50,0.35), inset 0 -6px 16px rgba(0,0,0,0.12);
+    border: 3px solid #2e7d32;
+}
+
+/* Leaf decorations */
+.ftree-canopy::before {
+    content: '🍃';
+    position: absolute;
+    top: 10px; left: 18px;
+    font-size: 1.4rem;
+    opacity: 0.4;
+}
+.ftree-canopy::after {
+    content: '🌿';
+    position: absolute;
+    top: 14px; right: 22px;
+    font-size: 1.2rem;
+    opacity: 0.35;
+    transform: scaleX(-1);
 }
 
 /* Row layout */
@@ -799,81 +839,123 @@ select.task-select {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .ftree-gp-row {
-    gap: 24px;
+    gap: 20px;
+    margin-bottom: 8px;
 }
 
 .ftree-parents-row {
-    gap: 10px;
+    gap: 6px;
     align-items: center;
 }
 
 .ftree-kids-row {
     align-items: flex-end;
+    gap: 12px;
 }
 
 /* Couple grouping */
 .ftree-couple {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
 }
 
-.ftree-couple-main { gap: 6px; }
+.ftree-couple-main { gap: 4px; }
 
 .ftree-connector-h {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     line-height: 1;
 }
 
-.ftree-heart-big { font-size: 1rem; }
+.ftree-heart-big { font-size: 0.9rem; }
 
-/* Vertical lines between generations */
+/* Branch lines between generations */
 .ftree-lines {
     display: flex;
     justify-content: space-around;
-    padding: 0 80px;
-    height: 20px;
+    padding: 0 60px;
+    height: 14px;
 }
 
 .ftree-lines-single {
     justify-content: center;
     padding: 0;
+    height: 0;
 }
 
 .ftree-vline {
     width: 3px;
     height: 100%;
-    background: linear-gradient(180deg, #a5d6a7, #66bb6a);
+    background: #5d4037;
     border-radius: 2px;
+    box-shadow: 1px 0 0 rgba(0,0,0,0.1);
 }
 
-/* Card style for each person */
+/* TRUNK */
+.ftree-trunk {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(180deg, #6d4c41, #5d4037, #4e342e);
+    margin: 0 auto;
+    border-radius: 6px 6px 12px 12px;
+    box-shadow: inset -5px 0 10px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.ftree-trunk::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 6px; height: 100%;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+}
+
+/* BASE - grass area with children */
+.ftree-gen-kids {
+    background: linear-gradient(180deg, #81c784, #66bb6a 30%, #a5d6a7);
+    border-radius: 24px;
+    padding: 16px 12px 22px;
+    margin-top: -4px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    border: 3px solid #4caf50;
+    position: relative;
+}
+
+.ftree-gen-kids::before {
+    content: '🌸 🌺';
+    position: absolute;
+    bottom: 6px; left: 14px;
+    font-size: 0.8rem; opacity: 0.5;
+}
+.ftree-gen-kids::after {
+    content: '🌷 🌼';
+    position: absolute;
+    bottom: 6px; right: 14px;
+    font-size: 0.8rem; opacity: 0.5;
+}
+
+/* Card for each person */
 .ftree-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    background: #fff;
-    border-radius: 14px;
-    padding: 8px 6px;
-    box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 6px 16px rgba(0,0,0,0.06);
-    border: 2px solid #e0e0e0;
+    gap: 2px;
     transition: transform 0.15s;
-    min-width: 70px;
 }
 
-.ftree-card:hover { transform: scale(1.05); }
+.ftree-card:hover { transform: scale(1.08); }
 
 .ftree-photo {
     border-radius: 50%;
     overflow: hidden;
     background: #f5f5f5;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
 }
 
 .ftree-photo img {
@@ -884,64 +966,85 @@ select.task-select {
 }
 
 /* Size variants */
-.ftree-sm .ftree-photo { width: 52px; height: 52px; border: 3px solid #a5d6a7; }
-.ftree-sm { min-width: 65px; }
+.ftree-sm .ftree-photo { width: 54px; height: 54px; border: 3px solid #fff; }
 
-.ftree-md .ftree-photo { width: 64px; height: 64px; border: 3px solid var(--accent-blue); }
-.ftree-md { min-width: 75px; }
+.ftree-md .ftree-photo { width: 66px; height: 66px; border: 3px solid #fff; }
 
 .ftree-lg .ftree-photo {
-    width: 80px; height: 80px;
+    width: 82px; height: 82px;
     border: 4px solid var(--accent-yellow);
-    box-shadow: 0 0 0 3px var(--accent-orange), 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 0 0 3px var(--accent-orange), 0 4px 14px rgba(0,0,0,0.3);
 }
-.ftree-lg { min-width: 90px; }
 
+.ftree-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+/* Name banner (blue ribbon style like reference) */
 .ftree-name {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 900;
-    color: var(--text-dark);
-    line-height: 1.2;
+    color: #fff;
+    background: #5c9fd4;
+    padding: 2px 10px;
+    border-radius: 8px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    line-height: 1.3;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .ftree-relation {
-    font-size: 0.6rem;
-    color: var(--text-medium);
-    font-weight: 600;
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 700;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
 }
 
 .ftree-word {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
-    color: var(--accent-purple);
+    color: var(--accent-yellow);
     font-style: italic;
     max-width: 80px;
     line-height: 1.2;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+/* Children zone - different colors */
+.ftree-gen-kids .ftree-name {
+    background: #43a047;
+}
+
+.ftree-gen-kids .ftree-relation {
+    color: #1b5e20;
+    text-shadow: none;
+}
+
+.ftree-gen-kids .ftree-word {
+    color: #2e7d32;
+    text-shadow: none;
+    font-size: 0.65rem;
 }
 
 /* Hero card (Guy) */
-.ftree-hero {
-    border: 3px solid var(--accent-orange);
-    background: linear-gradient(135deg, #fff8e1, #fff3e0);
-    box-shadow: 0 4px 0 #e65100, 0 8px 20px rgba(0,0,0,0.1);
+.ftree-hero .ftree-photo {
     animation: heroGlow 1.5s infinite;
 }
 
 .ftree-hero .ftree-name {
-    font-size: 0.9rem;
-    color: var(--accent-orange);
+    font-size: 0.8rem;
+    background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+    padding: 3px 14px;
+    box-shadow: 0 2px 0 #e65100;
 }
 
 .ftree-hero .ftree-word {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #e65100;
-}
-
-.ftree-gen-kids {
-    background: linear-gradient(180deg, rgba(165,214,167,0.3), rgba(200,230,201,0.2));
-    border-radius: 20px;
-    padding: 14px 10px 18px;
-    border: 2px dashed #a5d6a7;
 }
 
 /* ===== Kahoot Guide ===== */

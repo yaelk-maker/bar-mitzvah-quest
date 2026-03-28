@@ -394,49 +394,50 @@ function openQuest(questId) {
                         <div class="ftree">
                             <h3 class="ftree-title">🌳 עץ המשפחה של גיא 🌳</h3>
 
-                            <!-- Generation 1: Grandparents -->
-                            <div class="ftree-gen">
-                                <div class="ftree-gen-label">סבים וסבתות</div>
-                                <div class="ftree-row ftree-gp-row">
-                                    <div class="ftree-couple">
-                                        ${card(sM, 'sm')}
-                                        <span class="ftree-connector-h">❤️</span>
-                                        ${card(sR, 'sm')}
+                            <!-- CANOPY: Grandparents + Parents inside the green tree crown -->
+                            <div class="ftree-canopy">
+                                <!-- Grandparents -->
+                                <div class="ftree-gen">
+                                    <div class="ftree-gen-label">סבים וסבתות</div>
+                                    <div class="ftree-row ftree-gp-row">
+                                        <div class="ftree-couple">
+                                            ${card(sM, 'sm')}
+                                            <span class="ftree-connector-h">❤️</span>
+                                            ${card(sR, 'sm')}
+                                        </div>
+                                        <div class="ftree-couple">
+                                            ${card(sA, 'sm')}
+                                            <span class="ftree-connector-h">❤️</span>
+                                            ${card(sS, 'sm')}
+                                        </div>
                                     </div>
-                                    <div class="ftree-couple">
-                                        ${card(sA, 'sm')}
-                                        <span class="ftree-connector-h">❤️</span>
-                                        ${card(sS, 'sm')}
+                                </div>
+
+                                <!-- Branch lines -->
+                                <div class="ftree-lines">
+                                    <div class="ftree-vline"></div>
+                                    <div class="ftree-vline"></div>
+                                </div>
+
+                                <!-- Parents & Aunts -->
+                                <div class="ftree-gen">
+                                    <div class="ftree-gen-label">הורים ודודות</div>
+                                    <div class="ftree-row ftree-parents-row">
+                                        ${card(auntI, 'sm')}
+                                        <div class="ftree-couple ftree-couple-main">
+                                            ${card(dad, 'md')}
+                                            <span class="ftree-connector-h ftree-heart-big">💕</span>
+                                            ${card(mom, 'md')}
+                                        </div>
+                                        ${card(auntJ, 'sm')}
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Vertical connectors -->
-                            <div class="ftree-lines">
-                                <div class="ftree-vline"></div>
-                                <div class="ftree-vline"></div>
-                            </div>
+                            <!-- TRUNK -->
+                            <div class="ftree-trunk"></div>
 
-                            <!-- Generation 2: Parents & Aunts -->
-                            <div class="ftree-gen">
-                                <div class="ftree-gen-label">הורים ודודות</div>
-                                <div class="ftree-row ftree-parents-row">
-                                    ${card(auntI, 'sm')}
-                                    <div class="ftree-couple ftree-couple-main">
-                                        ${card(dad, 'md')}
-                                        <span class="ftree-connector-h ftree-heart-big">💕</span>
-                                        ${card(mom, 'md')}
-                                    </div>
-                                    ${card(auntJ, 'sm')}
-                                </div>
-                            </div>
-
-                            <!-- Vertical connector -->
-                            <div class="ftree-lines ftree-lines-single">
-                                <div class="ftree-vline"></div>
-                            </div>
-
-                            <!-- Generation 3: Children -->
+                            <!-- BASE: Children on the grass -->
                             <div class="ftree-gen ftree-gen-kids">
                                 <div class="ftree-gen-label ftree-gen-label-special">הילדים 🌟</div>
                                 <div class="ftree-row ftree-kids-row">
