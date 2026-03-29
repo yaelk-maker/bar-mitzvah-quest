@@ -438,47 +438,57 @@ function openQuest(questId) {
                 function renderFamilyTree() {
                     const responses = state.responses[questId] || {};
 
-                    // Position each member on the tree template image
-                    // Positions are percentages matching the circular slots in Family Tree.png
-                    const treePositions = [
-                        // Top row - Grandparents (4 circles in upper crown)
-                        { idx: 0, left: 18,  top: 16, cls: 'ftree-gp' },      // סבא מישה
-                        { idx: 1, left: 37.5, top: 11, cls: 'ftree-gp' },     // סבתא מרינה
-                        { idx: 2, left: 61,  top: 11, cls: 'ftree-gp' },      // סבא אלכס
-                        { idx: 3, left: 80,  top: 16, cls: 'ftree-gp' },      // סבתא סווטה
-                        // Middle row - Parents & Aunts (4 circles + heart)
-                        { idx: 6, left: 10,  top: 40, cls: 'ftree-parent' },  // דודה אירה
-                        { idx: 4, left: 30,  top: 37, cls: 'ftree-parent' },  // אבא איליה
-                        { idx: 5, left: 68,  top: 37, cls: 'ftree-parent' },  // אמא יעל
-                        { idx: 7, left: 88,  top: 40, cls: 'ftree-parent' },  // דודה ג'ני
-                        // Bottom row - Children (3 circles at trunk base)
-                        { idx: 8, left: 27,  top: 64, cls: 'ftree-child' },   // נטע
-                        { idx: 10, left: 49, top: 64, cls: 'ftree-hero' },    // גיא
-                        { idx: 9, left: 71,  top: 64, cls: 'ftree-child' },   // מיקה
+                    // Strip prefixes from names (סבא, סבתא, אבא, אמא, דודה)
+                    function shortName(fullName) {
+                        return fullName.replace(/^(סבא|סבתא|אבא|אמא|דודה)\s+/, '');
+                    }
+
+                    // Two-layer positioning: photos on green circles, labels on pink banners
+                    // Positions are % of the tree template image (2094x2048)
+                    const treeMembers = [
+                        // Top row - Grandparents
+                        { idx: 0, cx: 17,   cy: 11,  lx: 17,   ly: 21, cls: 'ftree-gp' },      // מישה
+                        { idx: 1, cx: 37.5, cy: 6.5, lx: 37.5, ly: 17, cls: 'ftree-gp' },      // מרינה
+                        { idx: 2, cx: 62,   cy: 6.5, lx: 62,   ly: 17, cls: 'ftree-gp' },      // אלכס
+                        { idx: 3, cx: 82,   cy: 11,  lx: 82,   ly: 21, cls: 'ftree-gp' },      // סווטה
+                        // Middle row - Parents & Aunts
+                        { idx: 6, cx: 10,   cy: 37,  lx: 10,   ly: 47, cls: 'ftree-parent' },  // אירה
+                        { idx: 4, cx: 30,   cy: 34,  lx: 30,   ly: 44, cls: 'ftree-parent' },  // איליה
+                        { idx: 5, cx: 69,   cy: 34,  lx: 69,   ly: 44, cls: 'ftree-parent' },  // יעל
+                        { idx: 7, cx: 89,   cy: 37,  lx: 89,   ly: 47, cls: 'ftree-parent' },  // ג'ני
+                        // Bottom row - Children
+                        { idx: 8,  cx: 28,  cy: 60,  lx: 28,   ly: 70, cls: 'ftree-child' },   // נטע
+                        { idx: 10, cx: 50,  cy: 60,  lx: 50,   ly: 70, cls: 'ftree-hero' },    // גיא
+                        { idx: 9,  cx: 72,  cy: 60,  lx: 72,   ly: 70, cls: 'ftree-child' },   // מיקה
                     ];
 
                     function memberHTML(pos) {
                         const m = flowMembers[pos.idx];
                         const word = responses[`member_${pos.idx}`] || '';
                         const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
-                        const isHero = pos.cls === 'ftree-hero';
-                        return `
-                            <div class="ftree-member ${pos.cls}" style="left: ${pos.left}%; top: ${pos.top}%;">
-                                <div class="ftree-member-photo">
-                                    <img src="${m.photo}" alt="${m.name}" style="${posStyle}">
-                                </div>
-                                <div class="ftree-member-name">${m.name}</div>
-                                <div class="ftree-member-relation">${m.relation}</div>
-                                ${word ? `<div class="ftree-member-word">"${word}"</div>` : ''}
+                        const name = shortName(m.name);
+                        // Photo circle (centered on green circle)
+                        let html = `
+                            <div class="ftree-photo-circle ${pos.cls}" style="left: ${pos.cx}%; top: ${pos.cy}%;">
+                                <img src="${m.photo}" alt="${name}" style="${posStyle}">
                             </div>
                         `;
+                        // Label on pink banner
+                        html += `
+                            <div class="ftree-label ${pos.cls}" style="left: ${pos.lx}%; top: ${pos.ly}%;">
+                                <div class="ftree-label-name">${name}</div>
+                                <div class="ftree-label-relation">${m.relation}</div>
+                                ${word ? `<div class="ftree-label-word">"${word}"</div>` : ''}
+                            </div>
+                        `;
+                        return html;
                     }
 
                     taskEl.innerHTML = `
                         <div class="ftree">
                             <h3 class="ftree-title">🌳 עץ המשפחה של גיא 🌳</h3>
                             <div class="ftree-map">
-                                ${treePositions.map(pos => memberHTML(pos)).join('')}
+                                ${treeMembers.map(pos => memberHTML(pos)).join('')}
                             </div>
                         </div>
                         <div class="flow-nav" style="margin-top:16px">
