@@ -490,17 +490,17 @@ function openQuest(questId) {
                     // Two-layer positioning: photos on green circles, labels on pink banners
                     // Positions are % of the tree template image (2094x2048)
                     const treeMembers = [
-                        // Top row - Grandparents (circles at cy=23.5%, banner at 30.4%)
+                        // Top row - Grandparents (circles cy=23.5%, banner center=30.5%)
                         { idx: 0, cx: 19,   cy: 23.5, lx: 19,   ly: 30.5, cls: 'ftree-gp' },
                         { idx: 1, cx: 38.5, cy: 23.5, lx: 38.5, ly: 30.5, cls: 'ftree-gp' },
                         { idx: 2, cx: 61,   cy: 23.5, lx: 61,   ly: 30.5, cls: 'ftree-gp' },
                         { idx: 3, cx: 80,   cy: 23.5, lx: 80,   ly: 30.5, cls: 'ftree-gp' },
-                        // Middle row - Parents & Aunts (circles at cy=42.6%, banner at 46%)
-                        { idx: 6, cx: 10,   cy: 42.6, lx: 10,   ly: 49, cls: 'ftree-parent' },
-                        { idx: 4, cx: 28.2, cy: 42.6, lx: 28.2, ly: 49, cls: 'ftree-parent' },
-                        { idx: 5, cx: 69.5, cy: 42.6, lx: 69.5, ly: 49, cls: 'ftree-parent' },
-                        { idx: 7, cx: 88.5, cy: 42.6, lx: 88.5, ly: 49, cls: 'ftree-parent' },
-                        // Bottom row - Children (circles at cy=62%, banner at 69.2%)
+                        // Middle row - Parents & Aunts (circles cy=42.6%, banner center=49.7%)
+                        { idx: 6, cx: 10,   cy: 42.6, lx: 10,   ly: 49.7, cls: 'ftree-parent' },
+                        { idx: 4, cx: 28.2, cy: 42.6, lx: 28.2, ly: 49.7, cls: 'ftree-parent' },
+                        { idx: 5, cx: 69.5, cy: 42.6, lx: 69.5, ly: 49.7, cls: 'ftree-parent' },
+                        { idx: 7, cx: 88.5, cy: 42.6, lx: 88.5, ly: 49.7, cls: 'ftree-parent' },
+                        // Bottom row - Children (circles cy=62%, banner center=69%)
                         { idx: 8,  cx: 32.5, cy: 62, lx: 32.5, ly: 69, cls: 'ftree-child' },
                         { idx: 10, cx: 49,   cy: 62, lx: 49,   ly: 69, cls: 'ftree-hero' },
                         { idx: 9,  cx: 64.2, cy: 62, lx: 64.2, ly: 69, cls: 'ftree-child' },
