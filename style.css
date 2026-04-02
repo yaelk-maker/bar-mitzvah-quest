@@ -1377,6 +1377,202 @@ select.task-select {
 }
 
 /* ===== Print Styles ===== */
+/* ===== Investigation Quiz (Quest 3) ===== */
+.iq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.iq-step {
+    background: #f8f6ff;
+    border: 2px solid #e0ddf0;
+    border-radius: var(--radius);
+    padding: 18px;
+    transition: opacity 0.3s, border-color 0.3s;
+}
+
+.iq-step.locked {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.iq-step.solved {
+    border-color: var(--accent-green);
+    background: #f0fff4;
+}
+
+.iq-step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.iq-step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.iq-step.solved .iq-step-number {
+    background: var(--accent-green);
+}
+
+.iq-step-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    flex: 1;
+}
+
+.iq-check {
+    color: var(--accent-green);
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.iq-story {
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0 0 14px;
+}
+
+.iq-question {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+}
+
+.iq-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.iq-option-btn {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    border: 2px solid #d0d4e0;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--text-dark);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: right;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.iq-option-btn:hover:not(:disabled) {
+    background: #f0f4ff;
+    border-color: var(--accent-blue);
+}
+
+.iq-option-btn.correct {
+    background: #e8f5e9;
+    border-color: var(--accent-green);
+    color: #2e7d32;
+}
+
+.iq-option-btn.wrong {
+    background: #ffeef0;
+    border-color: var(--accent-red);
+    animation: shake 0.4s ease;
+}
+
+.iq-option-btn.faded {
+    opacity: 0.5;
+}
+
+.iq-option-btn:disabled {
+    cursor: default;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+.iq-reveal {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease, margin 0.3s ease;
+    margin-top: 0;
+}
+
+.iq-reveal.visible {
+    max-height: 400px;
+    opacity: 1;
+    margin-top: 14px;
+}
+
+.iq-image-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.iq-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+}
+
+.iq-caption {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.iq-completion {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.iq-completion.visible {
+    max-height: 200px;
+    opacity: 1;
+}
+
+.iq-completion p {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border: 2px solid var(--accent-green);
+    border-radius: var(--radius);
+    padding: 18px;
+    color: #2e7d32;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.7;
+    margin: 0;
+}
+
 /* ===== Brain Meters (Quest 5) ===== */
 .brain-meters {
     display: flex;

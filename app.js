@@ -346,6 +346,99 @@ function openQuest(questId) {
                 taskEl.innerHTML = `<div class="task-info">${task.content.replace(/\n/g, '<br>')}</div>`;
                 break;
 
+            case 'investigation-quiz':
+                taskEl.innerHTML = `<label class="task-label">${task.label || ''}</label>`;
+                const iqWrap = document.createElement('div');
+                iqWrap.className = 'iq-container';
+                const iqCompletionKey = `iq_completed`;
+                const allSolved = task.steps.every((_, si) => savedResponses[`iq_step_${si}`] !== undefined);
+
+                task.steps.forEach((step, sIdx) => {
+                    const stepKey = `iq_step_${sIdx}`;
+                    const savedAnswer = savedResponses[stepKey];
+                    const isSolved = savedAnswer !== undefined;
+                    const prevSolved = sIdx === 0 || savedResponses[`iq_step_${sIdx - 1}`] !== undefined;
+
+                    const stepEl = document.createElement('div');
+                    stepEl.className = 'iq-step' + (isSolved ? ' solved' : '') + (!prevSolved ? ' locked' : '');
+                    stepEl.dataset.step = sIdx;
+
+                    // Bold text within ** markers
+                    const storyHtml = step.story.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+                    stepEl.innerHTML = `
+                        <div class="iq-step-header">
+                            <span class="iq-step-number">${sIdx + 1}</span>
+                            <h3 class="iq-step-title">${step.title}</h3>
+                            ${isSolved ? '<span class="iq-check">✓</span>' : ''}
+                        </div>
+                        <p class="iq-story">${storyHtml}</p>
+                        <p class="iq-question">${step.question}</p>
+                        <div class="iq-options"></div>
+                        <div class="iq-reveal ${isSolved ? 'visible' : ''}">
+                            <div class="iq-image-wrap">
+                                <img src="photos/${step.image}" alt="${step.caption}" class="iq-image" onerror="this.style.display='none'">
+                            </div>
+                            <p class="iq-caption">${step.caption}</p>
+                        </div>
+                    `;
+
+                    const optionsDiv = stepEl.querySelector('.iq-options');
+                    step.options.forEach((opt, oIdx) => {
+                        const btn = document.createElement('button');
+                        const isCorrect = step.correct === -1 || oIdx === step.correct;
+                        const wasChosen = savedAnswer === oIdx;
+                        btn.className = 'iq-option-btn' + (wasChosen ? ' correct' : '') + (isSolved && !wasChosen ? ' faded' : '');
+                        btn.textContent = `${String.fromCharCode(1488 + oIdx)}. ${opt}`;
+                        btn.disabled = isSolved;
+
+                        btn.addEventListener('click', () => {
+                            if (stepEl.classList.contains('solved') || stepEl.classList.contains('locked')) return;
+                            if (isCorrect) {
+                                btn.classList.add('correct');
+                                optionsDiv.querySelectorAll('.iq-option-btn').forEach(b => {
+                                    b.disabled = true;
+                                    if (b !== btn) b.classList.add('faded');
+                                });
+                                stepEl.classList.add('solved');
+                                stepEl.querySelector('.iq-step-header').insertAdjacentHTML('beforeend', '<span class="iq-check">✓</span>');
+                                stepEl.querySelector('.iq-reveal').classList.add('visible');
+                                if (!state.responses[questId]) state.responses[questId] = {};
+                                state.responses[questId][stepKey] = oIdx;
+                                saveState(state);
+                                // Unlock next step
+                                const nextStep = iqWrap.querySelector(`.iq-step[data-step="${sIdx + 1}"]`);
+                                if (nextStep) {
+                                    nextStep.classList.remove('locked');
+                                    setTimeout(() => nextStep.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
+                                }
+                                // Check if all solved
+                                const allNowSolved = task.steps.every((_, si) => {
+                                    if (si === sIdx) return true;
+                                    const r = state.responses[questId] || {};
+                                    return r[`iq_step_${si}`] !== undefined;
+                                });
+                                if (allNowSolved) {
+                                    iqWrap.querySelector('.iq-completion').classList.add('visible');
+                                }
+                            } else {
+                                btn.classList.add('wrong');
+                                setTimeout(() => btn.classList.remove('wrong'), 600);
+                            }
+                        });
+                        optionsDiv.appendChild(btn);
+                    });
+                    iqWrap.appendChild(stepEl);
+                });
+
+                // Completion message
+                const compEl = document.createElement('div');
+                compEl.className = 'iq-completion' + (allSolved ? ' visible' : '');
+                compEl.innerHTML = `<p>${task.completionMessage}</p>`;
+                iqWrap.appendChild(compEl);
+                taskEl.appendChild(iqWrap);
+                break;
+
             case 'story':
                 const storyClass = task.style === 'parchment' ? 'story-parchment' : 'story-box';
                 const storyText = task.text.replace(/\n/g, '<br>');
