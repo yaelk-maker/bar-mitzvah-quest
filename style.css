@@ -1521,7 +1521,7 @@ select.task-select {
 }
 
 .iq-reveal.visible {
-    max-height: 400px;
+    max-height: 800px;
     opacity: 1;
     margin-top: 14px;
 }
