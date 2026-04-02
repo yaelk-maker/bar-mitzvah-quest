@@ -1558,7 +1558,7 @@ select.task-select {
     padding: 12px;
     background: #f8f6ff;
     border-radius: 10px;
-    border-right: 4px solid var(--accent-blue);
+    border-right: none;
 }
 
 .iq-completion {
