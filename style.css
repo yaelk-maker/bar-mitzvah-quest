@@ -926,27 +926,16 @@ select.task-select {
     pointer-events: none;
 }
 
-/* Name + relation must fit within the ~3.3%-tall pink banner */
+/* Single line "name - relation" centered on the ~3.3%-tall pink banner */
 .ftree-label-name {
     font-family: 'Heebo', sans-serif;
-    font-size: clamp(0.42rem, 1.8cqi, 0.6rem);
-    font-weight: 900;
+    font-size: clamp(0.38rem, 1.6cqi, 0.55rem);
+    font-weight: 800;
     color: #fff;
-    padding: 0 4px;
+    padding: 0 3px;
     white-space: nowrap;
-    line-height: 1.15;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.7), 0 0 4px rgba(0,0,0,0.4);
-}
-
-.ftree-label-relation {
-    font-family: 'Heebo', sans-serif;
-    font-size: clamp(0.32rem, 1.2cqi, 0.42rem);
-    color: #fff;
-    font-weight: 600;
-    white-space: nowrap;
-    line-height: 1.1;
-    opacity: 0.85;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.4);
 }
 
 /* Quote appears below the banner as a subtle separate line */
@@ -964,13 +953,9 @@ select.task-select {
 
 /* Hero label special styles */
 .ftree-label.ftree-hero .ftree-label-name {
-    font-size: clamp(0.48rem, 2cqi, 0.65rem);
+    font-size: clamp(0.42rem, 1.8cqi, 0.6rem);
     color: #ffd600;
     text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(255,214,0,0.3);
-}
-
-.ftree-label.ftree-hero .ftree-label-relation {
-    color: #fff;
 }
 
 .ftree-label.ftree-hero .ftree-label-word {

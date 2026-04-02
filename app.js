@@ -517,11 +517,10 @@ function openQuest(questId) {
                                 <img src="${m.photo}" alt="${name}" style="${posStyle}">
                             </div>
                         `;
-                        // Label on pink banner
+                        // Label on pink banner — single line: "name - relation"
                         html += `
                             <div class="ftree-label ${pos.cls}" style="left: ${pos.lx}%; top: ${pos.ly}%;">
-                                <div class="ftree-label-name">${name}</div>
-                                <div class="ftree-label-relation">${m.relation}</div>
+                                <div class="ftree-label-name">${name} - ${m.relation}</div>
                                 ${word ? `<div class="ftree-label-word">"${word}"</div>` : ''}
                             </div>
                         `;
