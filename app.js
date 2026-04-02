@@ -347,9 +347,11 @@ function openQuest(questId) {
                 break;
 
             case 'story':
+                const storyClass = task.style === 'parchment' ? 'story-parchment' : 'story-box';
+                const storyText = task.text.replace(/\n/g, '<br>');
                 taskEl.innerHTML = `
                     <div class="task-info">${task.content}</div>
-                    <div class="story-box">${task.text}</div>
+                    <div class="${storyClass}">${storyText}</div>
                 `;
                 break;
 
@@ -600,6 +602,27 @@ function openQuest(questId) {
                     `;
                 });
                 taskEl.appendChild(opts);
+                break;
+
+            case 'drag-select':
+                const dsKey = `drag_${tIdx}`;
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const dsContainer = document.createElement('div');
+                dsContainer.className = 'drag-select-options';
+                task.options.forEach((opt, oIdx) => {
+                    const btn = document.createElement('div');
+                    btn.className = 'drag-select-option' + (savedResponses[dsKey] === opt ? ' selected' : '');
+                    btn.textContent = opt;
+                    btn.addEventListener('click', () => {
+                        dsContainer.querySelectorAll('.drag-select-option').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][dsKey] = opt;
+                        saveState(state);
+                    });
+                    dsContainer.appendChild(btn);
+                });
+                taskEl.appendChild(dsContainer);
                 break;
 
             case 'twin-shared':

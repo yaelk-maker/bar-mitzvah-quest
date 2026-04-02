@@ -588,6 +588,72 @@ select.task-select {
     box-shadow: var(--shadow-card);
 }
 
+/* ===== Story Parchment (old-fashioned page) ===== */
+.story-parchment {
+    direction: rtl;
+    text-align: right;
+    background: linear-gradient(135deg, #f5e6c8 0%, #ede0c8 40%, #e8d5b0 100%);
+    border-radius: 4px;
+    padding: 28px 24px;
+    line-height: 2;
+    font-family: 'Frank Ruhl Libre', 'David', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #3e2723;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 0 40px rgba(139,90,43,0.08);
+    border: 2px solid #c9a96e;
+    position: relative;
+}
+
+.story-parchment::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(139,90,43,0.2);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+/* ===== Drag-Select Task ===== */
+.drag-select-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.drag-select-option {
+    direction: rtl;
+    text-align: right;
+    padding: 12px 16px;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.drag-select-option:hover {
+    border-color: var(--accent-blue, #2196F3);
+    background: #e3f2fd;
+}
+
+.drag-select-option.selected {
+    border-color: var(--accent-green);
+    background: #e8f5e9;
+    box-shadow: 0 0 0 2px rgba(0,230,118,0.3);
+}
+
+.drag-select-option.selected::before {
+    content: '✓ ';
+    color: var(--accent-green);
+    font-weight: 900;
+}
+
 /* ===== Family Grid - With Photos ===== */
 .family-grid {
     display: grid;
