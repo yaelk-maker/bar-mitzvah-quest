@@ -1138,6 +1138,7 @@ select.task-select {
     position: sticky;
     bottom: 0;
     background: linear-gradient(transparent, rgba(79,195,247,0.8) 30%);
+    z-index: 10;
 }
 
 .btn-complete {
@@ -1601,16 +1602,7 @@ select.task-select {
 }
 
 .hj-timeline::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 4px;
-    background: linear-gradient(to bottom, #7EC8E3, #B39DDB, #81C784);
-    border-radius: 2px;
-    transform: translateX(-50%);
-    opacity: 0.3;
+    display: none;
 }
 
 .hj-node {
