@@ -440,6 +440,86 @@ function openQuest(questId) {
                 taskEl.appendChild(iqWrap);
                 break;
 
+            case 'hero-journey':
+                taskEl.innerHTML = '';
+                const hjWrap = document.createElement('div');
+                hjWrap.className = 'hj-container';
+                // Timeline line
+                const timeline = document.createElement('div');
+                timeline.className = 'hj-timeline';
+                task.stations.forEach((station, sIdx) => {
+                    const sKey = `hj_station_${station.id}`;
+                    const isRevealed = savedResponses[sKey] === true;
+                    const node = document.createElement('div');
+                    node.className = 'hj-node' + (isRevealed ? ' revealed' : '');
+                    node.style.setProperty('--station-color', station.color);
+                    node.innerHTML = `
+                        <div class="hj-node-dot"><span class="hj-node-icon">${station.icon}</span></div>
+                        <div class="hj-node-title">${station.title}</div>
+                    `;
+                    const textBox = document.createElement('div');
+                    textBox.className = 'hj-text-box' + (isRevealed ? ' visible' : '');
+                    textBox.innerHTML = `<p>${station.text}</p>`;
+                    node.addEventListener('click', () => {
+                        if (node.classList.contains('revealed')) return;
+                        node.classList.add('revealed');
+                        textBox.classList.add('visible');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][sKey] = true;
+                        saveState(state);
+                    });
+                    timeline.appendChild(node);
+                    timeline.appendChild(textBox);
+                });
+                hjWrap.appendChild(timeline);
+                taskEl.appendChild(hjWrap);
+                break;
+
+            case 'power-stones':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const psGrid = document.createElement('div');
+                psGrid.className = 'ps-grid';
+                task.stones.forEach((stone, sIdx) => {
+                    const psKey = `power_stone_${sIdx}`;
+                    const isLit = savedResponses[psKey] === true;
+                    const stoneEl = document.createElement('div');
+                    stoneEl.className = 'ps-stone' + (isLit ? ' lit' : '');
+                    stoneEl.style.setProperty('--stone-color', stone.color);
+                    stoneEl.innerHTML = `<span class="ps-icon">${stone.icon}</span><span class="ps-text">${stone.text}</span>`;
+                    stoneEl.addEventListener('click', () => {
+                        const nowLit = !stoneEl.classList.contains('lit');
+                        stoneEl.classList.toggle('lit', nowLit);
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][psKey] = nowLit;
+                        saveState(state);
+                    });
+                    psGrid.appendChild(stoneEl);
+                });
+                taskEl.appendChild(psGrid);
+                break;
+
+            case 'message-bubbles':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const mbWrap = document.createElement('div');
+                mbWrap.className = 'mb-container';
+                const mbKey = `msg_bubble_${tIdx}`;
+                task.bubbles.forEach((bubble, bIdx) => {
+                    const bEl = document.createElement('div');
+                    const isSelected = savedResponses[mbKey] === bIdx;
+                    bEl.className = 'mb-bubble' + (isSelected ? ' selected' : '');
+                    bEl.textContent = bubble;
+                    bEl.addEventListener('click', () => {
+                        mbWrap.querySelectorAll('.mb-bubble').forEach(b => b.classList.remove('selected'));
+                        bEl.classList.add('selected');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][mbKey] = bIdx;
+                        saveState(state);
+                    });
+                    mbWrap.appendChild(bEl);
+                });
+                taskEl.appendChild(mbWrap);
+                break;
+
             case 'story':
                 const storyClass = task.style === 'parchment' ? 'story-parchment' : 'story-box';
                 const storyText = task.text.replace(/\n/g, '<br>');

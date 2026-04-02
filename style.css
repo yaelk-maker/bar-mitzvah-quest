@@ -1586,6 +1586,200 @@ select.task-select {
     margin: 0;
 }
 
+/* ===== Hero Journey Timeline (Quest 4) ===== */
+.hj-container {
+    width: 100%;
+}
+
+.hj-timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    padding: 10px 0;
+}
+
+.hj-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    background: linear-gradient(to bottom, #7EC8E3, #B39DDB, #81C784);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    opacity: 0.3;
+}
+
+.hj-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1;
+    transition: transform 0.3s ease;
+    padding: 8px;
+}
+
+.hj-node:hover { transform: scale(1.05); }
+
+.hj-node-dot {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #2a2a4a;
+    border: 4px solid var(--station-color, #7EC8E3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+.hj-node.revealed .hj-node-dot {
+    background: var(--station-color, #7EC8E3);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--station-color) 40%, transparent);
+}
+
+.hj-node-icon {
+    font-size: 2rem;
+}
+
+.hj-node-title {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.hj-text-box {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.3s ease;
+    width: 100%;
+    padding: 0 8px;
+}
+
+.hj-text-box.visible {
+    max-height: 200px;
+    opacity: 1;
+    padding: 8px;
+}
+
+.hj-text-box p {
+    background: #f0f4ff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+    text-align: center;
+    animation: fadeSlideIn 0.5s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Power Stones (Quest 4) ===== */
+.ps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.ps-stone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 90px;
+    padding: 14px 10px;
+    border-radius: 16px;
+    background: #f0f0f8;
+    border: 3px solid #e0e0ee;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ps-stone:hover {
+    border-color: var(--stone-color, #ccc);
+    transform: scale(1.03);
+}
+
+.ps-stone.lit {
+    background: color-mix(in srgb, var(--stone-color) 20%, white);
+    border-color: var(--stone-color);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--stone-color) 30%, transparent);
+}
+
+.ps-icon {
+    font-size: 1.8rem;
+    transition: transform 0.3s ease;
+}
+
+.ps-stone.lit .ps-icon {
+    transform: scale(1.2);
+}
+
+.ps-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+/* ===== Message Bubbles (Quest 4) ===== */
+.mb-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.mb-bubble {
+    padding: 14px 18px;
+    border-radius: 20px;
+    background: #f0f4ff;
+    border: 2px solid #e0e4f0;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: right;
+}
+
+.mb-bubble:hover {
+    background: #e8ecff;
+    border-color: var(--accent-blue);
+}
+
+.mb-bubble.selected {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-color: var(--accent-blue);
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(68, 138, 255, 0.2);
+}
+
+.mb-container .mb-bubble:not(.selected) {
+    opacity: 1;
+    transition: opacity 0.3s ease, all 0.3s ease;
+}
+
+.mb-container:has(.selected) .mb-bubble:not(.selected) {
+    opacity: 0.55;
+}
+
 /* ===== Brain Meters (Quest 5) ===== */
 .brain-meters {
     display: flex;
