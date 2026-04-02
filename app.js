@@ -131,14 +131,28 @@ function renderQuestMap() {
         node.style.setProperty('--node-color', quest.color);
 
         if (isCompleted) {
-            node.innerHTML = `
-                <div class="map-node-circle map-node-complete-circle">
-                    <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
-                    <span class="map-node-check">✓</span>
-                </div>
-                <div class="map-node-label">${quest.name}</div>
-                <div class="map-node-xp">XP ${quest.xp}+</div>
-            `;
+            if (quest.id === 1) {
+                // Special: show mini family tree thumbnail
+                node.innerHTML = `
+                    <div class="map-node-circle map-node-complete-circle map-node-ftree-thumb">
+                        <div class="ftree-mini">
+                            ${renderMiniFamilyTree()}
+                        </div>
+                        <span class="map-node-check">✓</span>
+                    </div>
+                    <div class="map-node-label">${quest.name}</div>
+                    <div class="map-node-xp">XP ${quest.xp}+</div>
+                `;
+            } else {
+                node.innerHTML = `
+                    <div class="map-node-circle map-node-complete-circle">
+                        <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
+                        <span class="map-node-check">✓</span>
+                    </div>
+                    <div class="map-node-label">${quest.name}</div>
+                    <div class="map-node-xp">XP ${quest.xp}+</div>
+                `;
+            }
             node.addEventListener('click', () => openQuest(quest.id));
         } else if (isNext) {
             node.innerHTML = `
@@ -182,6 +196,36 @@ function renderQuestMap() {
         bookNode.addEventListener('click', () => openHeroBook());
         map.appendChild(bookNode);
     }
+}
+
+function renderMiniFamilyTree() {
+    const quest = QUESTS.find(q => q.id === 1);
+    if (!quest) return '';
+    const flowMembers = quest.tasks[0].members;
+    const positions = [
+        { idx: 0, cx: 17,   cy: 16 },
+        { idx: 1, cx: 37,   cy: 13 },
+        { idx: 2, cx: 62.5, cy: 13 },
+        { idx: 3, cx: 82.5, cy: 16 },
+        { idx: 6, cx: 10,   cy: 37.5 },
+        { idx: 4, cx: 30,   cy: 35 },
+        { idx: 5, cx: 69.5, cy: 35 },
+        { idx: 7, cx: 89,   cy: 37.5 },
+        { idx: 8,  cx: 26.5, cy: 58.5 },
+        { idx: 10, cx: 50,   cy: 58.5 },
+        { idx: 9,  cx: 73,   cy: 58.5 },
+    ];
+    let html = '';
+    positions.forEach(pos => {
+        const m = flowMembers[pos.idx];
+        const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
+        const isHero = pos.idx === 10;
+        html += `<div class="ftree-mini-photo ${isHero ? 'ftree-mini-hero' : ''}"
+                      style="left:${pos.cx}%;top:${pos.cy}%;">
+                    <img src="${m.photo}" alt="" style="${posStyle}" loading="lazy">
+                 </div>`;
+    });
+    return html;
 }
 
 function drawMapPath(svg, allQuests) {
@@ -446,20 +490,20 @@ function openQuest(questId) {
                     // Two-layer positioning: photos on green circles, labels on pink banners
                     // Positions are % of the tree template image (2094x2048)
                     const treeMembers = [
-                        // Top row - Grandparents
-                        { idx: 0, cx: 17,   cy: 11,  lx: 17,   ly: 21, cls: 'ftree-gp' },      // מישה
-                        { idx: 1, cx: 37.5, cy: 6.5, lx: 37.5, ly: 17, cls: 'ftree-gp' },      // מרינה
-                        { idx: 2, cx: 62,   cy: 6.5, lx: 62,   ly: 17, cls: 'ftree-gp' },      // אלכס
-                        { idx: 3, cx: 82,   cy: 11,  lx: 82,   ly: 21, cls: 'ftree-gp' },      // סווטה
-                        // Middle row - Parents & Aunts
-                        { idx: 6, cx: 10,   cy: 37,  lx: 10,   ly: 47, cls: 'ftree-parent' },  // אירה
-                        { idx: 4, cx: 30,   cy: 34,  lx: 30,   ly: 44, cls: 'ftree-parent' },  // איליה
-                        { idx: 5, cx: 69,   cy: 34,  lx: 69,   ly: 44, cls: 'ftree-parent' },  // יעל
-                        { idx: 7, cx: 89,   cy: 37,  lx: 89,   ly: 47, cls: 'ftree-parent' },  // ג'ני
-                        // Bottom row - Children
-                        { idx: 8,  cx: 28,  cy: 60,  lx: 28,   ly: 70, cls: 'ftree-child' },   // נטע
-                        { idx: 10, cx: 50,  cy: 60,  lx: 50,   ly: 70, cls: 'ftree-hero' },    // גיא
-                        { idx: 9,  cx: 72,  cy: 60,  lx: 72,   ly: 70, cls: 'ftree-child' },   // מיקה
+                        // Top row - Grandparents (banner at ~25%)
+                        { idx: 0, cx: 17,   cy: 16,  lx: 17,   ly: 25, cls: 'ftree-gp' },
+                        { idx: 1, cx: 37,   cy: 13,  lx: 37,   ly: 25, cls: 'ftree-gp' },
+                        { idx: 2, cx: 62.5, cy: 13,  lx: 62.5, ly: 25, cls: 'ftree-gp' },
+                        { idx: 3, cx: 82.5, cy: 16,  lx: 82.5, ly: 25, cls: 'ftree-gp' },
+                        // Middle row - Parents & Aunts (banner at ~46%)
+                        { idx: 6, cx: 10,   cy: 37.5, lx: 10,   ly: 46, cls: 'ftree-parent' },
+                        { idx: 4, cx: 30,   cy: 35,   lx: 30,   ly: 46, cls: 'ftree-parent' },
+                        { idx: 5, cx: 69.5, cy: 35,   lx: 69.5, ly: 46, cls: 'ftree-parent' },
+                        { idx: 7, cx: 89,   cy: 37.5, lx: 89,   ly: 46, cls: 'ftree-parent' },
+                        // Bottom row - Children (banner at ~68%)
+                        { idx: 8,  cx: 26.5, cy: 58.5, lx: 26.5, ly: 68, cls: 'ftree-child' },
+                        { idx: 10, cx: 50,   cy: 58.5, lx: 50,   ly: 68, cls: 'ftree-hero' },
+                        { idx: 9,  cx: 73,   cy: 58.5, lx: 73,   ly: 68, cls: 'ftree-child' },
                     ];
 
                     function memberHTML(pos) {
