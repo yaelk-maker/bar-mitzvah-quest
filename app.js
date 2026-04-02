@@ -625,67 +625,45 @@ function openQuest(questId) {
                 taskEl.appendChild(dsContainer);
                 break;
 
-            case 'brain-colors':
+            case 'brain-meters':
                 taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
-                const bcWrap = document.createElement('div');
-                bcWrap.className = 'brain-colors-container';
-                // Brain SVG with 6 regions
-                const brainSvg = `<svg class="brain-svg" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="brainGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                    </defs>
-                    <!-- Brain outline -->
-                    <path d="M150,20 C90,20 55,50 45,85 C35,120 40,145 50,165 C55,178 52,195 55,210 C60,230 80,245 110,248 C130,250 145,245 150,240 C155,245 170,250 190,248 C220,245 240,230 245,210 C248,195 245,178 250,165 C260,145 265,120 255,85 C245,50 210,20 150,20Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-                    <!-- Regions -->
-                    <path id="brain-creativity" d="M150,25 C120,25 95,35 80,55 C70,70 68,85 75,100 L150,100 L150,25Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="transition: fill 0.5s ease"/>
-                    <path id="brain-focus" d="M150,25 L150,100 L225,100 C232,85 230,70 220,55 C205,35 180,25 150,25Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="transition: fill 0.5s ease"/>
-                    <path id="brain-senses" d="M75,100 C60,115 50,135 48,155 C46,170 50,180 55,190 L150,190 L150,100 L75,100Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="transition: fill 0.5s ease"/>
-                    <path id="brain-movement" d="M150,100 L150,190 L245,190 C250,180 254,170 252,155 C250,135 240,115 225,100 L150,100Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="transition: fill 0.5s ease"/>
-                    <path id="brain-feelings" d="M55,190 C58,210 70,230 95,240 C115,247 140,245 150,240 L150,190 L55,190Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="transition: fill 0.5s ease"/>
-                    <path id="brain-memory" d="M150,190 L150,240 C160,245 185,247 205,240 C230,230 242,210 245,190 L150,190Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" style="transition: fill 0.5s ease"/>
-                </svg>`;
-                bcWrap.innerHTML = brainSvg;
-                const traitsDiv = document.createElement('div');
-                traitsDiv.className = 'brain-traits';
+                const metersWrap = document.createElement('div');
+                metersWrap.className = 'brain-meters';
                 task.traits.forEach(trait => {
-                    const cKey = `brain_color_${trait.id}`;
-                    const savedColor = savedResponses[cKey] || '';
+                    const mKey = `brain_meter_${trait.id}`;
+                    const savedLevel = savedResponses[mKey] || null;
                     const row = document.createElement('div');
-                    row.className = 'brain-trait-row';
+                    row.className = 'meter-row';
                     row.innerHTML = `
-                        <div class="brain-trait-info">
-                            <span class="brain-trait-icon">${trait.icon}</span>
-                            <div><strong>${trait.name}</strong><br><small>${trait.description}</small></div>
+                        <div class="meter-header">
+                            <span class="meter-icon">${trait.icon}</span>
+                            <span class="meter-name">${trait.name}</span>
                         </div>
-                        <div class="color-picker-row"></div>
+                        <div class="meter-bar-track">
+                            <div class="meter-bar-fill" style="background:${trait.color};width:${savedLevel !== null ? ((task.levels.indexOf(savedLevel) + 1) / task.levels.length * 100) : 0}%"></div>
+                        </div>
+                        <div class="meter-levels"></div>
                     `;
-                    const pickerRow = row.querySelector('.color-picker-row');
-                    task.colors.forEach(color => {
-                        const circle = document.createElement('div');
-                        circle.className = 'color-circle' + (savedColor === color ? ' selected' : '');
-                        circle.style.background = color;
-                        circle.addEventListener('click', () => {
-                            pickerRow.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
-                            circle.classList.add('selected');
+                    const levelsDiv = row.querySelector('.meter-levels');
+                    const fillBar = row.querySelector('.meter-bar-fill');
+                    task.levels.forEach((level, lIdx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'meter-level-btn' + (savedLevel === level ? ' selected' : '');
+                        btn.textContent = level;
+                        btn.style.setProperty('--meter-color', trait.color);
+                        btn.addEventListener('click', () => {
+                            levelsDiv.querySelectorAll('.meter-level-btn').forEach(b => b.classList.remove('selected'));
+                            btn.classList.add('selected');
+                            fillBar.style.width = ((lIdx + 1) / task.levels.length * 100) + '%';
                             if (!state.responses[questId]) state.responses[questId] = {};
-                            state.responses[questId][cKey] = color;
+                            state.responses[questId][mKey] = level;
                             saveState(state);
-                            const region = bcWrap.querySelector(`#brain-${trait.id}`);
-                            if (region) { region.setAttribute('fill', color + 'cc'); region.setAttribute('filter', 'url(#brainGlow)'); }
                         });
-                        pickerRow.appendChild(circle);
+                        levelsDiv.appendChild(btn);
                     });
-                    traitsDiv.appendChild(row);
-                    // Restore color on brain SVG
-                    if (savedColor) {
-                        setTimeout(() => {
-                            const region = bcWrap.querySelector(`#brain-${trait.id}`);
-                            if (region) { region.setAttribute('fill', savedColor + 'cc'); region.setAttribute('filter', 'url(#brainGlow)'); }
-                        }, 50);
-                    }
+                    metersWrap.appendChild(row);
                 });
-                bcWrap.appendChild(traitsDiv);
-                taskEl.appendChild(bcWrap);
+                taskEl.appendChild(metersWrap);
                 break;
 
             case 'brain-cards':

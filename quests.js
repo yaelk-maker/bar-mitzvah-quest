@@ -215,17 +215,17 @@ const QUESTS = [
                 content: "🧠 כל מוח בעולם הוא ייחודי — כמו טביעת אצבע. אין שני מוחות זהים. בואו נגלה איך המוח שלך עובד!"
             },
             {
-                type: "brain-colors",
-                label: "צבע את המוח שלך! בחר צבע לכל תכונה:",
+                type: "brain-meters",
+                label: "כמה חזקה כל תכונה אצלך? לחץ על הרמה שמתאימה לך:",
+                levels: ["קצת", "בינוני", "הרבה", "סופר!"],
                 traits: [
-                    { id: "creativity", name: "דמיון ויצירתיות", icon: "🎨", description: "היכולת לדמיין, להמציא ולחלום" },
-                    { id: "senses", name: "חושים רגישים", icon: "👁️", description: "לשים לב לצלילים, צבעים ומגע" },
-                    { id: "focus", name: "ריכוז עמוק", icon: "🔍", description: "להתעמק במה שמעניין אותך" },
-                    { id: "movement", name: "תנועה וגוף", icon: "💪", description: "איך הגוף שלך זז ועובד" },
-                    { id: "feelings", name: "רגשות", icon: "💙", description: "איך אתה מרגיש דברים" },
-                    { id: "memory", name: "זיכרון", icon: "🧩", description: "מה אתה זוכר ואיך" }
-                ],
-                colors: ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#9B59B6", "#FF8C42", "#45B7D1", "#F06292"]
+                    { id: "creativity", name: "דמיון ויצירתיות", icon: "🎨", color: "#FF6B6B" },
+                    { id: "senses", name: "חושים רגישים", icon: "👁️", color: "#45B7D1" },
+                    { id: "focus", name: "ריכוז עמוק", icon: "🔍", color: "#9B59B6" },
+                    { id: "movement", name: "כוח וגוף", icon: "💪", color: "#FF8C42" },
+                    { id: "feelings", name: "רגשות חזקים", icon: "💙", color: "#4D96FF" },
+                    { id: "memory", name: "זיכרון", icon: "🧩", color: "#6BCB77" }
+                ]
             },
             {
                 type: "brain-cards",

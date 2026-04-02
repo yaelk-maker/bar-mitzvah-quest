@@ -1377,36 +1377,22 @@ select.task-select {
 }
 
 /* ===== Print Styles ===== */
-/* ===== Brain Colors (Quest 5) ===== */
-.brain-colors-container {
+/* ===== Brain Meters (Quest 5) ===== */
+.brain-meters {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.brain-svg {
+    gap: 16px;
     width: 100%;
-    max-width: 280px;
-    height: auto;
-    filter: drop-shadow(0 0 20px rgba(255,255,255,0.1));
 }
 
-.brain-traits {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.brain-trait-row {
+.meter-row {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: var(--radius-sm);
-    padding: 12px 14px;
+    padding: 14px;
 }
 
-.brain-trait-info {
+.meter-header {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1414,60 +1400,63 @@ select.task-select {
     color: #fff;
 }
 
-.brain-trait-icon {
-    font-size: 1.5rem;
+.meter-icon {
+    font-size: 1.6rem;
     flex-shrink: 0;
 }
 
-.brain-trait-info strong {
-    font-size: 0.95rem;
+.meter-name {
+    font-size: 1.05rem;
+    font-weight: 700;
 }
 
-.brain-trait-info small {
-    color: rgba(255,255,255,0.6);
-    font-size: 0.8rem;
+.meter-bar-track {
+    width: 100%;
+    height: 14px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 7px;
+    overflow: hidden;
+    margin-bottom: 10px;
 }
 
-.color-picker-row {
+.meter-bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.meter-levels {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
 }
 
-.color-circle {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 3px solid rgba(255,255,255,0.2);
+.meter-level-btn {
+    flex: 1;
+    min-height: 48px;
+    padding: 10px 4px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.7);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
 }
 
-.color-circle:hover {
-    transform: scale(1.1);
-    border-color: rgba(255,255,255,0.5);
+.meter-level-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.3);
 }
 
-.color-circle.selected {
-    border-color: #fff;
-    border-width: 4px;
-    transform: scale(1.15);
-    box-shadow: 0 0 12px rgba(255,255,255,0.4);
-}
-
-.color-circle.selected::after {
-    content: '✓';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.meter-level-btn.selected {
+    background: var(--meter-color, #4D96FF);
+    border-color: var(--meter-color, #4D96FF);
     color: #fff;
-    font-size: 1.2rem;
-    font-weight: 900;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--meter-color, #4D96FF) 50%, transparent);
+    transform: scale(1.05);
 }
 
 /* ===== Brain Cards (Quest 5) ===== */
