@@ -1386,8 +1386,8 @@ select.task-select {
 }
 
 .meter-row {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #f0f4ff;
+    border: 2px solid #e0e4f0;
     border-radius: var(--radius-sm);
     padding: 14px;
 }
@@ -1397,7 +1397,7 @@ select.task-select {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
-    color: #fff;
+    color: var(--text-dark);
 }
 
 .meter-icon {
@@ -1413,7 +1413,7 @@ select.task-select {
 .meter-bar-track {
     width: 100%;
     height: 14px;
-    background: rgba(255,255,255,0.1);
+    background: #e0e4f0;
     border-radius: 7px;
     overflow: hidden;
     margin-bottom: 10px;
@@ -1423,7 +1423,6 @@ select.task-select {
     height: 100%;
     border-radius: 7px;
     transition: width 0.4s ease;
-    box-shadow: 0 0 10px rgba(255,255,255,0.2);
 }
 
 .meter-levels {
@@ -1435,10 +1434,10 @@ select.task-select {
     flex: 1;
     min-height: 48px;
     padding: 10px 4px;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid #d0d4e0;
     border-radius: 12px;
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.7);
+    background: #fff;
+    color: var(--text-medium);
     font-family: inherit;
     font-size: 0.9rem;
     font-weight: 700;
@@ -1447,15 +1446,15 @@ select.task-select {
 }
 
 .meter-level-btn:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.3);
+    background: #f0f4ff;
+    border-color: #b0b4c0;
 }
 
 .meter-level-btn.selected {
     background: var(--meter-color, #4D96FF);
     border-color: var(--meter-color, #4D96FF);
     color: #fff;
-    box-shadow: 0 0 12px color-mix(in srgb, var(--meter-color, #4D96FF) 50%, transparent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     transform: scale(1.05);
 }
 
