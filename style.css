@@ -951,16 +951,9 @@ select.task-select {
     text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
-/* Hero label special styles */
+/* Hero label — same white as everyone else */
 .ftree-label.ftree-hero .ftree-label-name {
     font-size: clamp(0.42rem, 1.8cqi, 0.6rem);
-    color: #ffd600;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 6px rgba(255,214,0,0.3);
-}
-
-.ftree-label.ftree-hero .ftree-label-word {
-    color: rgba(255,214,0,0.9);
-    font-size: clamp(0.36rem, 1.4cqi, 0.48rem);
 }
 
 /* ===== Kahoot Guide ===== */
