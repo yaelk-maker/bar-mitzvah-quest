@@ -380,6 +380,7 @@ function openQuest(questId) {
                                 <img src="photos/${step.image}" alt="${step.caption}" class="iq-image" onerror="this.style.display='none'">
                             </div>
                             <p class="iq-caption">${step.caption}</p>
+                            ${step.revealStory ? `<p class="iq-reveal-story">${step.revealStory}</p>` : ''}
                         </div>
                     `;
 

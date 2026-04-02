@@ -1534,9 +1534,11 @@ select.task-select {
 
 .iq-image {
     width: 100%;
-    height: auto;
+    max-height: 300px;
+    object-fit: contain;
     display: block;
     border-radius: 12px;
+    background: #f0f0f0;
 }
 
 .iq-caption {
@@ -1546,6 +1548,17 @@ select.task-select {
     text-align: center;
     margin: 0;
     line-height: 1.5;
+}
+
+.iq-reveal-story {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 12px 0 0;
+    padding: 12px;
+    background: #f8f6ff;
+    border-radius: 10px;
+    border-right: 4px solid var(--accent-blue);
 }
 
 .iq-completion {
