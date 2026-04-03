@@ -1288,6 +1288,22 @@ function openQuest(questId) {
                 const tcWrap = document.createElement('div');
                 tcWrap.className = 'tc-wrap';
 
+                // Medal counter
+                const tcCounter = document.createElement('div');
+                tcCounter.className = 'tc-counter';
+                const savedCabinetCount = savedResponses['cabinet'] ? Object.keys(savedResponses['cabinet']).length : 0;
+                tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${savedCabinetCount} / ${task.medals.length}</strong></span>`;
+                tcWrap.appendChild(tcCounter);
+
+                function updateMedalCounter() {
+                    const count = state.responses[questId] && state.responses[questId]['cabinet']
+                        ? Object.keys(state.responses[questId]['cabinet']).length : 0;
+                    tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${count} / ${task.medals.length}</strong></span>`;
+                    if (count === task.medals.length) {
+                        tcCounter.classList.add('complete');
+                    }
+                }
+
                 // Build cabinet with 3 shelves
                 const cabinet = document.createElement('div');
                 cabinet.className = 'tc-cabinet';
@@ -1313,6 +1329,7 @@ function openQuest(questId) {
                             state.responses[questId]['cabinet'][medalId] = sh;
                             saveState(state);
                             updateCompleteButton();
+                            updateMedalCounter();
                             if (window._wireProudestClick) window._wireProudestClick(medal);
                         }
                     });
@@ -1329,6 +1346,7 @@ function openQuest(questId) {
                             state.responses[questId]['cabinet'][selected.dataset.id] = sh;
                             saveState(state);
                             updateCompleteButton();
+                            updateMedalCounter();
                             if (window._wireProudestClick) window._wireProudestClick(selected);
                         }
                     });

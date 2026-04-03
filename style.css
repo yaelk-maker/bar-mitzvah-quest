@@ -1351,6 +1351,30 @@ select.task-select {
     margin-top: 10px;
 }
 
+/* Medal counter */
+.tc-counter {
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background: #fff8e1;
+    border: 2px solid #FFC107;
+    border-radius: 14px;
+}
+
+.tc-counter.complete {
+    background: #e8f5e9;
+    border-color: #4CAF50;
+}
+
+.tc-counter.complete .tc-counter-text {
+    color: #2e7d32;
+}
+
+.tc-counter-text {
+    font-size: 1rem;
+    color: #F57F17;
+}
+
 /* Cabinet */
 .tc-wrap {
     width: 100%;
