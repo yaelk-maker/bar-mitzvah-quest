@@ -390,7 +390,8 @@ const QUESTS = [
             },
             {
                 type: "trophy-cabinet",
-                label: "גרור את המדליות אל המדפים בארון הגביעים שלך:",
+                label: "גרור לפחות 3 מדליות אל המדפים בארון הגביעים שלך:",
+                minMedals: 3,
                 medals: [
                     { id: "m0", text: "מומחה למחשבים", icon: "💻", color: "#4FC3F7" },
                     { id: "m1", text: "משחק כדורגל", icon: "⚽", color: "#81C784" },

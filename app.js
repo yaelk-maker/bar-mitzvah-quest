@@ -1291,17 +1291,17 @@ function openQuest(questId) {
                 // Medal counter
                 const tcCounter = document.createElement('div');
                 tcCounter.className = 'tc-counter';
+                const tcMin = task.minMedals || task.medals.length;
                 const savedCabinetCount = savedResponses['cabinet'] ? Object.keys(savedResponses['cabinet']).length : 0;
-                tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${savedCabinetCount} / ${task.medals.length}</strong></span>`;
+                tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${savedCabinetCount} / ${tcMin}</strong></span>`;
+                if (savedCabinetCount >= tcMin) tcCounter.classList.add('complete');
                 tcWrap.appendChild(tcCounter);
 
                 function updateMedalCounter() {
                     const count = state.responses[questId] && state.responses[questId]['cabinet']
                         ? Object.keys(state.responses[questId]['cabinet']).length : 0;
-                    tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${count} / ${task.medals.length}</strong></span>`;
-                    if (count === task.medals.length) {
-                        tcCounter.classList.add('complete');
-                    }
+                    tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${count} / ${tcMin}</strong></span>`;
+                    tcCounter.classList.toggle('complete', count >= tcMin);
                 }
 
                 // Build cabinet with 3 shelves
@@ -1688,8 +1688,9 @@ function getQuestValidation(questId) {
                 break;
             case 'trophy-cabinet':
                 const cab = responses['cabinet'];
-                const allMedals = cab && task.medals.every(m => cab[m.id] !== undefined);
-                if (!allMedals) missing.push('מדליות בארון');
+                const minReq = task.minMedals || task.medals.length;
+                const cabCount = cab ? Object.keys(cab).length : 0;
+                if (cabCount < minReq) missing.push('מדליות בארון');
                 break;
             case 'medal-factory':
                 const factory = responses['medal_factory'];
