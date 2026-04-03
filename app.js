@@ -488,6 +488,7 @@ function openQuest(questId) {
                             if (!state.responses[questId][sKey]) {
                                 state.responses[questId][sKey] = true;
                                 saveState(state);
+                                updateCompleteButton();
                             }
                         }
                     });
@@ -516,6 +517,7 @@ function openQuest(questId) {
                         if (!state.responses[questId]) state.responses[questId] = {};
                         state.responses[questId][psKey] = nowLit;
                         saveState(state);
+                        updateCompleteButton();
                     });
                     psGrid.appendChild(stoneEl);
                 });
@@ -538,6 +540,7 @@ function openQuest(questId) {
                         if (!state.responses[questId]) state.responses[questId] = {};
                         state.responses[questId][mbKey] = bIdx;
                         saveState(state);
+                        updateCompleteButton();
                     });
                     mbWrap.appendChild(bEl);
                 });
@@ -817,6 +820,7 @@ function openQuest(questId) {
                         if (!state.responses[questId]) state.responses[questId] = {};
                         state.responses[questId][dsKey] = opt;
                         saveState(state);
+                        updateCompleteButton();
                     });
                     dsContainer.appendChild(btn);
                 });
@@ -857,6 +861,7 @@ function openQuest(questId) {
                             state.responses[questId][mKey] = level;
                             saveState(state);
                             if (typeof checkAllMetersFilled === 'function') checkAllMetersFilled();
+                            updateCompleteButton();
                         });
                         levelsDiv.appendChild(btn);
                     });
@@ -1023,6 +1028,7 @@ function openQuest(questId) {
                         if (!state.responses[questId]) state.responses[questId] = {};
                         state.responses[questId][cardKey] = nowClaimed;
                         saveState(state);
+                        updateCompleteButton();
                     });
                     cardsGrid.appendChild(cardEl);
                 });
@@ -1135,7 +1141,6 @@ function openQuest(questId) {
         footer.style.display = '';
     } else {
         btn.textContent = 'סיימתי את המשימה! ✓';
-        btn.disabled = false;
         btn.classList.remove('completed');
         // Hide the complete button for quests with family-flow until tree is shown
         const hasFlow = quest.tasks.some(t => t.type === 'family-flow');
@@ -1144,6 +1149,10 @@ function openQuest(questId) {
         } else {
             footer.style.display = '';
         }
+        // Validate before enabling
+        const { valid } = getQuestValidation(questId);
+        btn.disabled = !valid;
+        btn.classList.toggle('not-ready', !valid);
     }
 
     // Auto-save on input
@@ -1174,12 +1183,64 @@ function autoSaveInput(el) {
     saveState(state);
 }
 
+// ===== Quest Validation =====
+function getQuestValidation(questId) {
+    const quest = QUESTS.find(q => q.id === questId);
+    if (!quest) return { valid: true, missing: [] };
+    const responses = state.responses[questId] || {};
+    const missing = [];
+
+    quest.tasks.forEach((task, tIdx) => {
+        switch (task.type) {
+            case 'hero-journey':
+                const anyOpened = task.stations.some(s => responses[`hj_station_${s.id}`]);
+                if (!anyOpened) missing.push('תיקי החקירה');
+                break;
+            case 'power-stones':
+                const anyStone = task.stones.some((_, i) => responses[`power_stone_${i}`]);
+                if (!anyStone) missing.push('אבני הכוח');
+                break;
+            case 'message-bubbles':
+                if (responses[`msg_bubble_${tIdx}`] === undefined) missing.push('המשפט לגיא התינוק');
+                break;
+            case 'brain-meters':
+                const anyMeter = task.traits.some(t => responses[`brain_meter_${t.id}`]);
+                if (!anyMeter) missing.push('עוצמות התכונות');
+                break;
+            case 'brain-cards':
+                const anyCard = task.cards.some((_, i) => responses[`brain_card_${i}`]);
+                if (!anyCard) missing.push('כרטיסי המוח');
+                break;
+            case 'drag-select':
+                if (responses[`drag_${tIdx}`] === undefined) missing.push('המשפט שמתאים לך');
+                break;
+        }
+    });
+
+    return { valid: missing.length === 0, missing };
+}
+
+function updateCompleteButton() {
+    const questId = state.currentQuest;
+    if (!questId || state.completedQuests.includes(questId)) return;
+    const btn = document.getElementById('btn-complete');
+    const { valid } = getQuestValidation(questId);
+    btn.disabled = !valid;
+    btn.classList.toggle('not-ready', !valid);
+}
+
 // ===== Complete Quest =====
 function completeQuest() {
     const questId = state.currentQuest;
     if (!questId || state.completedQuests.includes(questId)) return;
 
-    // Simple validation - check if at least one text field is filled
+    const { valid, missing } = getQuestValidation(questId);
+    if (!valid) {
+        showToast(`עוד לא סיימת! חסר: ${missing.join(', ')}`);
+        return;
+    }
+
+    // Also check text fields if any
     const body = document.getElementById('quest-body');
     const textInputs = body.querySelectorAll('textarea, input[type="text"]');
     let hasContent = false;
