@@ -1898,12 +1898,12 @@ select.task-select {
     transform: scale(1.05);
 }
 
-/* ===== Radar Chart (Quest 5 Brain Map) ===== */
-.radar-section {
+/* ===== Brain Bubble Map (Quest 5) ===== */
+.brain-map-section {
     margin-top: 20px;
 }
 
-.radar-reveal-btn {
+.brain-map-reveal-btn {
     display: block;
     width: 100%;
     padding: 16px 20px;
@@ -1918,7 +1918,7 @@ select.task-select {
     transition: all 0.3s ease;
 }
 
-.radar-reveal-btn.ready {
+.brain-map-reveal-btn.ready {
     background: linear-gradient(135deg, #6C63FF, #9B59B6);
     border-color: #6C63FF;
     color: #fff;
@@ -1926,24 +1926,24 @@ select.task-select {
     box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
 }
 
-.radar-reveal-btn.ready:hover {
+.brain-map-reveal-btn.ready:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 24px rgba(108, 99, 255, 0.4);
 }
 
-.radar-result {
+.brain-map-result {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
     transition: max-height 0.6s ease, opacity 0.5s ease;
 }
 
-.radar-result.visible {
-    max-height: 1200px;
+.brain-map-result.visible {
+    max-height: 1400px;
     opacity: 1;
 }
 
-.radar-charts {
+.brain-map-charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
@@ -1951,42 +1951,45 @@ select.task-select {
 }
 
 @media (max-width: 600px) {
-    .radar-charts {
+    .brain-map-charts {
         grid-template-columns: 1fr;
     }
 }
 
-.radar-chart-box {
+.brain-map-box {
     background: #f7f9ff;
     border-radius: 18px;
     border: 3px solid #e0e0e0;
     padding: 16px 12px;
     text-align: center;
-    transition: all 0.3s ease;
 }
 
-.radar-chart-box.highlight {
-    border-color: #6C63FF;
-    box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
-    background: linear-gradient(135deg, #f7f5ff, #f0f0ff);
+.brain-map-box.highlight {
+    border-color: #9B59B6;
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.2);
+    background: linear-gradient(135deg, #f7f3ff, #f0eaff);
 }
 
-.radar-chart-title {
-    font-size: 1.05rem;
+.brain-map-title {
+    font-size: 1.1rem;
     font-weight: 800;
     color: #1a1a2e;
     margin-bottom: 8px;
 }
 
-.radar-svg {
+.brain-map-svg {
     width: 100%;
-    max-width: 260px;
+    max-width: 280px;
     height: auto;
     margin: 0 auto;
     display: block;
 }
 
-.radar-chart-desc {
+.brain-bubble {
+    transition: r 0.5s ease;
+}
+
+.brain-map-desc {
     font-size: 0.85rem;
     color: #555;
     line-height: 1.6;
@@ -1994,7 +1997,7 @@ select.task-select {
     padding: 0 4px;
 }
 
-.radar-chart-box.highlight .radar-chart-desc {
+.brain-map-box.highlight .brain-map-desc {
     color: #333;
     font-weight: 600;
 }

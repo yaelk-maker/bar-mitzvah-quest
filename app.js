@@ -868,95 +868,92 @@ function openQuest(questId) {
                     metersWrap.appendChild(row);
                 });
                 taskEl.appendChild(metersWrap);
-                // Radar chart reveal button + section
-                const radarSection = document.createElement('div');
-                radarSection.className = 'radar-section';
-                const radarBtn = document.createElement('button');
-                radarBtn.className = 'radar-reveal-btn';
-                radarBtn.textContent = 'גלה את מפת המוח שלי! 🧠';
-                radarBtn.disabled = true; // enabled when all sliders filled
+                // Brain bubble map reveal button + section
+                const brainSection = document.createElement('div');
+                brainSection.className = 'brain-map-section';
+                const brainBtn = document.createElement('button');
+                brainBtn.className = 'brain-map-reveal-btn';
+                brainBtn.textContent = 'גלה את מפת המוח שלי! 🧠';
+                brainBtn.disabled = true;
 
-                const radarResult = document.createElement('div');
-                radarResult.className = 'radar-result';
+                const brainResult = document.createElement('div');
+                brainResult.className = 'brain-map-result';
 
                 function checkAllMetersFilled() {
                     const filled = task.traits.every(t => {
                         const k = `brain_meter_${t.id}`;
                         return state.responses[questId] && state.responses[questId][k];
                     });
-                    radarBtn.disabled = !filled;
-                    radarBtn.classList.toggle('ready', filled);
+                    brainBtn.disabled = !filled;
+                    brainBtn.classList.toggle('ready', filled);
                 }
 
-                function buildRadarSVG(values, colors, labels, maxVal, fillColor, fillOpacity) {
-                    const size = 260, cx = size / 2, cy = size / 2, r = 100;
-                    const n = values.length;
-                    const angleStep = (2 * Math.PI) / n;
-                    const startAngle = -Math.PI / 2;
+                // Brain outline path + bubble positions inside the brain
+                const BRAIN_PATH = 'M150,25 C90,25 45,50 35,90 C25,130 30,160 50,185 C60,200 75,215 90,225 C105,235 125,245 150,248 C175,245 195,235 210,225 C225,215 240,200 250,185 C270,160 275,130 265,90 C255,50 210,25 150,25 Z';
+                const BUBBLE_POS = [
+                    { cx: 100, cy: 75 },   // creativity - top left
+                    { cx: 200, cy: 75 },   // senses - top right
+                    { cx: 75,  cy: 145 },  // focus - mid left
+                    { cx: 225, cy: 145 },  // movement - mid right
+                    { cx: 110, cy: 205 },  // feelings - bottom left
+                    { cx: 190, cy: 205 },  // memory - bottom right
+                ];
 
-                    function polarToXY(angle, dist) {
-                        return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) };
-                    }
+                function buildBrainSVG(values, colors, labels, icons, maxVal, isTypical) {
+                    const minR = 12, maxR = 38;
+                    let defs = `<defs>`;
+                    let circles = '';
+                    let labelEls = '';
 
-                    // Grid rings
-                    let gridLines = '';
-                    for (let ring = 1; ring <= maxVal; ring++) {
-                        const ringR = (ring / maxVal) * r;
-                        let pts = [];
-                        for (let i = 0; i < n; i++) {
-                            const p = polarToXY(startAngle + i * angleStep, ringR);
-                            pts.push(`${p.x},${p.y}`);
+                    for (let i = 0; i < values.length; i++) {
+                        const ratio = values[i] / maxVal;
+                        const r = minR + ratio * (maxR - minR);
+                        const color = isTypical ? '#aab' : colors[i];
+                        const pos = BUBBLE_POS[i];
+                        const filterId = `glow-${isTypical ? 'typ' : 'usr'}-${i}`;
+
+                        // Glow filter for large bubbles (value >= 3)
+                        if (values[i] >= 3 && !isTypical) {
+                            defs += `<filter id="${filterId}" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>`;
                         }
-                        gridLines += `<polygon points="${pts.join(' ')}" fill="none" stroke="#ddd" stroke-width="1" opacity="0.5"/>`;
+
+                        const filterAttr = (values[i] >= 3 && !isTypical) ? ` filter="url(#${filterId})"` : '';
+                        circles += `<circle cx="${pos.cx}" cy="${pos.cy}" r="${r}" fill="${color}" fill-opacity="0.7"${filterAttr} class="brain-bubble"/>`;
+
+                        // Icon + label
+                        labelEls += `<text x="${pos.cx}" y="${pos.cy - 1}" text-anchor="middle" dominant-baseline="central" font-size="${r > 25 ? 20 : 16}" font-family="sans-serif">${icons[i]}</text>`;
+                        labelEls += `<text x="${pos.cx}" y="${pos.cy + r + 14}" text-anchor="middle" fill="${color}" font-size="10" font-weight="700" font-family="Heebo,sans-serif">${labels[i]}</text>`;
                     }
+                    defs += `</defs>`;
 
-                    // Axis lines
-                    let axes = '';
-                    for (let i = 0; i < n; i++) {
-                        const p = polarToXY(startAngle + i * angleStep, r);
-                        axes += `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="#ccc" stroke-width="1" opacity="0.4"/>`;
-                    }
-
-                    // Data polygon
-                    let dataPts = [];
-                    for (let i = 0; i < n; i++) {
-                        const dist = (values[i] / maxVal) * r;
-                        const p = polarToXY(startAngle + i * angleStep, dist);
-                        dataPts.push(`${p.x},${p.y}`);
-                    }
-                    const dataPolygon = `<polygon points="${dataPts.join(' ')}" fill="${fillColor}" fill-opacity="${fillOpacity}" stroke="${fillColor}" stroke-width="2.5"/>`;
-
-                    // Data points + labels
-                    let dots = '', labelEls = '';
-                    for (let i = 0; i < n; i++) {
-                        const dist = (values[i] / maxVal) * r;
-                        const p = polarToXY(startAngle + i * angleStep, dist);
-                        dots += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="${colors[i]}" stroke="#fff" stroke-width="2"/>`;
-
-                        const lp = polarToXY(startAngle + i * angleStep, r + 22);
-                        labelEls += `<text x="${lp.x}" y="${lp.y}" text-anchor="middle" dominant-baseline="central" fill="${colors[i]}" font-size="11" font-weight="700" font-family="Heebo,sans-serif">${labels[i]}</text>`;
-                    }
-
-                    return `<svg viewBox="0 0 ${size} ${size}" class="radar-svg">${gridLines}${axes}${dataPolygon}${dots}${labelEls}</svg>`;
+                    const brainFill = isTypical ? '#f0f0f5' : 'linear-gradient(#eef,#e8e0ff)';
+                    return `<svg viewBox="0 0 300 280" class="brain-map-svg">
+                        ${defs}
+                        <path d="${BRAIN_PATH}" fill="${isTypical ? '#f0f0f5' : '#ece6ff'}" stroke="${isTypical ? '#ccc' : '#9B59B6'}" stroke-width="2.5" fill-opacity="0.5"/>
+                        ${circles}
+                        ${labelEls}
+                    </svg>`;
                 }
 
-                // Monitor meter clicks to enable button
                 metersWrap.addEventListener('click', () => setTimeout(checkAllMetersFilled, 50));
-                checkAllMetersFilled(); // check on load (might already be filled)
+                checkAllMetersFilled();
 
-                // Check if radar was already revealed
-                const radarRevealed = savedResponses['radar_revealed'] === true;
+                const brainRevealed = savedResponses['radar_revealed'] === true;
 
-                radarBtn.addEventListener('click', () => {
+                brainBtn.addEventListener('click', () => {
                     if (!state.responses[questId]) state.responses[questId] = {};
                     state.responses[questId]['radar_revealed'] = true;
                     saveState(state);
-                    showRadarCharts();
+                    showBrainMap();
                 });
 
-                function showRadarCharts() {
+                function showBrainMap() {
                     const traitLabels = task.traits.map(t => t.name.split(' ')[0]);
                     const traitColors = task.traits.map(t => t.color);
+                    const traitIcons = task.traits.map(t => t.icon);
                     const userValues = task.traits.map(t => {
                         const level = state.responses[questId] && state.responses[questId][`brain_meter_${t.id}`];
                         return level ? task.levels.indexOf(level) + 1 : 2;
@@ -964,33 +961,33 @@ function openQuest(questId) {
                     const typicalValues = [2, 2, 2, 2, 2, 2];
                     const maxVal = task.levels.length;
 
-                    const typicalSVG = buildRadarSVG(typicalValues, traitColors.map(() => '#999'), traitLabels, maxVal, '#999', 0.2);
-                    const userSVG = buildRadarSVG(userValues, traitColors, traitLabels, maxVal, '#6C63FF', 0.35);
+                    const typicalSVG = buildBrainSVG(typicalValues, traitColors, traitLabels, traitIcons, maxVal, true);
+                    const userSVG = buildBrainSVG(userValues, traitColors, traitLabels, traitIcons, maxVal, false);
 
-                    radarResult.innerHTML = `
-                        <div class="radar-charts">
-                            <div class="radar-chart-box">
-                                <div class="radar-chart-title">מוח רגיל (טיפוסי)</div>
+                    brainResult.innerHTML = `
+                        <div class="brain-map-charts">
+                            <div class="brain-map-box">
+                                <div class="brain-map-title">מוח טיפוסי</div>
                                 ${typicalSVG}
-                                <p class="radar-chart-desc">רוב היכולות נמצאות איפשהו באמצע</p>
+                                <p class="brain-map-desc">רוב היכולות דורשות כמות אנרגיה דומה</p>
                             </div>
-                            <div class="radar-chart-box highlight">
-                                <div class="radar-chart-title">המוח המיוחד שלי! ⭐</div>
+                            <div class="brain-map-box highlight">
+                                <div class="brain-map-title">המוח המיוחד שלי! ⭐</div>
                                 ${userSVG}
-                                <p class="radar-chart-desc">מוח מיוחד עם "כוחות-על" בולטים ואזורים אחרים שדורשים פחות אנרגיה. קוראים לזה "פרופיל קופצני", וזה מה שעושה אותך מומחה!</p>
+                                <p class="brain-map-desc">מוח עם "כוחות-על" בולטים ואזורים שדורשים פחות אנרגיה. קוראים לזה "פרופיל קופצני", וזה מה שעושה אותך מומחה!</p>
                             </div>
                         </div>
                     `;
-                    radarResult.classList.add('visible');
-                    radarBtn.style.display = 'none';
-                    radarResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    brainResult.classList.add('visible');
+                    brainBtn.style.display = 'none';
+                    brainResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
 
-                radarSection.appendChild(radarBtn);
-                radarSection.appendChild(radarResult);
-                taskEl.appendChild(radarSection);
+                brainSection.appendChild(brainBtn);
+                brainSection.appendChild(brainResult);
+                taskEl.appendChild(brainSection);
 
-                if (radarRevealed) showRadarCharts();
+                if (brainRevealed) showBrainMap();
                 break;
 
             case 'brain-cards':
