@@ -1897,6 +1897,107 @@ select.task-select {
     transform: scale(1.05);
 }
 
+/* ===== Radar Chart (Quest 5 Brain Map) ===== */
+.radar-section {
+    margin-top: 20px;
+}
+
+.radar-reveal-btn {
+    display: block;
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-family: inherit;
+    border: 3px solid #ccc;
+    border-radius: 16px;
+    background: #e8e8e8;
+    color: #999;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+}
+
+.radar-reveal-btn.ready {
+    background: linear-gradient(135deg, #6C63FF, #9B59B6);
+    border-color: #6C63FF;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+}
+
+.radar-reveal-btn.ready:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(108, 99, 255, 0.4);
+}
+
+.radar-result {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+}
+
+.radar-result.visible {
+    max-height: 1200px;
+    opacity: 1;
+}
+
+.radar-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+@media (max-width: 600px) {
+    .radar-charts {
+        grid-template-columns: 1fr;
+    }
+}
+
+.radar-chart-box {
+    background: #f7f9ff;
+    border-radius: 18px;
+    border: 3px solid #e0e0e0;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.radar-chart-box.highlight {
+    border-color: #6C63FF;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
+    background: linear-gradient(135deg, #f7f5ff, #f0f0ff);
+}
+
+.radar-chart-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.radar-svg {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.radar-chart-desc {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 10px 0 0;
+    padding: 0 4px;
+}
+
+.radar-chart-box.highlight .radar-chart-desc {
+    color: #333;
+    font-weight: 600;
+}
+
 /* ===== Brain Cards (Quest 5) ===== */
 .brain-cards-grid {
     display: grid;

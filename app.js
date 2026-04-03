@@ -856,12 +856,136 @@ function openQuest(questId) {
                             if (!state.responses[questId]) state.responses[questId] = {};
                             state.responses[questId][mKey] = level;
                             saveState(state);
+                            if (typeof checkAllMetersFilled === 'function') checkAllMetersFilled();
                         });
                         levelsDiv.appendChild(btn);
                     });
                     metersWrap.appendChild(row);
                 });
                 taskEl.appendChild(metersWrap);
+                // Radar chart reveal button + section
+                const radarSection = document.createElement('div');
+                radarSection.className = 'radar-section';
+                const radarBtn = document.createElement('button');
+                radarBtn.className = 'radar-reveal-btn';
+                radarBtn.textContent = 'גלה את מפת המוח שלי! 🧠';
+                radarBtn.disabled = true; // enabled when all sliders filled
+
+                const radarResult = document.createElement('div');
+                radarResult.className = 'radar-result';
+
+                function checkAllMetersFilled() {
+                    const filled = task.traits.every(t => {
+                        const k = `brain_meter_${t.id}`;
+                        return state.responses[questId] && state.responses[questId][k];
+                    });
+                    radarBtn.disabled = !filled;
+                    radarBtn.classList.toggle('ready', filled);
+                }
+
+                function buildRadarSVG(values, colors, labels, maxVal, fillColor, fillOpacity) {
+                    const size = 260, cx = size / 2, cy = size / 2, r = 100;
+                    const n = values.length;
+                    const angleStep = (2 * Math.PI) / n;
+                    const startAngle = -Math.PI / 2;
+
+                    function polarToXY(angle, dist) {
+                        return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) };
+                    }
+
+                    // Grid rings
+                    let gridLines = '';
+                    for (let ring = 1; ring <= maxVal; ring++) {
+                        const ringR = (ring / maxVal) * r;
+                        let pts = [];
+                        for (let i = 0; i < n; i++) {
+                            const p = polarToXY(startAngle + i * angleStep, ringR);
+                            pts.push(`${p.x},${p.y}`);
+                        }
+                        gridLines += `<polygon points="${pts.join(' ')}" fill="none" stroke="#ddd" stroke-width="1" opacity="0.5"/>`;
+                    }
+
+                    // Axis lines
+                    let axes = '';
+                    for (let i = 0; i < n; i++) {
+                        const p = polarToXY(startAngle + i * angleStep, r);
+                        axes += `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="#ccc" stroke-width="1" opacity="0.4"/>`;
+                    }
+
+                    // Data polygon
+                    let dataPts = [];
+                    for (let i = 0; i < n; i++) {
+                        const dist = (values[i] / maxVal) * r;
+                        const p = polarToXY(startAngle + i * angleStep, dist);
+                        dataPts.push(`${p.x},${p.y}`);
+                    }
+                    const dataPolygon = `<polygon points="${dataPts.join(' ')}" fill="${fillColor}" fill-opacity="${fillOpacity}" stroke="${fillColor}" stroke-width="2.5"/>`;
+
+                    // Data points + labels
+                    let dots = '', labelEls = '';
+                    for (let i = 0; i < n; i++) {
+                        const dist = (values[i] / maxVal) * r;
+                        const p = polarToXY(startAngle + i * angleStep, dist);
+                        dots += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="${colors[i]}" stroke="#fff" stroke-width="2"/>`;
+
+                        const lp = polarToXY(startAngle + i * angleStep, r + 22);
+                        labelEls += `<text x="${lp.x}" y="${lp.y}" text-anchor="middle" dominant-baseline="central" fill="${colors[i]}" font-size="11" font-weight="700" font-family="Heebo,sans-serif">${labels[i]}</text>`;
+                    }
+
+                    return `<svg viewBox="0 0 ${size} ${size}" class="radar-svg">${gridLines}${axes}${dataPolygon}${dots}${labelEls}</svg>`;
+                }
+
+                // Monitor meter clicks to enable button
+                metersWrap.addEventListener('click', () => setTimeout(checkAllMetersFilled, 50));
+                checkAllMetersFilled(); // check on load (might already be filled)
+
+                // Check if radar was already revealed
+                const radarRevealed = savedResponses['radar_revealed'] === true;
+
+                radarBtn.addEventListener('click', () => {
+                    if (!state.responses[questId]) state.responses[questId] = {};
+                    state.responses[questId]['radar_revealed'] = true;
+                    saveState(state);
+                    showRadarCharts();
+                });
+
+                function showRadarCharts() {
+                    const traitLabels = task.traits.map(t => t.name.split(' ')[0]);
+                    const traitColors = task.traits.map(t => t.color);
+                    const userValues = task.traits.map(t => {
+                        const level = state.responses[questId] && state.responses[questId][`brain_meter_${t.id}`];
+                        return level ? task.levels.indexOf(level) + 1 : 2;
+                    });
+                    const typicalValues = [2, 2, 2, 2, 2, 2];
+                    const maxVal = task.levels.length;
+
+                    const typicalSVG = buildRadarSVG(typicalValues, traitColors.map(() => '#999'), traitLabels, maxVal, '#999', 0.2);
+                    const userSVG = buildRadarSVG(userValues, traitColors, traitLabels, maxVal, '#6C63FF', 0.35);
+
+                    radarResult.innerHTML = `
+                        <div class="radar-charts">
+                            <div class="radar-chart-box">
+                                <div class="radar-chart-title">מוח רגיל (טיפוסי)</div>
+                                ${typicalSVG}
+                                <p class="radar-chart-desc">רוב היכולות נמצאות איפשהו באמצע</p>
+                            </div>
+                            <div class="radar-chart-box highlight">
+                                <div class="radar-chart-title">המוח המיוחד שלי! ⭐</div>
+                                ${userSVG}
+                                <p class="radar-chart-desc">מוח מיוחד עם "כוחות-על" בולטים ואזורים אחרים שדורשים פחות אנרגיה. קוראים לזה "פרופיל קופצני", וזה מה שעושה אותך מומחה!</p>
+                            </div>
+                        </div>
+                    `;
+                    radarResult.classList.add('visible');
+                    radarBtn.style.display = 'none';
+                    radarResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                radarSection.appendChild(radarBtn);
+                radarSection.appendChild(radarResult);
+                taskEl.appendChild(radarSection);
+
+                if (radarRevealed) showRadarCharts();
                 break;
 
             case 'brain-cards':
