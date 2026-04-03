@@ -1673,6 +1673,287 @@ select.task-select {
     margin-top: 8px;
 }
 
+/* ===== Secret Envelopes (Quest 8) ===== */
+.env-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.env-card {
+    border: 3px solid var(--env-color, #7C4DFF);
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.env-card:hover:not(.opened) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--env-color) 30%, transparent);
+}
+
+.env-closed {
+    padding: 18px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    background: color-mix(in srgb, var(--env-color) 8%, white);
+}
+
+.env-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.3s ease;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.env-card.opened .env-content {
+    max-height: 200px;
+    opacity: 1;
+    padding: 16px 20px;
+}
+
+.env-card.opened .env-closed {
+    background: var(--env-color);
+    color: #fff;
+}
+
+.env-quote {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.7;
+    font-style: italic;
+    margin: 0 0 8px;
+}
+
+.env-from {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--env-color);
+}
+
+/* ===== Cinema Videos (Quest 9) ===== */
+.cin-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #1a1a2e;
+    border-radius: 20px;
+    padding: 20px 14px;
+}
+
+.cin-video-box {
+    border: 2px solid #4FC3F7;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 16px rgba(79, 195, 247, 0.25);
+    background: #0d0d1a;
+}
+
+.cin-video-title {
+    padding: 10px 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #4FC3F7;
+    text-align: center;
+    background: rgba(79, 195, 247, 0.1);
+}
+
+.cin-video {
+    width: 100%;
+    display: block;
+    border-radius: 0 0 14px 14px;
+}
+
+.cin-placeholder {
+    padding: 40px 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #666;
+    background: #111;
+}
+
+/* ===== Emotion Board (Quest 9) ===== */
+.emo-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.emo-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 10px;
+    border: 3px solid #e0e0e0;
+    border-radius: 18px;
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.25s ease;
+}
+
+.emo-btn:hover {
+    border-color: var(--emo-color);
+    transform: translateY(-2px);
+}
+
+.emo-btn.selected {
+    border-color: var(--emo-color);
+    background: color-mix(in srgb, var(--emo-color) 12%, white);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--emo-color) 35%, transparent);
+    transform: scale(1.08);
+}
+
+.emo-icon { font-size: 2rem; }
+
+.emo-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+}
+
+/* ===== Card Builder (Quest 10 - Grand Finale) ===== */
+.cb-wrap {
+    width: 100%;
+}
+
+.cb-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: linear-gradient(135deg, #fff3e0, #fce4ec);
+    border: 3px solid #FF5722;
+    border-radius: 22px;
+    padding: 20px 16px;
+}
+
+.cb-reveal-btn {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 20px;
+    font-size: 1.3rem;
+    font-weight: 900;
+    font-family: inherit;
+    border: 3px solid #ccc;
+    border-radius: 20px;
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+}
+
+.cb-reveal-btn.ready {
+    background: linear-gradient(135deg, #FF5722, #FF9800);
+    border-color: #E64A19;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+    animation: finaleGlow 2s ease infinite;
+}
+
+@keyframes finaleGlow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4); }
+    50% { box-shadow: 0 8px 36px rgba(255, 87, 34, 0.7); }
+}
+
+.cb-reveal-btn.ready:hover {
+    transform: scale(1.05);
+}
+
+.cb-result {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.8s ease, opacity 0.6s ease;
+}
+
+.cb-result.visible {
+    max-height: 800px;
+    opacity: 1;
+}
+
+.cb-confetti {
+    text-align: center;
+    font-size: 2rem;
+    letter-spacing: 8px;
+    margin-bottom: 16px;
+    animation: confettiBounce 1s ease infinite;
+}
+
+@keyframes confettiBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.cb-card {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 4px solid #FFD54F;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 213, 79, 0.4);
+    animation: cardFlipIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes cardFlipIn {
+    0% { transform: perspective(600px) rotateY(90deg) scale(0.5); opacity: 0; }
+    100% { transform: perspective(600px) rotateY(0deg) scale(1); opacity: 1; }
+}
+
+.cb-card-img-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.cb-card-img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    display: block;
+}
+
+.cb-card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.cb-card-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #FFD54F;
+    margin-bottom: 12px;
+    font-family: 'Bungee', cursive;
+}
+
+.cb-card-line {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    margin: 6px 0;
+}
+
+.cb-finale {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #FF5722;
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #fff3e0, #fce4ec);
+    border-radius: 18px;
+    border: 3px solid #FF5722;
+    animation: medalPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 /* ===== Superpower Survey ===== */
 .superpower-survey { display: flex; flex-direction: column; gap: 12px; }
 

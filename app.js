@@ -1588,6 +1588,184 @@ function openQuest(questId) {
                 taskEl.innerHTML = `<label class="task-label">${task.label}</label>
                     <div class="task-info" style="font-style:italic; opacity:0.7">ההורים יוסיפו הישגים כאן</div>`;
                 break;
+
+            case 'secret-envelopes':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const envWrap = document.createElement('div');
+                envWrap.className = 'env-wrap';
+                task.envelopes.forEach((env, eIdx) => {
+                    const envKey = `envelope_${eIdx}`;
+                    const isOpened = savedResponses[envKey] === true;
+                    const envEl = document.createElement('div');
+                    envEl.className = 'env-card' + (isOpened ? ' opened' : '');
+                    envEl.style.setProperty('--env-color', env.color);
+                    envEl.innerHTML = `
+                        <div class="env-closed">✉️ מעטפה מ${env.from}</div>
+                        <div class="env-content">
+                            <p class="env-quote">"${env.quote}"</p>
+                            <span class="env-from">— ${env.from}</span>
+                        </div>
+                    `;
+                    envEl.addEventListener('click', () => {
+                        if (envEl.classList.contains('opened')) return;
+                        envEl.classList.add('opened');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][envKey] = true;
+                        saveState(state);
+                        updateCompleteButton();
+                    });
+                    envWrap.appendChild(envEl);
+                });
+                taskEl.appendChild(envWrap);
+                break;
+
+            case 'power-select':
+                taskEl.innerHTML = '';
+                const pwWrap = document.createElement('div');
+                pwWrap.className = 'mf-wrap';
+                pwWrap.innerHTML = `<div class="mf-header"><span class="mf-header-icon">⚡</span><span class="mf-header-title">${task.label}</span></div>`;
+                const pwSelWrap = document.createElement('div');
+                pwSelWrap.className = 'mf-select-wrap';
+                const pwSel = document.createElement('select');
+                pwSel.className = 'mf-select';
+                const savedPower = savedResponses[`power_choice_${tIdx}`] || '';
+                pwSel.innerHTML = `<option value="">בחר...</option>` +
+                    task.options.map(o => `<option value="${o}" ${savedPower === o ? 'selected' : ''}>${o}</option>`).join('');
+                pwSel.addEventListener('change', () => {
+                    if (!state.responses[questId]) state.responses[questId] = {};
+                    state.responses[questId][`power_choice_${tIdx}`] = pwSel.value;
+                    saveState(state);
+                    updateCompleteButton();
+                });
+                pwSelWrap.appendChild(pwSel);
+                pwWrap.appendChild(pwSelWrap);
+                taskEl.appendChild(pwWrap);
+                break;
+
+            case 'cinema-videos':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const cinWrap = document.createElement('div');
+                cinWrap.className = 'cin-wrap';
+                task.videos.forEach(vid => {
+                    const vidEl = document.createElement('div');
+                    vidEl.className = 'cin-video-box';
+                    vidEl.innerHTML = `
+                        <div class="cin-video-title">${vid.title}</div>
+                        <video src="photos/${vid.src}" controls playsinline class="cin-video"
+                               onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרטון יתווסף בקרוב...</div>'"></video>
+                    `;
+                    cinWrap.appendChild(vidEl);
+                });
+                taskEl.appendChild(cinWrap);
+                break;
+
+            case 'emotion-board':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const emoWrap = document.createElement('div');
+                emoWrap.className = 'emo-wrap';
+                const savedEmotion = savedResponses[`emotion_${tIdx}`];
+                task.emotions.forEach((emo, eIdx) => {
+                    const emoBtn = document.createElement('button');
+                    emoBtn.className = 'emo-btn' + (savedEmotion === eIdx ? ' selected' : '');
+                    emoBtn.style.setProperty('--emo-color', emo.color);
+                    emoBtn.innerHTML = `<span class="emo-icon">${emo.icon}</span><span class="emo-text">${emo.text}</span>`;
+                    emoBtn.addEventListener('click', () => {
+                        emoWrap.querySelectorAll('.emo-btn').forEach(b => b.classList.remove('selected'));
+                        emoBtn.classList.add('selected');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][`emotion_${tIdx}`] = eIdx;
+                        saveState(state);
+                        updateCompleteButton();
+                    });
+                    emoWrap.appendChild(emoBtn);
+                });
+                taskEl.appendChild(emoWrap);
+                break;
+
+            case 'card-builder':
+                taskEl.innerHTML = '';
+                const cbWrap = document.createElement('div');
+                cbWrap.className = 'cb-wrap';
+                const savedCard = savedResponses['card_builder'] || {};
+                const cardRevealed = savedResponses['card_revealed'] === true;
+
+                // Dropdowns
+                const cbForm = document.createElement('div');
+                cbForm.className = 'cb-form';
+                task.fields.forEach(field => {
+                    const row = document.createElement('div');
+                    row.className = 'mf-row';
+                    row.innerHTML = `<span class="mf-prefix">${field.prefix}</span>`;
+                    const selWrap = document.createElement('div');
+                    selWrap.className = 'mf-select-wrap';
+                    const sel = document.createElement('select');
+                    sel.className = 'mf-select cb-select';
+                    sel.innerHTML = `<option value="">בחר...</option>` +
+                        field.options.map(o => `<option value="${o}" ${savedCard[field.id] === o ? 'selected' : ''}>${o}</option>`).join('');
+                    sel.addEventListener('change', () => {
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        if (!state.responses[questId]['card_builder']) state.responses[questId]['card_builder'] = {};
+                        state.responses[questId]['card_builder'][field.id] = sel.value;
+                        saveState(state);
+                        const allFilled = task.fields.every(f =>
+                            state.responses[questId]['card_builder'] && state.responses[questId]['card_builder'][f.id]
+                        );
+                        if (cbRevealBtn) { cbRevealBtn.disabled = !allFilled; cbRevealBtn.classList.toggle('ready', allFilled); }
+                    });
+                    selWrap.appendChild(sel);
+                    row.appendChild(selWrap);
+                    cbForm.appendChild(row);
+                });
+                cbWrap.appendChild(cbForm);
+
+                // Reveal button
+                const allCardFilled = task.fields.every(f => savedCard[f.id]);
+                const cbRevealBtn = document.createElement('button');
+                cbRevealBtn.className = 'cb-reveal-btn' + (allCardFilled ? ' ready' : '');
+                cbRevealBtn.disabled = !allCardFilled;
+                cbRevealBtn.textContent = task.revealButtonText;
+
+                // Card result
+                const cbResult = document.createElement('div');
+                cbResult.className = 'cb-result';
+
+                function showFinalCard() {
+                    const data = state.responses[questId]['card_builder'] || savedCard;
+                    cbForm.style.display = 'none';
+                    cbRevealBtn.style.display = 'none';
+                    cbResult.innerHTML = `
+                        <div class="cb-confetti">🎊✨🎉✨🎊</div>
+                        <div class="cb-card">
+                            <div class="cb-card-img-wrap">
+                                <img src="photos/${task.image}" class="cb-card-img" onerror="this.src='photos/${task.fallbackImage}'">
+                            </div>
+                            <div class="cb-card-body">
+                                <div class="cb-card-title">${data.title || ''}</div>
+                                <div class="cb-card-line">🗡️ ${data.weapon || ''}</div>
+                                <div class="cb-card-line">🎯 ${data.goal || ''}</div>
+                            </div>
+                        </div>
+                        <div class="cb-finale">${task.completionMessage}</div>
+                    `;
+                    cbResult.classList.add('visible');
+                    cbResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                cbRevealBtn.addEventListener('click', () => {
+                    if (cbRevealBtn.disabled) return;
+                    if (!state.responses[questId]) state.responses[questId] = {};
+                    state.responses[questId]['card_revealed'] = true;
+                    saveState(state);
+                    updateCompleteButton();
+                    showFinalCard();
+                });
+
+                cbWrap.appendChild(cbRevealBtn);
+                cbWrap.appendChild(cbResult);
+                taskEl.appendChild(cbWrap);
+
+                if (cardRevealed) showFinalCard();
+                break;
         }
 
         body.appendChild(taskEl);
@@ -1699,6 +1877,19 @@ function getQuestValidation(questId) {
                 break;
             case 'trophy-select':
                 if (!responses['proudest_medal']) missing.push('בחירת הגביע');
+                break;
+            case 'secret-envelopes':
+                const anyEnvOpened = task.envelopes.some((_, i) => responses[`envelope_${i}`]);
+                if (!anyEnvOpened) missing.push('המעטפות הסודיות');
+                break;
+            case 'power-select':
+                if (!responses[`power_choice_${tIdx}`]) missing.push('בחירת הכוח');
+                break;
+            case 'emotion-board':
+                if (responses[`emotion_${tIdx}`] === undefined) missing.push('לוח הרגשות');
+                break;
+            case 'card-builder':
+                if (!responses['card_revealed']) missing.push('קלף הבר מצווה');
                 break;
         }
     });
