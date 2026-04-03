@@ -322,7 +322,7 @@ const QUESTS = [
                 type: "twin-sort",
                 stageTitle: "גיל ינקות - המיון הראשון",
                 stageIcon: "👶",
-                image: "placeholder_twins_babies.jpg",
+                image: "placeholder_twins_babies.jpeg",
                 intro: "נולדנו יחד באותו יום! בהתחלה היינו פשוט תאומים חמודים שנראים כמעט אותו דבר... בוא נגלה מתי אנחנו דומים ומתי שונים. פזר את כרטיסיות הזיכרון לקופסאות הנכונות:",
                 bins: ["רק גיא", "שנינו ביחד!", "רק מיקה"],
                 cards: [
@@ -338,7 +338,7 @@ const QUESTS = [
                 type: "twin-sort",
                 stageTitle: "גיל הילדות ובית הספר - מגלים כוחות חדשים",
                 stageIcon: "🎒",
-                image: "placeholder_twins_kids.jpg",
+                image: "placeholder_twins_kids.jpeg",
                 intro: "ככל שגדלנו, התחלנו לגלות שלכל אחד מאיתנו יש כוחות מיוחדים ותחומי עניין משלו. איזה כוח התפתח אצלך ואיזה אצל מיקה?",
                 bins: ["רק גיא", "שנינו ביחד!", "רק מיקה"],
                 cards: [
@@ -354,7 +354,7 @@ const QUESTS = [
                 type: "twin-madlibs",
                 stageTitle: "נוער (היום) - המרכיב ברכה למיקה",
                 stageIcon: "💌",
-                image: "placeholder_twins_teens.jpg",
+                image: "placeholder_twins_teens.jpeg",
                 intro: "היום אנחנו כבר בני 12 וחצי, נערים בוגרים ומיוחדים. בוא נרכיב למיקה ברכה מיוחדת מהלב שלך.",
                 template: "מיקה, להיות תאום שלך זה תמיד {1}. אני הכי אוהב בך שאת {2}, ואני תמיד אהיה פה כדי {3}.",
                 fields: [
