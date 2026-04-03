@@ -1093,6 +1093,221 @@ select.task-select {
 
 .twin-input-row .task-input-small { flex: 1; }
 
+/* ===== Twin Sort (Quest 6) ===== */
+.ts-container {
+    width: 100%;
+}
+
+.ts-stage-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    direction: rtl;
+}
+
+.ts-stage-icon {
+    font-size: 2rem;
+}
+
+.ts-stage-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.ts-image-wrap {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.ts-image, .ml-image {
+    width: 100%;
+    border-radius: 16px;
+    object-fit: cover;
+    max-height: 200px;
+}
+
+.ts-intro {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    text-align: right;
+}
+
+/* Bins row */
+.ts-bins {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.ts-bin {
+    background: color-mix(in srgb, var(--bin-color) 10%, white);
+    border: 3px dashed var(--bin-color);
+    border-radius: 16px;
+    padding: 10px 6px;
+    min-height: 120px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ts-bin:hover {
+    border-style: solid;
+    background: color-mix(in srgb, var(--bin-color) 18%, white);
+}
+
+.ts-bin-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.ts-bin-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+/* Card pool */
+.ts-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.ts-card {
+    background: #fff;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    max-width: 200px;
+}
+
+.ts-card:hover {
+    border-color: #999;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.ts-card.selected {
+    border-color: #E91E63;
+    background: #fce4ec;
+    box-shadow: 0 0 12px rgba(233, 30, 99, 0.3);
+    transform: scale(1.05);
+}
+
+.ts-card.placed {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    cursor: default;
+    max-width: none;
+}
+
+.ts-card.correct {
+    background: #e8f5e9;
+    border-color: #4CAF50;
+    color: #2e7d32;
+}
+
+.ts-card.correct::after {
+    content: ' ✓';
+    color: #4CAF50;
+    font-weight: 900;
+}
+
+.ts-card.wrong {
+    background: #ffebee;
+    border-color: #f44336;
+    animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+/* ===== Mad Libs (Quest 6) ===== */
+.ml-container {
+    width: 100%;
+}
+
+.ml-sentence {
+    background: linear-gradient(135deg, #fff3e0, #fce4ec);
+    border: 3px solid #E91E63;
+    border-radius: 18px;
+    padding: 20px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 2.2;
+    color: #333;
+    text-align: right;
+    direction: rtl;
+}
+
+.ml-select {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    border: 2px solid #E91E63;
+    border-radius: 10px;
+    background: #fff;
+    color: #E91E63;
+    cursor: pointer;
+    appearance: auto;
+    margin: 0 4px;
+}
+
+.ml-select:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(233, 30, 99, 0.3);
+}
+
+.ml-completion {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.ml-completion.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 16px;
+}
+
+.ml-completion p {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border: 2px solid #4CAF50;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    font-weight: 700;
+    color: #2e7d32;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
 /* ===== Superpower Survey ===== */
 .superpower-survey { display: flex; flex-direction: column; gap: 12px; }
 

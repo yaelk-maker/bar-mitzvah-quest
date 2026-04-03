@@ -1070,6 +1070,186 @@ function openQuest(questId) {
                 taskEl.appendChild(unique);
                 break;
 
+            case 'twin-sort':
+                taskEl.innerHTML = '';
+                const tsWrap = document.createElement('div');
+                tsWrap.className = 'ts-container';
+                const tsStageKey = `twin_sort_${tIdx}`;
+
+                // Stage header
+                tsWrap.innerHTML = `
+                    <div class="ts-stage-header">
+                        <span class="ts-stage-icon">${task.stageIcon}</span>
+                        <h3 class="ts-stage-title">${task.stageTitle}</h3>
+                    </div>
+                    <div class="ts-image-wrap">
+                        <img src="photos/${task.image}" alt="${task.stageTitle}" class="ts-image" onerror="this.style.display='none'">
+                    </div>
+                    <p class="ts-intro">${task.intro}</p>
+                `;
+
+                // Build bins
+                const tsBinsRow = document.createElement('div');
+                tsBinsRow.className = 'ts-bins';
+                const binColors = ['#4FC3F7', '#81C784', '#F48FB1'];
+                const binEls = task.bins.map((binName, bIdx) => {
+                    const bin = document.createElement('div');
+                    bin.className = 'ts-bin';
+                    bin.dataset.bin = bIdx;
+                    bin.style.setProperty('--bin-color', binColors[bIdx]);
+                    bin.innerHTML = `<div class="ts-bin-label">${binName}</div><div class="ts-bin-cards"></div>`;
+                    tsBinsRow.appendChild(bin);
+                    return bin;
+                });
+                tsWrap.appendChild(tsBinsRow);
+
+                // Build card pool
+                const tsPool = document.createElement('div');
+                tsPool.className = 'ts-pool';
+                // Shuffle cards for display
+                const shuffledCards = task.cards.map((c, i) => ({ ...c, origIdx: i }));
+                for (let i = shuffledCards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
+                }
+
+                // Load saved placements
+                const savedPlacements = savedResponses[tsStageKey] || {};
+                let tsCorrectCount = 0;
+
+                shuffledCards.forEach(cardData => {
+                    const cardKey = `card_${cardData.origIdx}`;
+                    const savedBin = savedPlacements[cardKey];
+                    const card = document.createElement('div');
+                    card.className = 'ts-card';
+                    card.dataset.correct = cardData.correct;
+                    card.dataset.idx = cardData.origIdx;
+                    card.textContent = cardData.text;
+
+                    if (savedBin !== undefined) {
+                        // Already placed
+                        const isCorrect = parseInt(savedBin) === cardData.correct;
+                        card.classList.add('placed', isCorrect ? 'correct' : 'wrong');
+                        const targetBin = binEls[savedBin];
+                        if (targetBin) {
+                            targetBin.querySelector('.ts-bin-cards').appendChild(card);
+                            if (isCorrect) tsCorrectCount++;
+                        }
+                    } else {
+                        // In pool — needs tap-to-place interaction
+                        card.addEventListener('click', () => {
+                            if (card.classList.contains('placed')) return;
+                            // Toggle selected state
+                            const wasSelected = card.classList.contains('selected');
+                            tsPool.querySelectorAll('.ts-card').forEach(c => c.classList.remove('selected'));
+                            if (!wasSelected) card.classList.add('selected');
+                        });
+                        tsPool.appendChild(card);
+                    }
+                });
+
+                // Bin click to place selected card
+                binEls.forEach((bin, bIdx) => {
+                    bin.addEventListener('click', () => {
+                        const selectedCard = tsPool.querySelector('.ts-card.selected');
+                        if (!selectedCard) return;
+                        const correctBin = parseInt(selectedCard.dataset.correct);
+                        const isCorrect = bIdx === correctBin;
+                        selectedCard.classList.remove('selected');
+                        selectedCard.classList.add('placed', isCorrect ? 'correct' : 'wrong');
+                        bin.querySelector('.ts-bin-cards').appendChild(selectedCard);
+
+                        // Save placement
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        if (!state.responses[questId][tsStageKey]) state.responses[questId][tsStageKey] = {};
+                        state.responses[questId][tsStageKey][`card_${selectedCard.dataset.idx}`] = bIdx;
+                        saveState(state);
+                        updateCompleteButton();
+
+                        // If wrong, bounce back after delay
+                        if (!isCorrect) {
+                            setTimeout(() => {
+                                selectedCard.classList.remove('placed', 'wrong');
+                                tsPool.appendChild(selectedCard);
+                                delete state.responses[questId][tsStageKey][`card_${selectedCard.dataset.idx}`];
+                                saveState(state);
+                            }, 800);
+                        }
+                    });
+                });
+
+                tsWrap.appendChild(tsPool);
+                taskEl.appendChild(tsWrap);
+                break;
+
+            case 'twin-madlibs':
+                taskEl.innerHTML = '';
+                const mlWrap = document.createElement('div');
+                mlWrap.className = 'ml-container';
+                const mlKey = `madlibs_${tIdx}`;
+
+                mlWrap.innerHTML = `
+                    <div class="ts-stage-header">
+                        <span class="ts-stage-icon">${task.stageIcon}</span>
+                        <h3 class="ts-stage-title">${task.stageTitle}</h3>
+                    </div>
+                    <div class="ts-image-wrap">
+                        <img src="photos/${task.image}" alt="${task.stageTitle}" class="ml-image" onerror="this.style.display='none'">
+                    </div>
+                    <p class="ts-intro">${task.intro}</p>
+                `;
+
+                // Build the mad-libs sentence with dropdowns
+                const mlSentence = document.createElement('div');
+                mlSentence.className = 'ml-sentence';
+                const savedMl = savedResponses[mlKey] || {};
+
+                // Parse template: split on {1}, {2}, {3}
+                let templateHtml = task.template;
+                task.fields.forEach((field, fIdx) => {
+                    const selectId = `ml-select-${tIdx}-${fIdx}`;
+                    const savedVal = savedMl[field.id] || '';
+                    const optionsHtml = field.options.map(opt =>
+                        `<option value="${opt}" ${savedVal === opt ? 'selected' : ''}>${opt}</option>`
+                    ).join('');
+                    const selectHtml = `<select id="${selectId}" class="ml-select" data-field="${field.id}">
+                        <option value="">${field.placeholder}</option>${optionsHtml}
+                    </select>`;
+                    templateHtml = templateHtml.replace(`{${fIdx + 1}}`, selectHtml);
+                });
+                mlSentence.innerHTML = templateHtml;
+
+                // Wire up change events
+                mlWrap.appendChild(mlSentence);
+                setTimeout(() => {
+                    mlSentence.querySelectorAll('.ml-select').forEach(sel => {
+                        sel.addEventListener('change', () => {
+                            if (!state.responses[questId]) state.responses[questId] = {};
+                            if (!state.responses[questId][mlKey]) state.responses[questId][mlKey] = {};
+                            state.responses[questId][mlKey][sel.dataset.field] = sel.value;
+                            saveState(state);
+                            updateCompleteButton();
+
+                            // Check if all filled — show completion
+                            const allFilled = task.fields.every(f =>
+                                state.responses[questId][mlKey] && state.responses[questId][mlKey][f.id]
+                            );
+                            const compEl = mlWrap.querySelector('.ml-completion');
+                            if (compEl) compEl.classList.toggle('visible', allFilled);
+                        });
+                    });
+                }, 50);
+
+                // Completion message
+                const mlComp = document.createElement('div');
+                const allMlFilled = task.fields.every(f => savedMl[f.id]);
+                mlComp.className = 'ml-completion' + (allMlFilled ? ' visible' : '');
+                mlComp.innerHTML = `<p>${task.completionMessage}</p>`;
+                mlWrap.appendChild(mlComp);
+
+                taskEl.appendChild(mlWrap);
+                break;
+
             case 'superpower-survey':
                 taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
                 const survey = document.createElement('div');
@@ -1210,6 +1390,16 @@ function getQuestValidation(questId) {
                 break;
             case 'drag-select':
                 if (responses[`drag_${tIdx}`] === undefined) missing.push('המשפט שמתאים לך');
+                break;
+            case 'twin-sort':
+                const sortData = responses[`twin_sort_${tIdx}`];
+                const allSorted = sortData && task.cards.every((_, i) => sortData[`card_${i}`] !== undefined);
+                if (!allSorted) missing.push(task.stageTitle);
+                break;
+            case 'twin-madlibs':
+                const mlData = responses[`madlibs_${tIdx}`];
+                const allMlFields = mlData && task.fields.every(f => mlData[f.id]);
+                if (!allMlFields) missing.push('הברכה למיקה');
                 break;
         }
     });
