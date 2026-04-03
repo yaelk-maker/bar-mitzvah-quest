@@ -1339,8 +1339,6 @@ select.task-select {
 .trophy-hero-img,
 .trophy-hero-video {
     width: 100%;
-    max-height: 300px;
-    object-fit: cover;
     border-radius: 16px;
     border: 4px solid #FFD54F;
     box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
