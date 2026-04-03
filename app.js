@@ -1076,7 +1076,7 @@ function openQuest(questId) {
                 tsWrap.className = 'ts-container';
                 const tsStageKey = `twin_sort_${tIdx}`;
 
-                // Stage header
+                // Stage header + image + intro
                 tsWrap.innerHTML = `
                     <div class="ts-stage-header">
                         <span class="ts-stage-icon">${task.stageIcon}</span>
@@ -1106,16 +1106,39 @@ function openQuest(questId) {
                 // Build card pool
                 const tsPool = document.createElement('div');
                 tsPool.className = 'ts-pool';
-                // Shuffle cards for display
                 const shuffledCards = task.cards.map((c, i) => ({ ...c, origIdx: i }));
                 for (let i = shuffledCards.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
                 }
 
-                // Load saved placements
                 const savedPlacements = savedResponses[tsStageKey] || {};
-                let tsCorrectCount = 0;
+
+                // Shared function: place a card into a bin
+                function placeCardInBin(card, bIdx) {
+                    const correctBin = parseInt(card.dataset.correct);
+                    const isCorrect = bIdx === correctBin;
+                    card.classList.remove('selected', 'dragging');
+                    card.classList.add('placed', isCorrect ? 'correct' : 'wrong');
+                    card.removeAttribute('draggable');
+                    binEls[bIdx].querySelector('.ts-bin-cards').appendChild(card);
+
+                    if (!state.responses[questId]) state.responses[questId] = {};
+                    if (!state.responses[questId][tsStageKey]) state.responses[questId][tsStageKey] = {};
+                    state.responses[questId][tsStageKey][`card_${card.dataset.idx}`] = bIdx;
+                    saveState(state);
+                    updateCompleteButton();
+
+                    if (!isCorrect) {
+                        setTimeout(() => {
+                            card.classList.remove('placed', 'wrong');
+                            card.setAttribute('draggable', 'true');
+                            tsPool.appendChild(card);
+                            delete state.responses[questId][tsStageKey][`card_${card.dataset.idx}`];
+                            saveState(state);
+                        }, 800);
+                    }
+                }
 
                 shuffledCards.forEach(cardData => {
                     const cardKey = `card_${cardData.origIdx}`;
@@ -1127,19 +1150,24 @@ function openQuest(questId) {
                     card.textContent = cardData.text;
 
                     if (savedBin !== undefined) {
-                        // Already placed
                         const isCorrect = parseInt(savedBin) === cardData.correct;
                         card.classList.add('placed', isCorrect ? 'correct' : 'wrong');
                         const targetBin = binEls[savedBin];
-                        if (targetBin) {
-                            targetBin.querySelector('.ts-bin-cards').appendChild(card);
-                            if (isCorrect) tsCorrectCount++;
-                        }
+                        if (targetBin) targetBin.querySelector('.ts-bin-cards').appendChild(card);
                     } else {
-                        // In pool — needs tap-to-place interaction
+                        // Drag & Drop
+                        card.setAttribute('draggable', 'true');
+                        card.addEventListener('dragstart', (e) => {
+                            card.classList.add('dragging');
+                            e.dataTransfer.setData('text/plain', cardData.origIdx);
+                            e.dataTransfer.effectAllowed = 'move';
+                        });
+                        card.addEventListener('dragend', () => {
+                            card.classList.remove('dragging');
+                        });
+                        // Click fallback (tap on mobile)
                         card.addEventListener('click', () => {
                             if (card.classList.contains('placed')) return;
-                            // Toggle selected state
                             const wasSelected = card.classList.contains('selected');
                             tsPool.querySelectorAll('.ts-card').forEach(c => c.classList.remove('selected'));
                             if (!wasSelected) card.classList.add('selected');
@@ -1148,33 +1176,28 @@ function openQuest(questId) {
                     }
                 });
 
-                // Bin click to place selected card
+                // Bin: drag-over + drop + click fallback
                 binEls.forEach((bin, bIdx) => {
+                    bin.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        bin.classList.add('drag-over');
+                    });
+                    bin.addEventListener('dragleave', () => {
+                        bin.classList.remove('drag-over');
+                    });
+                    bin.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        bin.classList.remove('drag-over');
+                        const dragIdx = e.dataTransfer.getData('text/plain');
+                        const draggedCard = tsPool.querySelector(`.ts-card[data-idx="${dragIdx}"]`) ||
+                                            tsWrap.querySelector(`.ts-card.dragging`);
+                        if (draggedCard) placeCardInBin(draggedCard, bIdx);
+                    });
+                    // Click fallback for selected card
                     bin.addEventListener('click', () => {
                         const selectedCard = tsPool.querySelector('.ts-card.selected');
-                        if (!selectedCard) return;
-                        const correctBin = parseInt(selectedCard.dataset.correct);
-                        const isCorrect = bIdx === correctBin;
-                        selectedCard.classList.remove('selected');
-                        selectedCard.classList.add('placed', isCorrect ? 'correct' : 'wrong');
-                        bin.querySelector('.ts-bin-cards').appendChild(selectedCard);
-
-                        // Save placement
-                        if (!state.responses[questId]) state.responses[questId] = {};
-                        if (!state.responses[questId][tsStageKey]) state.responses[questId][tsStageKey] = {};
-                        state.responses[questId][tsStageKey][`card_${selectedCard.dataset.idx}`] = bIdx;
-                        saveState(state);
-                        updateCompleteButton();
-
-                        // If wrong, bounce back after delay
-                        if (!isCorrect) {
-                            setTimeout(() => {
-                                selectedCard.classList.remove('placed', 'wrong');
-                                tsPool.appendChild(selectedCard);
-                                delete state.responses[questId][tsStageKey][`card_${selectedCard.dataset.idx}`];
-                                saveState(state);
-                            }, 800);
-                        }
+                        if (selectedCard) placeCardInBin(selectedCard, bIdx);
                     });
                 });
 
