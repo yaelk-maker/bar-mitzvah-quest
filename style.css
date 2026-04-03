@@ -1330,6 +1330,232 @@ select.task-select {
     line-height: 1.6;
 }
 
+/* ===== Trophy Cabinet (Quest 7) ===== */
+.trophy-hero {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.trophy-hero-img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 16px;
+    border: 4px solid #FFD54F;
+    box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
+}
+
+.trophy-hero-caption {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #F57F17;
+    margin-top: 10px;
+}
+
+/* Cabinet */
+.tc-wrap {
+    width: 100%;
+}
+
+.tc-cabinet {
+    background: linear-gradient(180deg, #5D4037 0%, #4E342E 100%);
+    border: 4px solid #8D6E63;
+    border-radius: 18px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    min-height: 200px;
+}
+
+.tc-shelf {
+    background: linear-gradient(180deg, #8D6E63 0%, #6D4C41 100%);
+    border-radius: 10px;
+    min-height: 60px;
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 4px solid #4E342E;
+    transition: all 0.2s ease;
+}
+
+.tc-shelf.drag-over {
+    background: linear-gradient(180deg, #A1887F 0%, #8D6E63 100%);
+    box-shadow: inset 0 0 12px rgba(255, 213, 79, 0.4);
+    border-color: #FFD54F;
+}
+
+/* Medal pool */
+.tc-medal-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+    padding: 12px;
+    background: #f5f0e8;
+    border-radius: 16px;
+    border: 2px dashed #BCAAA4;
+}
+
+/* Medal */
+.tc-medal {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, var(--medal-color), color-mix(in srgb, var(--medal-color) 70%, white));
+    border: 2px solid color-mix(in srgb, var(--medal-color) 80%, #333);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333;
+    cursor: grab;
+    transition: all 0.25s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.tc-medal:active:not(.placed) { cursor: grabbing; }
+
+.tc-medal:hover:not(.placed) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.tc-medal.dragging { opacity: 0.5; }
+
+.tc-medal.selected {
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.5);
+    transform: scale(1.05);
+    border-color: #FFC107;
+}
+
+.tc-medal.placed {
+    cursor: pointer;
+    border-style: solid;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.tc-medal.proudest {
+    border-color: #FFD54F;
+    box-shadow: 0 0 16px rgba(255, 213, 79, 0.6);
+    transform: scale(1.1);
+}
+
+.tc-medal-icon { font-size: 1.3rem; }
+.tc-medal-text { white-space: nowrap; }
+
+/* Medal Factory */
+.mf-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.mf-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mf-prefix {
+    font-weight: 700;
+    color: #5D4037;
+    font-size: 0.95rem;
+}
+
+.mf-select {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    border: 2px solid #FFC107;
+    border-radius: 12px;
+    background: #fffde7;
+    color: #333;
+    cursor: pointer;
+    appearance: auto;
+}
+
+.mf-select:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+}
+
+.mf-preview {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.4s ease;
+}
+
+.mf-preview.visible {
+    max-height: 120px;
+    opacity: 1;
+}
+
+.mf-custom-medal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #F57F17;
+    background: linear-gradient(135deg, #fffde7, #fff8e1);
+    border: 3px solid #FFC107;
+    border-radius: 20px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 0 16px rgba(255, 193, 7, 0.3);
+}
+
+/* Trophy Select */
+.tselect-wrap { text-align: center; }
+
+.tselect-hint {
+    font-size: 0.9rem;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 12px;
+}
+
+.tselect-trophy {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.5s ease;
+    text-align: center;
+}
+
+.tselect-trophy.visible {
+    max-height: 200px;
+    opacity: 1;
+    margin-bottom: 12px;
+}
+
+.tselect-golden {
+    font-size: 5rem;
+    animation: trophyPulse 1.5s ease infinite;
+}
+
+@keyframes trophyPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(255,193,7,0.4)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(255,193,7,0.8)); }
+}
+
+.tselect-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #F57F17;
+    margin-top: 8px;
+}
+
 /* ===== Superpower Survey ===== */
 .superpower-survey { display: flex; flex-direction: column; gap: 12px; }
 

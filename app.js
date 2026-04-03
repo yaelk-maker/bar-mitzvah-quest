@@ -1273,6 +1273,193 @@ function openQuest(questId) {
                 taskEl.appendChild(mlWrap);
                 break;
 
+            case 'trophy-hero-image':
+                taskEl.innerHTML = `
+                    <div class="trophy-hero">
+                        <img src="photos/${task.image}" alt="${task.caption}" class="trophy-hero-img"
+                             onerror="this.src='photos/${task.fallbackImage}'">
+                        <div class="trophy-hero-caption">${task.caption}</div>
+                    </div>
+                `;
+                break;
+
+            case 'trophy-cabinet':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const tcWrap = document.createElement('div');
+                tcWrap.className = 'tc-wrap';
+
+                // Build cabinet with 3 shelves
+                const cabinet = document.createElement('div');
+                cabinet.className = 'tc-cabinet';
+                for (let sh = 0; sh < 3; sh++) {
+                    const shelf = document.createElement('div');
+                    shelf.className = 'tc-shelf';
+                    shelf.dataset.shelf = sh;
+
+                    // Drag over/leave/drop for shelf
+                    shelf.addEventListener('dragover', (e) => { e.preventDefault(); shelf.classList.add('drag-over'); });
+                    shelf.addEventListener('dragleave', () => shelf.classList.remove('drag-over'));
+                    shelf.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        shelf.classList.remove('drag-over');
+                        const medalId = e.dataTransfer.getData('text/plain');
+                        const medal = tcWrap.querySelector(`.tc-medal[data-id="${medalId}"]`);
+                        if (medal && !medal.classList.contains('placed')) {
+                            medal.classList.add('placed');
+                            medal.removeAttribute('draggable');
+                            shelf.appendChild(medal);
+                            if (!state.responses[questId]) state.responses[questId] = {};
+                            if (!state.responses[questId]['cabinet']) state.responses[questId]['cabinet'] = {};
+                            state.responses[questId]['cabinet'][medalId] = sh;
+                            saveState(state);
+                            updateCompleteButton();
+                            if (window._wireProudestClick) window._wireProudestClick(medal);
+                        }
+                    });
+                    // Click fallback
+                    shelf.addEventListener('click', () => {
+                        const selected = medalPool.querySelector('.tc-medal.selected');
+                        if (selected && !selected.classList.contains('placed')) {
+                            selected.classList.remove('selected');
+                            selected.classList.add('placed');
+                            selected.removeAttribute('draggable');
+                            shelf.appendChild(selected);
+                            if (!state.responses[questId]) state.responses[questId] = {};
+                            if (!state.responses[questId]['cabinet']) state.responses[questId]['cabinet'] = {};
+                            state.responses[questId]['cabinet'][selected.dataset.id] = sh;
+                            saveState(state);
+                            updateCompleteButton();
+                            if (window._wireProudestClick) window._wireProudestClick(selected);
+                        }
+                    });
+                    cabinet.appendChild(shelf);
+                }
+                tcWrap.appendChild(cabinet);
+
+                // Medal pool
+                const medalPool = document.createElement('div');
+                medalPool.className = 'tc-medal-pool';
+                const savedCabinet = savedResponses['cabinet'] || {};
+
+                task.medals.forEach(m => {
+                    const medal = document.createElement('div');
+                    medal.className = 'tc-medal';
+                    medal.dataset.id = m.id;
+                    medal.style.setProperty('--medal-color', m.color);
+                    medal.innerHTML = `<span class="tc-medal-icon">${m.icon}</span><span class="tc-medal-text">${m.text}</span>`;
+
+                    if (savedCabinet[m.id] !== undefined) {
+                        medal.classList.add('placed');
+                        const targetShelf = cabinet.querySelectorAll('.tc-shelf')[savedCabinet[m.id]];
+                        if (targetShelf) targetShelf.appendChild(medal);
+                    } else {
+                        medal.setAttribute('draggable', 'true');
+                        medal.addEventListener('dragstart', (e) => {
+                            medal.classList.add('dragging');
+                            e.dataTransfer.setData('text/plain', m.id);
+                            e.dataTransfer.effectAllowed = 'move';
+                        });
+                        medal.addEventListener('dragend', () => medal.classList.remove('dragging'));
+                        medal.addEventListener('click', () => {
+                            const wasSelected = medal.classList.contains('selected');
+                            medalPool.querySelectorAll('.tc-medal').forEach(m => m.classList.remove('selected'));
+                            if (!wasSelected) medal.classList.add('selected');
+                        });
+                        medalPool.appendChild(medal);
+                    }
+                });
+                tcWrap.appendChild(medalPool);
+                taskEl.appendChild(tcWrap);
+                break;
+
+            case 'medal-factory':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const mfWrap = document.createElement('div');
+                mfWrap.className = 'mf-wrap';
+                const savedFactory = savedResponses['medal_factory'] || {};
+
+                task.fields.forEach(field => {
+                    const row = document.createElement('div');
+                    row.className = 'mf-row';
+                    row.innerHTML = `<span class="mf-prefix">${field.prefix}</span>`;
+                    const sel = document.createElement('select');
+                    sel.className = 'mf-select';
+                    sel.innerHTML = `<option value="">בחר...</option>` +
+                        field.options.map(o => `<option value="${o}" ${savedFactory[field.id] === o ? 'selected' : ''}>${o}</option>`).join('');
+                    sel.addEventListener('change', () => {
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        if (!state.responses[questId]['medal_factory']) state.responses[questId]['medal_factory'] = {};
+                        state.responses[questId]['medal_factory'][field.id] = sel.value;
+                        saveState(state);
+                        updateCompleteButton();
+                        // Check if all filled -> show custom medal
+                        const allFilled = task.fields.every(f =>
+                            state.responses[questId]['medal_factory'] && state.responses[questId]['medal_factory'][f.id]
+                        );
+                        const preview = mfWrap.querySelector('.mf-preview');
+                        if (preview) preview.classList.toggle('visible', allFilled);
+                    });
+                    row.appendChild(sel);
+                    mfWrap.appendChild(row);
+                });
+
+                // Custom medal preview
+                const allFactoryFilled = task.fields.every(f => savedFactory[f.id]);
+                const preview = document.createElement('div');
+                preview.className = 'mf-preview' + (allFactoryFilled ? ' visible' : '');
+                preview.innerHTML = `<div class="mf-custom-medal">🥇<span>המדליה האישית שלך!</span></div>`;
+                mfWrap.appendChild(preview);
+                taskEl.appendChild(mfWrap);
+                break;
+
+            case 'trophy-select':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const tselectWrap = document.createElement('div');
+                tselectWrap.className = 'tselect-wrap';
+                const savedProudest = savedResponses['proudest_medal'];
+
+                const tselectHint = document.createElement('p');
+                tselectHint.className = 'tselect-hint';
+                tselectHint.textContent = 'לחץ על מדליה אחת בארון למעלה כדי לבחור אותה כגביע הזהב שלך!';
+                tselectWrap.appendChild(tselectHint);
+
+                const trophyDisplay = document.createElement('div');
+                trophyDisplay.className = 'tselect-trophy' + (savedProudest ? ' visible' : '');
+                if (savedProudest) {
+                    trophyDisplay.innerHTML = `<div class="tselect-golden">🏆</div><div class="tselect-text">${savedProudest}</div>`;
+                }
+                tselectWrap.appendChild(trophyDisplay);
+
+                const tcompEl = document.createElement('div');
+                tcompEl.className = 'ml-completion' + (savedProudest ? ' visible' : '');
+                tcompEl.innerHTML = `<p>${task.completionMessage}</p>`;
+                tselectWrap.appendChild(tcompEl);
+
+                taskEl.appendChild(tselectWrap);
+
+                // Store a global function that cabinet can call when medals are placed
+                window._wireProudestClick = function(medal) {
+                    medal.style.cursor = 'pointer';
+                    medal.addEventListener('click', () => {
+                        document.querySelectorAll('.tc-medal.proudest').forEach(m => m.classList.remove('proudest'));
+                        medal.classList.add('proudest');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId]['proudest_medal'] = medal.querySelector('.tc-medal-text').textContent;
+                        saveState(state);
+                        updateCompleteButton();
+                        trophyDisplay.innerHTML = `<div class="tselect-golden">🏆</div><div class="tselect-text">${medal.querySelector('.tc-medal-text').textContent}</div>`;
+                        trophyDisplay.classList.add('visible');
+                        tcompEl.classList.add('visible');
+                        trophyDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                };
+
+                // Wire already-placed medals (from saved state)
+                setTimeout(() => {
+                    document.querySelectorAll('.tc-medal.placed').forEach(m => window._wireProudestClick(m));
+                }, 100);
+                break;
+
             case 'superpower-survey':
                 taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
                 const survey = document.createElement('div');
@@ -1423,6 +1610,19 @@ function getQuestValidation(questId) {
                 const mlData = responses[`madlibs_${tIdx}`];
                 const allMlFields = mlData && task.fields.every(f => mlData[f.id]);
                 if (!allMlFields) missing.push('הברכה למיקה');
+                break;
+            case 'trophy-cabinet':
+                const cab = responses['cabinet'];
+                const allMedals = cab && task.medals.every(m => cab[m.id] !== undefined);
+                if (!allMedals) missing.push('מדליות בארון');
+                break;
+            case 'medal-factory':
+                const factory = responses['medal_factory'];
+                const allFactory = factory && task.fields.every(f => factory[f.id]);
+                if (!allFactory) missing.push('המדליה האישית');
+                break;
+            case 'trophy-select':
+                if (!responses['proudest_medal']) missing.push('בחירת הגביע');
                 break;
         }
     });
