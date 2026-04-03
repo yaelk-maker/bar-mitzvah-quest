@@ -1373,15 +1373,25 @@ function openQuest(questId) {
                 break;
 
             case 'medal-factory':
-                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                taskEl.innerHTML = '';
                 const mfWrap = document.createElement('div');
                 mfWrap.className = 'mf-wrap';
                 const savedFactory = savedResponses['medal_factory'] || {};
+
+                // Factory header
+                mfWrap.innerHTML = `
+                    <div class="mf-header">
+                        <span class="mf-header-icon">🏭</span>
+                        <span class="mf-header-title">${task.label}</span>
+                    </div>
+                `;
 
                 task.fields.forEach(field => {
                     const row = document.createElement('div');
                     row.className = 'mf-row';
                     row.innerHTML = `<span class="mf-prefix">${field.prefix}</span>`;
+                    const selWrap = document.createElement('div');
+                    selWrap.className = 'mf-select-wrap';
                     const sel = document.createElement('select');
                     sel.className = 'mf-select';
                     sel.innerHTML = `<option value="">בחר...</option>` +
@@ -1392,23 +1402,70 @@ function openQuest(questId) {
                         state.responses[questId]['medal_factory'][field.id] = sel.value;
                         saveState(state);
                         updateCompleteButton();
-                        // Check if all filled -> show custom medal
+                        // Enable/disable produce button
                         const allFilled = task.fields.every(f =>
                             state.responses[questId]['medal_factory'] && state.responses[questId]['medal_factory'][f.id]
                         );
-                        const preview = mfWrap.querySelector('.mf-preview');
-                        if (preview) preview.classList.toggle('visible', allFilled);
+                        const produceBtn = mfWrap.querySelector('.mf-produce-btn');
+                        if (produceBtn) {
+                            produceBtn.disabled = !allFilled;
+                            produceBtn.classList.toggle('ready', allFilled);
+                        }
                     });
-                    row.appendChild(sel);
+                    selWrap.appendChild(sel);
+                    row.appendChild(selWrap);
                     mfWrap.appendChild(row);
                 });
 
-                // Custom medal preview
+                // Produce button
                 const allFactoryFilled = task.fields.every(f => savedFactory[f.id]);
-                const preview = document.createElement('div');
-                preview.className = 'mf-preview' + (allFactoryFilled ? ' visible' : '');
-                preview.innerHTML = `<div class="mf-custom-medal">🥇<span>המדליה האישית שלך!</span></div>`;
-                mfWrap.appendChild(preview);
+                const produceBtn = document.createElement('button');
+                produceBtn.className = 'mf-produce-btn' + (allFactoryFilled ? ' ready' : '');
+                produceBtn.disabled = !allFactoryFilled;
+                produceBtn.textContent = 'ייצר את המדליה שלי! ✨';
+
+                // Medal result area
+                const mfResult = document.createElement('div');
+                mfResult.className = 'mf-result';
+                const alreadyProduced = savedResponses['medal_produced'] === true;
+
+                if (alreadyProduced) {
+                    const medalText = [savedFactory.proud, savedFactory.topic, savedFactory.power].filter(Boolean).join(' + ');
+                    mfResult.innerHTML = `<div class="mf-produced-medal"><span class="mf-produced-icon">🥇</span><span class="mf-produced-text">המדליה האישית שלך!</span><span class="mf-produced-detail">${medalText}</span></div>`;
+                    mfResult.classList.add('visible');
+                    produceBtn.style.display = 'none';
+                }
+
+                produceBtn.addEventListener('click', () => {
+                    if (produceBtn.disabled) return;
+                    if (!state.responses[questId]) state.responses[questId] = {};
+                    state.responses[questId]['medal_produced'] = true;
+                    saveState(state);
+
+                    const factory = state.responses[questId]['medal_factory'] || {};
+                    const medalText = [factory.proud, factory.topic, factory.power].filter(Boolean).join(' + ');
+                    mfResult.innerHTML = `<div class="mf-produced-medal"><span class="mf-produced-icon">🥇</span><span class="mf-produced-text">המדליה האישית שלך!</span><span class="mf-produced-detail">${medalText}</span></div>`;
+                    mfResult.classList.add('visible');
+                    produceBtn.style.display = 'none';
+
+                    // Also add as a medal in the cabinet
+                    const cabinet = document.querySelector('.tc-cabinet');
+                    if (cabinet) {
+                        const customMedal = document.createElement('div');
+                        customMedal.className = 'tc-medal placed';
+                        customMedal.dataset.id = 'custom';
+                        customMedal.style.setProperty('--medal-color', '#FFD54F');
+                        customMedal.innerHTML = `<span class="tc-medal-icon">🥇</span><span class="tc-medal-text">המדליה האישית שלי</span>`;
+                        const firstShelf = cabinet.querySelector('.tc-shelf');
+                        if (firstShelf) firstShelf.appendChild(customMedal);
+                        if (window._wireProudestClick) window._wireProudestClick(customMedal);
+                    }
+
+                    mfResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+
+                mfWrap.appendChild(produceBtn);
+                mfWrap.appendChild(mfResult);
                 taskEl.appendChild(mfWrap);
                 break;
 
