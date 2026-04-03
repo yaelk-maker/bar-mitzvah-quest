@@ -383,6 +383,7 @@ const QUESTS = [
         tasks: [
             {
                 type: "trophy-hero-image",
+                video: "guy_soccer_video.mp4",
                 image: "guy_soccer_victory.jpg",
                 fallbackImage: "גיא ילד יום הולדת.jpg",
                 caption: "וואו, תראו איזה הישג מטורף! גיא הלוחם!"

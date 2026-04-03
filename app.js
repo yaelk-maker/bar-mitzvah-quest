@@ -1276,8 +1276,8 @@ function openQuest(questId) {
             case 'trophy-hero-image':
                 taskEl.innerHTML = `
                     <div class="trophy-hero">
-                        <img src="photos/${task.image}" alt="${task.caption}" class="trophy-hero-img"
-                             onerror="this.src='photos/${task.fallbackImage}'">
+                        <video src="photos/${task.video || task.image}" autoplay loop muted playsinline class="trophy-hero-video"
+                               onerror="this.outerHTML='<img src=\\'photos/${task.fallbackImage}\\' class=\\'trophy-hero-img\\' />'"></video>
                         <div class="trophy-hero-caption">${task.caption}</div>
                     </div>
                 `;
