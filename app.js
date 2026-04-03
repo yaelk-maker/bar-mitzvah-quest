@@ -444,34 +444,58 @@ function openQuest(questId) {
                 taskEl.innerHTML = '';
                 const hjWrap = document.createElement('div');
                 hjWrap.className = 'hj-container';
-                // Timeline line
-                const timeline = document.createElement('div');
-                timeline.className = 'hj-timeline';
+                // Instruction text
+                const hjInstruction = document.createElement('div');
+                hjInstruction.className = 'hj-instruction';
+                hjInstruction.innerHTML = '📂 כדי לגלות את סיפור הגבורה שלך, פתח את 3 תיקי החקירה הבאים:';
+                hjWrap.appendChild(hjInstruction);
+                // Accordion cards
+                const hjAccordion = document.createElement('div');
+                hjAccordion.className = 'hj-accordion';
                 task.stations.forEach((station, sIdx) => {
                     const sKey = `hj_station_${station.id}`;
                     const isRevealed = savedResponses[sKey] === true;
-                    const node = document.createElement('div');
-                    node.className = 'hj-node' + (isRevealed ? ' revealed' : '');
-                    node.style.setProperty('--station-color', station.color);
-                    node.innerHTML = `
-                        <div class="hj-node-dot"><span class="hj-node-icon">${station.icon}</span></div>
-                        <div class="hj-node-title">${station.title}</div>
+                    const card = document.createElement('div');
+                    card.className = 'hj-card' + (isRevealed ? ' open' : '');
+                    card.style.setProperty('--station-color', station.color);
+                    // Card header (always visible, clickable)
+                    const header = document.createElement('button');
+                    header.className = 'hj-card-header';
+                    header.setAttribute('aria-expanded', isRevealed ? 'true' : 'false');
+                    header.innerHTML = `
+                        <span class="hj-card-icon">${station.icon}</span>
+                        <span class="hj-card-title">${station.title}</span>
+                        <span class="hj-card-hint">${isRevealed ? 'סגור 🔼' : 'לחץ לפתיחה 🔽'}</span>
                     `;
-                    const textBox = document.createElement('div');
-                    textBox.className = 'hj-text-box' + (isRevealed ? ' visible' : '');
-                    textBox.innerHTML = `<p>${station.text}</p>`;
-                    node.addEventListener('click', () => {
-                        if (node.classList.contains('revealed')) return;
-                        node.classList.add('revealed');
-                        textBox.classList.add('visible');
-                        if (!state.responses[questId]) state.responses[questId] = {};
-                        state.responses[questId][sKey] = true;
-                        saveState(state);
+                    // Card body (expandable)
+                    const body = document.createElement('div');
+                    body.className = 'hj-card-body';
+                    body.innerHTML = `<p>${station.text}</p>`;
+                    header.addEventListener('click', () => {
+                        const isOpen = card.classList.contains('open');
+                        if (isOpen) {
+                            // Close this card
+                            card.classList.remove('open');
+                            header.querySelector('.hj-card-hint').textContent = 'לחץ לפתיחה 🔽';
+                            header.setAttribute('aria-expanded', 'false');
+                        } else {
+                            // Open this card
+                            card.classList.add('open');
+                            header.querySelector('.hj-card-hint').textContent = 'סגור 🔼';
+                            header.setAttribute('aria-expanded', 'true');
+                            // Save as revealed
+                            if (!state.responses[questId]) state.responses[questId] = {};
+                            if (!state.responses[questId][sKey]) {
+                                state.responses[questId][sKey] = true;
+                                saveState(state);
+                            }
+                        }
                     });
-                    timeline.appendChild(node);
-                    timeline.appendChild(textBox);
+                    card.appendChild(header);
+                    card.appendChild(body);
+                    hjAccordion.appendChild(card);
                 });
-                hjWrap.appendChild(timeline);
+                hjWrap.appendChild(hjAccordion);
                 taskEl.appendChild(hjWrap);
                 break;
 

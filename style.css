@@ -1588,90 +1588,134 @@ select.task-select {
 }
 
 /* ===== Hero Journey Timeline (Quest 4) ===== */
+/* ── Hero Journey: Accordion Cards ── */
 .hj-container {
     width: 100%;
 }
 
-.hj-timeline {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    position: relative;
-    padding: 10px 0;
+.hj-instruction {
+    background: linear-gradient(135deg, #fff3e0, #fff8e1);
+    border: 3px solid #ff8f00;
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #4e342e;
+    text-align: center;
+    line-height: 1.6;
 }
 
-.hj-timeline::before {
-    display: none;
-}
-
-.hj-node {
+.hj-accordion {
     display: flex;
     flex-direction: column;
+    gap: 12px;
+}
+
+/* Card - closed state */
+.hj-card {
+    border-radius: 18px;
+    border: 3px solid var(--station-color, #7EC8E3);
+    background: #f7f9ff;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.hj-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Card - open state: glowing focus border */
+.hj-card.open {
+    border-color: var(--station-color, #7EC8E3);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--station-color) 35%, transparent),
+                0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card header button */
+.hj-card-header {
+    width: 100%;
+    display: flex;
     align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border: none;
+    background: none;
     cursor: pointer;
-    z-index: 1;
-    transition: transform 0.3s ease;
-    padding: 8px;
+    font-family: inherit;
+    direction: rtl;
+    transition: background 0.2s ease;
 }
 
-.hj-node:hover { transform: scale(1.05); }
+.hj-card-header:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
 
-.hj-node-dot {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: #2a2a4a;
-    border: 4px solid var(--station-color, #7EC8E3);
+.hj-card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.4s ease;
-    box-shadow: 0 0 0 rgba(0,0,0,0);
+    background: color-mix(in srgb, var(--station-color) 15%, white);
+    border-radius: 14px;
+    border: 2px solid var(--station-color, #7EC8E3);
 }
 
-.hj-node.revealed .hj-node-dot {
+.hj-card.open .hj-card-icon {
     background: var(--station-color, #7EC8E3);
-    box-shadow: 0 0 20px color-mix(in srgb, var(--station-color) 40%, transparent);
+    border-color: var(--station-color, #7EC8E3);
 }
 
-.hj-node-icon {
-    font-size: 2rem;
+.hj-card-title {
+    flex: 1;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    text-align: right;
 }
 
-.hj-node-title {
-    margin-top: 6px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    text-align: center;
+.hj-card-hint {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #888;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
 }
 
-.hj-text-box {
+.hj-card.open .hj-card-hint {
+    color: var(--station-color, #7EC8E3);
+}
+
+/* Card body - expandable */
+.hj-card-body {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.3s ease;
-    width: 100%;
-    padding: 0 8px;
+    transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.3s ease;
+    padding: 0 18px;
 }
 
-.hj-text-box.visible {
-    max-height: 200px;
+.hj-card.open .hj-card-body {
+    max-height: 300px;
     opacity: 1;
-    padding: 8px;
+    padding: 0 18px 18px;
 }
 
-.hj-text-box p {
-    background: #f0f4ff;
+.hj-card-body p {
+    background: color-mix(in srgb, var(--station-color) 8%, #f8f9ff);
     border-radius: 14px;
-    padding: 14px 16px;
-    color: var(--text-medium);
-    font-size: 0.95rem;
-    line-height: 1.7;
+    border-right: 4px solid var(--station-color, #7EC8E3);
+    padding: 16px 18px;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.8;
     margin: 0;
-    text-align: center;
-    animation: fadeSlideIn 0.5s ease;
+    text-align: right;
+    animation: fadeSlideIn 0.4s ease;
 }
 
 @keyframes fadeSlideIn {
