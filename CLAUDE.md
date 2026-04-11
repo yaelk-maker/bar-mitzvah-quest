@@ -31,7 +31,8 @@ bar-mitzvah-quest/
 │   ├── placeholder_twins_teens.jpeg  # Quest 6
 │   ├── guy_soccer_video.mp4          # Quest 7 (autoplay loop)
 │   └── [11 Hebrew-named family photos]
-├── brainrot/           # SAB voxel character PNGs (7 figures, 90px each)
+├── Videos - step 9/    # Quest 9 greeting videos (Hebrew filenames)
+├── brainrot/           # SAB voxel character PNGs (7 figures, 120px each)
 ├── CLAUDE.md, README.md, STITCH_PROMPT.md
 ```
 
@@ -62,11 +63,11 @@ bar-mitzvah-quest/
 
 ### Map System
 - Background: `map-bg.png` (lava, dark theme)
-- Banner: 60px centered gradient header with "מסע הגיבורים של גיא"
-- Nodes: x/y percentages defined in `MAP_POSITIONS` (quests.js)
+- Banner: 72px centered gradient header with "מסע הגיבורים של גיא"
+- Nodes: 90px circles, x/y percentages defined in `MAP_POSITIONS` (quests.js)
 - SVG curves: lava-orange trail + bright green completed overlay
-- Characters: 7 SAB voxel PNGs, 90px each, static positioned (BRAINROT_CHARS in app.js)
-- XP bar: gold on dark background
+- Characters: 7 SAB voxel PNGs, 120px each, static positioned (BRAINROT_CHARS in app.js)
+- XP bar: 300px wide, gold on dark background
 - No scrolling: all 10 nodes + chars fit in 100vh
 
 ### Family Tree (Quest 1)
@@ -97,8 +98,10 @@ bar-mitzvah-quest/
 | `trophy-cabinet` | Wooden shelf + drag & drop medals + live counter | 7 |
 | `medal-factory` | Factory UI with custom dropdowns, produce button, animated result | 7 |
 | `trophy-select` | Click placed medal → golden trophy pulse | 7 |
-| `secret-envelopes` | 3D flip cards, corkboard Flexbox layout, nth-child rotations | 8 |
+| `secret-envelopes` | Scattered expand/collapse cards, asymmetric sizes, click-to-toggle | 8 |
 | `superpower-survey` | Name + power dropdown (5 people) | 8 |
+| `cinema-videos` | Scattered title cards → fullscreen overlay video player | 9 |
+| `emotion-board` | Emotion selection grid | 9 |
 | `support-map` | Categorized name + message inputs | 9 |
 | `story` | Styled text block | — |
 
@@ -113,35 +116,44 @@ bar-mitzvah-quest/
 | 5 - המוח שלי עובד אחרת | Complete | Meters + map + flip cards |
 | 6 - תאום אבל אני | Complete | 2x drag & drop + mad-libs |
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
-| 8 - הסופרפאוורס שלי | Complete | 8 corkboard flip cards (real messages) + power select |
-| 9 - האנשים שלי | Partial | 10 cinema videos (5 real + 5 placeholder) + emotion board |
+| 8 - הסופרפאוורס שלי | Complete | 8 scattered envelope cards (real messages) + power select |
+| 9 - האנשים שלי | Partial | 10 video title cards with overlay player (6 real + 4 placeholder) + emotion board |
 | 10 - מי אני עכשיו | Needs content | Personal manifesto |
 
 ## Design System
 | Element | Value |
 |---------|-------|
-| Theme | Dark lava/volcanic game + bright neon |
+| Theme | Dark glassmorphism + neon gaming (RPG quest log) |
 | Background | `map-bg.png` (map); `#1a1025` (body) |
-| Banner | Dark gradient, gold/orange/pink text (Bungee) |
-| Cards | White, 20px rounded, chunky borders, shadows |
-| Buttons | Chunky game style, bottom shadow (3D) |
-| Completed nodes | Green neon glow |
+| Banner | 72px dark gradient, gold/orange/pink text (Bungee) |
+| Cards | Dark glass `rgba(15,15,35,0.75)`, `backdrop-filter: blur(12px)`, neon borders |
+| Inputs | Dark bg `rgba(0,0,0,0.4)`, white text, neon blue focus glow |
+| Buttons | Chunky game style, green neon glow on hover with `scale(1.03)` |
+| Quest layout | Full-width PC, `max-width: 1400px` body, `900px` task blocks centered |
+| Completed nodes | Green neon glow, 90px circles |
 | Next node | Yellow neon pulse |
 | Locked nodes | Dark volcanic stone |
 | Path: default | `#ff8f00` (lava orange) |
 | Path: completed | `#76ff03` (bright green) |
+| Text: primary | `#e8e8f0` (light on dark) |
+| Text: secondary | `#b0b0d0` (muted light) |
+| Neon border | `rgba(100, 200, 255, 0.25)` (cyan glow) |
 | Text direction | RTL (Hebrew); XP numbers use ltr + isolate |
-| Characters | 7 SAB voxel PNGs, 90px, static |
+| Characters | 7 SAB voxel PNGs, 120px, static |
+| Scrollbar | Custom dark: translucent cyan thumb on dark track |
 | Accessibility | Clear instructions, visual affordances, progress counters (autistic user friendly) |
 
 ## Constraints
 - **Hebrew RTL**: Numbers in XP need `direction: ltr; unicode-bidi: isolate`
 - **No frameworks**: Vanilla only
+- **PC-first design**: Optimized for desktop; mobile not currently supported
+- **Dark theme**: All new components must use dark glass backgrounds, neon borders, light text (`var(--text-dark)` / `var(--text-medium)`). Never use `#fff`, `#333`, or `color-mix(..., white)`
 - **Photo filenames**: Hebrew characters (e.g., `סבא מישה (מצד אבא).jpg`); twins use `.jpeg`
 - **Photo centering**: Custom `object-position` via `photoPos` field in quests.js
-- **Brainrot**: SAB voxel PNGs only, all 90px, static (no emoji, no animations)
+- **Brainrot**: SAB voxel PNGs only, all 120px, static (no emoji, no animations)
 - **Map scaling**: All 10 nodes + chars fit in 100vh, no scrolling
-- **Family tree image**: ~800KB compressed (original 6MB)
+- **Family tree**: Displayed at 1200px max-width with transparent task block container
+- **Media max-height**: Images/videos capped at 450px
 - **Cache busting**: Auto via timestamps in index.html
 
 ## Common Tasks
@@ -156,7 +168,7 @@ bar-mitzvah-quest/
 
 **Change family tree photos**: Edit `treePositions` in `renderFamilyTree()` (app.js). Each: `idx` (member index), `left`/`top` (%), `cls` (ftree-gp, ftree-parent, ftree-child, ftree-hero).
 
-**Add brainrot chars**: Edit `BRAINROT_CHARS` (app.js). Each: `{ img, top, right/left, size }` (all 90px). Add PNGs to brainrot/ folder.
+**Add brainrot chars**: Edit `BRAINROT_CHARS` (app.js). Each: `{ img, top, right/left, size }` (all 120px). Add PNGs to brainrot/ folder.
 
 **Deploy**: `git add . && git commit -m "description" && git push`. Auto-deploys from master (1-2 min). Cache busting is automatic.
 
@@ -176,9 +188,10 @@ location.reload();
 ```
 
 ## Known Issues / TODO
-- Quests 8-10 need parent content
+- Quest 10 needs content
+- Quest 9 has 4 placeholder videos remaining
 - Hero Book PDF export is basic (browser print)
-- Mobile responsive design incomplete
+- Mobile responsive design not supported (PC-first)
 - Completed quest artifact preview on map (deferred)
 - Presentation export not implemented
 - Family tree photo positions may need fine-tuning per screen size

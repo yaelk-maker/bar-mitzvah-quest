@@ -19,8 +19,8 @@ The app uses a treasure map interface with a winding lava path, brainrot meme ch
 | 5 | המוח שלי עובד אחרת (My Brain Works Differently) | CP & autism | Trait sliders + brain bubble energy map + flip cards |
 | 6 | תאום אבל אני (Twin But Me) | Twin identity with Mika | Card sorting (drag & drop) + mad-libs blessing |
 | 7 | הדרך שעשיתי (The Road I've Traveled) | Personal achievements | Trophy cabinet (drag & drop) + medal factory + golden trophy |
-| 8 | הסופרפאוורס שלי (My Superpowers) | Strengths survey | Superpower survey (5 people) |
-| 9 | האנשים שלי (My People) | Support network | Support map |
+| 8 | הסופרפאוורס שלי (My Superpowers) | Secret messages | 8 scattered envelope cards with personal messages + power select |
+| 9 | האנשים שלי (My People) | Video greetings | Title cards → overlay video player + emotion board |
 | 10 | מי אני עכשיו (Who I Am Now) | Personal manifesto | Story + manifesto |
 
 ## How It Works
@@ -29,10 +29,12 @@ The app uses a treasure map interface with a winding lava path, brainrot meme ch
 - **XP system**: 100 XP per quest, 1000 XP total
 - **Validation**: Complete button only enables after interacting with every section
 - **Auto-save**: All responses saved to localStorage in real time
-- **Drag & Drop**: Quests 6 and 7 use HTML5 drag & drop with click fallback for mobile
+- **Drag & Drop**: Quests 6 and 7 use HTML5 drag & drop with click fallback
+- **Envelope cards**: Quest 8 uses scattered expand/collapse cards with asymmetric sizes
+- **Video overlay**: Quest 9 hides videos behind title cards; click opens fullscreen overlay player
 - **Accessibility**: Clear visual affordances, instruction text, progress counters designed for autistic user
 - **Hero Book**: After completing all quests, view/export the full identity book
-- **Family tree**: Quest 1 builds an illustrated family tree from family member photos
+- **Family tree**: Quest 1 builds an illustrated family tree from family member photos (displayed at 1000px+)
 
 ## Tech Stack
 
@@ -50,32 +52,37 @@ The app uses a treasure map interface with a winding lava path, brainrot meme ch
 
 ## Design
 
-The visual style is a dark lava/volcanic game aesthetic:
-- Lava map background with winding orange trail connecting quest nodes
+The visual style is a dark glassmorphism gaming aesthetic (RPG quest log feel):
+- Lava map background with winding orange trail connecting 90px quest nodes
 - Bright green neon glow on completed quests, yellow pulse on next quest
-- SAB (Steal a Brainrot) voxel characters scattered across the map
-- Chunky game-style buttons with 3D shadow effects
-- White cards with thick borders and rounded corners
+- SAB (Steal a Brainrot) voxel characters (120px) scattered across the map
+- Dark glass cards (`rgba(15,15,35,0.75)`) with `backdrop-filter: blur` and cyan neon borders
+- Light text on dark backgrounds with neon accent colors
+- Full-width PC layout (1400px quest body, 900px task blocks centered)
+- Chunky game-style buttons with neon glow on hover
 - Wooden trophy cabinet with medal system
 - Purple gradient medal factory
 - Brain silhouette with colored energy bubbles
+- Custom dark scrollbar with cyan thumb
+- Scattered asymmetric card layouts for envelopes and video cards
 
 ## Project Structure
 
 ```
-index.html      -> Main HTML (3 screens: map, quest, book)
-app.js          -> Application logic, rendering, validation (~1600 lines)
-quests.js       -> Quest data model & map positions (~530 lines)
-style.css       -> All styles (~2200 lines)
-manifest.json   -> PWA configuration
-photos/         -> Family photos, stage photos, video
-brainrot/       -> SAB voxel character images (7 PNGs)
+index.html              -> Main HTML (3 screens: map, quest, book)
+app.js                  -> Application logic, rendering, validation (~1900 lines)
+quests.js               -> Quest data model & map positions (~530 lines)
+style.css               -> All styles (~3200 lines, dark glassmorphism theme)
+manifest.json           -> PWA configuration
+photos/                 -> Family photos, stage photos, video
+photos/Videos - step 9/ -> Quest 9 greeting videos
+brainrot/               -> SAB voxel character images (7 PNGs, 120px)
 ```
 
 ## Timeline
 
-- **Now - April 2026**: Content preparation + design refinement (Quests 1-7 complete)
-- **April - May 2026**: Complete Quests 8-10 content
+- **Now - April 2026**: Content preparation + design refinement (Quests 1-8 complete, Quest 9 partial)
+- **April - May 2026**: Complete Quest 9 videos + Quest 10 content
 - **May 2026**: App ready, Guy starts Quest 1
 - **May - July 12**: ~1 quest per week (10 weeks)
 - **July 12-18**: Finalize Hero Book + Bar Mitzvah presentation
