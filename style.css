@@ -1694,29 +1694,37 @@ select.task-select {
 }
 
 .env-wrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px 16px;
-    align-items: start;
-    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
 }
 
 .env-card {
     perspective: 800px;
+    width: 100%;
+    max-width: 340px;
     min-height: 200px;
     cursor: pointer;
-    transform: rotate(var(--env-rotate, 0deg));
     transition: transform 0.3s ease;
-    z-index: var(--env-z, 1);
+}
+
+.env-card:nth-child(odd) {
+    transform: rotate(-2deg);
+}
+
+.env-card:nth-child(even) {
+    transform: rotate(3deg);
+}
+
+.env-card:last-child {
+    max-width: 800px;
+    transform: rotate(0deg) !important;
 }
 
 .env-card:hover {
     z-index: 10;
-}
-
-/* Odelia's card spans full width */
-.env-card.env-wide {
-    grid-column: 1 / -1;
 }
 
 .env-card-inner {
@@ -1743,6 +1751,7 @@ select.task-select {
     padding: 18px;
     border: 3px solid var(--env-color, #7C4DFF);
     background: linear-gradient(145deg, color-mix(in srgb, var(--env-color) 15%, white), color-mix(in srgb, var(--env-color) 30%, white));
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
     gap: 10px;
 }
 
@@ -1757,6 +1766,7 @@ select.task-select {
     padding: 14px;
     border: 3px solid var(--env-color, #7C4DFF);
     background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
     transform: rotateY(180deg);
     min-height: 200px;
 }
@@ -1784,7 +1794,7 @@ select.task-select {
 }
 
 .env-card:not(.opened):hover {
-    transform: rotate(0deg) translateY(-4px);
+    transform: rotate(0deg) translateY(-4px) !important;
 }
 
 .env-card:not(.opened):hover .env-card-front {
@@ -1792,10 +1802,10 @@ select.task-select {
 }
 
 .env-card-back .env-quote {
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #333;
-    line-height: 1.55;
+    line-height: 1.6;
     font-style: italic;
     text-align: center;
     margin: 0;

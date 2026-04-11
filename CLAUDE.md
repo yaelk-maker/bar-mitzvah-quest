@@ -97,6 +97,7 @@ bar-mitzvah-quest/
 | `trophy-cabinet` | Wooden shelf + drag & drop medals + live counter | 7 |
 | `medal-factory` | Factory UI with custom dropdowns, produce button, animated result | 7 |
 | `trophy-select` | Click placed medal → golden trophy pulse | 7 |
+| `secret-envelopes` | 3D flip cards, corkboard Flexbox layout, nth-child rotations | 8 |
 | `superpower-survey` | Name + power dropdown (5 people) | 8 |
 | `support-map` | Categorized name + message inputs | 9 |
 | `story` | Styled text block | — |
@@ -112,7 +113,7 @@ bar-mitzvah-quest/
 | 5 - המוח שלי עובד אחרת | Complete | Meters + map + flip cards |
 | 6 - תאום אבל אני | Complete | 2x drag & drop + mad-libs |
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
-| 8 - הסופרפאוורס שלי | Complete | 8 secret envelopes (real messages) + power select |
+| 8 - הסופרפאוורס שלי | Complete | 8 corkboard flip cards (real messages) + power select |
 | 9 - האנשים שלי | Partial | 10 cinema videos (5 real + 5 placeholder) + emotion board |
 | 10 - מי אני עכשיו | Needs content | Personal manifesto |
 
