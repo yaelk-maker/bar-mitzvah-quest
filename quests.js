@@ -484,9 +484,16 @@ const QUESTS = [
                 type: "cinema-videos",
                 label: "סרטוני הברכה שלך:",
                 videos: [
-                    { src: "family_video_1.mp4", title: "ברכה ממשפחה" },
-                    { src: "family_video_2.mp4", title: "ברכה מחברים" },
-                    { src: "family_video_3.mp4", title: "ברכה מיוחדת" }
+                    { src: "Videos - step 9/סרטון - אליה.mp4", title: "ברכה מאליה" },
+                    { src: "Videos - step 9/סרטון - יובל והמשפחה.mp4", title: "ברכה מיובל והמשפחה" },
+                    { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
+                    { src: "Videos - step 9/סרטון - סבתא ציליה.mp4", title: "ברכה מסבתא ציליה" },
+                    { src: "Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
+                    { src: "Videos - step 9/placeholder_6.mp4", title: "ברכה 6" },
+                    { src: "Videos - step 9/placeholder_7.mp4", title: "ברכה 7" },
+                    { src: "Videos - step 9/placeholder_8.mp4", title: "ברכה 8" },
+                    { src: "Videos - step 9/placeholder_9.mp4", title: "ברכה 9" },
+                    { src: "Videos - step 9/placeholder_10.mp4", title: "ברכה 10" }
                 ]
             },
             {
@@ -502,7 +509,7 @@ const QUESTS = [
         ],
         artifact: {
             title: "קולנוע ה-VIP שלי",
-            description: "סרטוני הברכה + הרגש שבחרת"
+            description: "10 סרטוני ברכה + הרגש שבחרת"
         }
     },
     {

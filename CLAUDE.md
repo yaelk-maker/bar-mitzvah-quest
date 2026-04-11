@@ -113,7 +113,7 @@ bar-mitzvah-quest/
 | 6 - תאום אבל אני | Complete | 2x drag & drop + mad-libs |
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
 | 8 - הסופרפאוורס שלי | Complete | 8 secret envelopes (real messages) + power select |
-| 9 - האנשים שלי | Needs content | Support map |
+| 9 - האנשים שלי | Partial | 10 cinema videos (5 real + 5 placeholder) + emotion board |
 | 10 - מי אני עכשיו | Needs content | Personal manifesto |
 
 ## Design System
