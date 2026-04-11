@@ -1713,7 +1713,7 @@ select.task-select {
 }
 
 .env-card.opened .env-content {
-    max-height: 500px;
+    max-height: 600px;
     opacity: 1;
     padding: 16px 20px;
 }
