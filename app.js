@@ -1601,12 +1601,17 @@ function openQuest(questId) {
                 taskEl.appendChild(envProgress);
                 const envWrap = document.createElement('div');
                 envWrap.className = 'env-wrap';
+                const envRotations = [-2.5, 1.8, -1.2, 2.8, -2, 1.5, -1.8, 0.5];
+                const envZIndexes = [2, 3, 1, 2, 3, 1, 2, 1];
                 task.envelopes.forEach((env, eIdx) => {
                     const envKey = `envelope_${eIdx}`;
                     const isOpened = savedResponses[envKey] === true;
+                    const isLast = eIdx === task.envelopes.length - 1;
                     const envEl = document.createElement('div');
-                    envEl.className = 'env-card' + (isOpened ? ' opened' : '');
+                    envEl.className = 'env-card' + (isOpened ? ' opened' : '') + (isLast ? ' env-wide' : '');
                     envEl.style.setProperty('--env-color', env.color);
+                    envEl.style.setProperty('--env-rotate', (envRotations[eIdx] || 0) + 'deg');
+                    envEl.style.setProperty('--env-z', envZIndexes[eIdx] || 1);
                     envEl.innerHTML = `
                         <div class="env-card-inner">
                             <div class="env-card-front">
