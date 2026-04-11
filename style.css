@@ -1697,18 +1697,19 @@ select.task-select {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
+    align-items: stretch;
 }
 
 .env-card {
     perspective: 800px;
-    height: 220px;
+    min-height: 200px;
     cursor: pointer;
 }
 
 .env-card-inner {
     position: relative;
     width: 100%;
-    height: 100%;
+    min-height: 200px;
     transition: transform 0.6s ease;
     transform-style: preserve-3d;
 }
@@ -1717,8 +1718,7 @@ select.task-select {
     transform: rotateY(180deg);
 }
 
-.env-card-front,
-.env-card-back {
+.env-card-front {
     position: absolute;
     inset: 0;
     backface-visibility: hidden;
@@ -1729,12 +1729,23 @@ select.task-select {
     justify-content: center;
     padding: 18px;
     border: 3px solid var(--env-color, #7C4DFF);
-    overflow: hidden;
-}
-
-.env-card-front {
     background: linear-gradient(145deg, color-mix(in srgb, var(--env-color) 15%, white), color-mix(in srgb, var(--env-color) 30%, white));
     gap: 10px;
+}
+
+.env-card-back {
+    position: relative;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    border: 3px solid var(--env-color, #7C4DFF);
+    background: #fff;
+    transform: rotateY(180deg);
+    min-height: 200px;
 }
 
 .env-card-front .env-icon {
@@ -1763,25 +1774,15 @@ select.task-select {
     box-shadow: 0 8px 24px color-mix(in srgb, var(--env-color) 35%, transparent);
 }
 
-.env-card-back {
-    background: #fff;
-    transform: rotateY(180deg);
-    justify-content: center;
-    padding: 16px;
-    overflow-y: auto;
-}
-
 .env-card-back .env-quote {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: #333;
-    line-height: 1.6;
+    line-height: 1.55;
     font-style: italic;
     text-align: center;
     margin: 0;
-    flex: 1;
     width: 100%;
-    overflow-y: auto;
 }
 
 .env-card-back .env-from {
@@ -1790,17 +1791,6 @@ select.task-select {
     color: var(--env-color);
     text-align: center;
     margin-top: 8px;
-    flex-shrink: 0;
-}
-
-/* Long messages (like Odelia) - taller card, scrollable back */
-.env-card.env-long {
-    height: 320px;
-}
-.env-card.env-long .env-card-back .env-quote {
-    font-size: 0.75rem;
-    line-height: 1.45;
-    align-items: flex-start;
 }
 
 /* ===== Cinema Videos (Quest 9) ===== */

@@ -1604,9 +1604,8 @@ function openQuest(questId) {
                 task.envelopes.forEach((env, eIdx) => {
                     const envKey = `envelope_${eIdx}`;
                     const isOpened = savedResponses[envKey] === true;
-                    const isLong = env.quote.length > 400;
                     const envEl = document.createElement('div');
-                    envEl.className = 'env-card' + (isOpened ? ' opened' : '') + (isLong ? ' env-long' : '');
+                    envEl.className = 'env-card' + (isOpened ? ' opened' : '');
                     envEl.style.setProperty('--env-color', env.color);
                     envEl.innerHTML = `
                         <div class="env-card-inner">
