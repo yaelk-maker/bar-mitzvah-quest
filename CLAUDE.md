@@ -1,192 +1,171 @@
 # Bar Mitzvah Quest - Claude Development Guide
 
 ## Project Overview
-A gamified Bar Mitzvah identity quest PWA for Guy (12.5, Bar Mitzvah July 19, 2026). Guy has cerebral palsy and autism, is a twin with his sister Mika. The app is a 10-step RPG-style journey that builds toward a personal "Hero Book" shown at the Bar Mitzvah.
+Gamified Bar Mitzvah identity quest PWA for Guy (12.5, Bar Mitzvah July 19, 2026). RPG-style 10-step journey building toward "Hero Book" displayed at the event. Guy has cerebral palsy and autism; his twin sister is Mika.
 
 ## Tech Stack
 - **Vanilla HTML/CSS/JS** — no frameworks, no build step
-- **PWA** with manifest.json, localStorage for state persistence
-- **Hosted on GitHub Pages**: https://yaelk-maker.github.io/bar-mitzvah-quest/
-- **Repo**: https://github.com/yaelk-maker/bar-mitzvah-quest (public, `master` branch)
-- **Font**: Heebo (Hebrew) + Bungee (titles), loaded from Google Fonts
-- **Cache busting**: JS files loaded with timestamp query params (auto-generated in index.html)
+- **PWA** with manifest.json, localStorage state persistence
+- **Hosted**: https://yaelk-maker.github.io/bar-mitzvah-quest/ (GitHub Pages, `master` branch)
+- **Repo**: https://github.com/yaelk-maker/bar-mitzvah-quest (public)
+- **Fonts**: Heebo (Hebrew) + Bungee (titles) from Google Fonts
+- **Cache busting**: JS files use timestamp query params (auto-generated in index.html)
 
 ## File Structure
 ```
 bar-mitzvah-quest/
-├── index.html          # Main HTML - 3 screens: home map, quest, hero book
-├── app.js              # All app logic: state, navigation, quest rendering, map, validation
-├── quests.js           # Quest data model (10 quests) + MAP_POSITIONS
-├── style.css           # All styles - lava/volcanic game theme
-├── map-bg.png          # Lava/volcanic game map background (from itch.io asset pack)
-├── manifest.json       # PWA manifest
-├── icon-192.png        # PWA icon (192x192)
-├── icon-512.png        # PWA icon (512x512)
-├── photos/             # Family member photos + stage photos + video
+├── index.html          # Main HTML: home map, quest, hero book (3 screens)
+├── app.js              # State, navigation, quest rendering, map, validation
+├── quests.js           # Quest data (10 quests) + MAP_POSITIONS
+├── style.css           # Lava/volcanic game theme
+├── map-bg.png          # Lava map background (itch.io asset pack)
+├── manifest.json, icon-192.png, icon-512.png  # PWA files
+├── photos/             # Family/stage photos + video
 │   ├── family-tree-bg.png            # Illustrated family tree template
-│   ├── placeholder_parents_young.jpg # Quest 3 - parents story
-│   ├── placeholder_neta_baby.jpg     # Quest 3 - Neta as baby
-│   ├── placeholder_nicu_twins.jpg    # Quest 3 - twins in NICU
-│   ├── placeholder_ultrasound.jpg    # Quest 3 - ultrasound
-│   ├── placeholder_twins_babies.jpeg # Quest 6 - twins as babies
-│   ├── placeholder_twins_kids.jpeg   # Quest 6 - twins as kids
-│   ├── placeholder_twins_teens.jpeg  # Quest 6 - twins as teens
-│   ├── guy_soccer_video.mp4          # Quest 7 - hero video (autoplay loop)
-│   └── [11 family member photos with Hebrew filenames]
-├── brainrot/           # SAB (Steal a Brainrot) voxel character PNGs (7 figures)
-│   ├── sab-tralalero.png, sab-shark.png, sab-spaghetti.png
-│   ├── sab-blue.png, sab-giftbox.png, sab-bat.png, sab-67.png
-├── CLAUDE.md           # This file
-├── README.md           # Project documentation
-└── STITCH_PROMPT.md    # Google Stitch design prompts (reference only)
+│   ├── placeholder_parents_young.jpg # Quest 3
+│   ├── placeholder_neta_baby.jpg     # Quest 3
+│   ├── placeholder_nicu_twins.jpg    # Quest 3
+│   ├── placeholder_ultrasound.jpg    # Quest 3
+│   ├── placeholder_twins_babies.jpeg # Quest 6
+│   ├── placeholder_twins_kids.jpeg   # Quest 6
+│   ├── placeholder_twins_teens.jpeg  # Quest 6
+│   ├── guy_soccer_video.mp4          # Quest 7 (autoplay loop)
+│   └── [11 Hebrew-named family photos]
+├── brainrot/           # SAB voxel character PNGs (7 figures, 90px each)
+├── CLAUDE.md, README.md, STITCH_PROMPT.md
 ```
 
 ## Architecture
 
 ### State Management
-- All state stored in `localStorage` under key `bar-mitzvah-quest`
-- State shape: `{ completedQuests: number[], responses: { [questId]: { [key]: value } }, currentQuest: number | null }`
-- `loadState()` / `saveState()` for persistence
-- To reset: `localStorage.removeItem('bar-mitzvah-quest')` in browser console
+- Key: `bar-mitzvah-quest` in localStorage
+- Shape: `{ completedQuests: number[], responses: { [questId]: { [key]: value } }, currentQuest: number | null }`
+- Functions: `loadState()` / `saveState()`
+- Reset: `localStorage.removeItem('bar-mitzvah-quest')` in browser console
 
-### Screen System
-Three screens toggled via CSS `.active` class:
-1. **`screen-home`** — Treasure map with winding path, quest nodes, brainrot characters
-2. **`screen-quest`** — Individual quest view with tasks. Uses `height: 100vh; overflow-y: auto` so sticky footer works.
-3. **`screen-book`** — Hero Book view (all completed quest responses)
+### Screens (toggled via `.active` CSS class)
+| Screen | Purpose |
+|--------|---------|
+| `screen-home` | Treasure map with winding path, quest nodes, brainrot chars |
+| `screen-quest` | Individual quest (height: 100vh; overflow-y: auto) |
+| `screen-book` | Hero Book: all completed quest responses |
 
 ### Quest Progression
-- Sequential unlock: Quest N+1 unlocks only after Quest N is completed
-- Each quest awards 100 XP (total 1000 XP for all 10)
-- Completed quests show green checkmark on map
-- Next available quest pulses yellow
-- Locked quests show grey circle with lock icon (no name visible)
+- Sequential unlock: Quest N+1 unlocks after Quest N completes
+- Each quest: 100 XP (1000 total for all 10)
+- Completed: green checkmark on map
+- Next available: yellow pulse
+- Locked: grey circle + lock icon (no name)
 
-### Quest Completion Validation
-The `getQuestValidation(questId)` function checks per-task-type requirements before enabling the complete button. Each interactive task type has its own validation rule (e.g., at least 1 stone selected, all cards sorted, all dropdowns filled). The complete button starts **disabled** and enables only when all sections pass validation. On click, `completeQuest()` also runs validation and shows a Hebrew toast listing missing items.
+### Quest Validation
+`getQuestValidation(questId)` checks per-task-type requirements. Complete button starts disabled, enables only when all sections pass. On click, re-validates and shows Hebrew toast with missing items.
 
 ### Map System
-- **Background**: Lava/volcanic game map (`map-bg.png`) with dark theme
-- **Banner**: 60px centered header with gradient title "מסע הגיבורים של גיא"
-- `MAP_POSITIONS` array in quests.js defines x/y percentage positions for each node
-- SVG bezier curves connect nodes (lava-orange trail + bright green completed overlay)
-- `BRAINROT_CHARS` array in app.js defines 7 SAB voxel character images (all 90px, static positioned)
-- Map is fullscreen (100vh), no scrolling
-- XP bar with gold colors on dark background
+- Background: `map-bg.png` (lava, dark theme)
+- Banner: 60px centered gradient header with "מסע הגיבורים של גיא"
+- Nodes: x/y percentages defined in `MAP_POSITIONS` (quests.js)
+- SVG curves: lava-orange trail + bright green completed overlay
+- Characters: 7 SAB voxel PNGs, 90px each, static positioned (BRAINROT_CHARS in app.js)
+- XP bar: gold on dark background
+- No scrolling: all 10 nodes + chars fit in 100vh
 
-### Family Tree (Quest 1 - Illustrated Template)
-- Uses `photos/family-tree-bg.png` as background — an illustrated tree with circular photo slots
-- Family member photos are absolutely positioned over the template's circular slots
-- 3 rows: grandparents (top 4), parents & aunts (middle 4 + heart), children (bottom 3)
-- Each member shows: circular photo, name label, relation, and the word Guy wrote
-- Guy's photo has special golden glow (hero style)
-- Positions defined as percentage coordinates in `renderFamilyTree()` function in app.js
+### Family Tree (Quest 1)
+- Background: `photos/family-tree-bg.png` (illustrated tree with circular slots)
+- Layout: 3 rows (grandparents top, parents/aunts middle, children bottom)
+- Photos: absolutely positioned over template slots; Guy has golden glow
+- Data: `renderFamilyTree()` in app.js positions members as % coordinates; `treePositions` array maps idx/left/top/cls
 
 ### Task Types
-Quest tasks are rendered dynamically based on `type`:
-- `info` — Read-only text block
-- `textarea` / `reflection` — Text input areas
-- `family-flow` — Sequential family member cards with per-person word input, culminating in illustrated family tree overlay
-- `kahoot-guide` — Step-by-step guide with numbered list
-- `checklist` — Checkbox items
-- `multiselect` — Multiple choice checkboxes
-- `investigation-quiz` — Multi-step quiz with story reveal, images, and progressive unlocking (Quest 3)
-- `hero-journey` — Accordion collapsible cards with instruction text and clear affordances (Quest 4)
-- `power-stones` — Toggle-able stone icons representing strengths (Quest 4)
-- `message-bubbles` — Single-select message cards (Quest 4)
-- `brain-meters` — Trait sliders with level buttons + brain bubble map reveal (Quest 5)
-- `brain-cards` — Flip cards with "זה אני!" claim buttons (Quest 5)
-- `drag-select` — Single-select sentence cards (Quest 5)
-- `twin-sort` — Card sorting into 3 bins (Guy/Both/Mika) with drag & drop + click fallback. Wrong answers shake and bounce back. (Quest 6)
-- `twin-madlibs` — Mad-libs sentence with dropdown selects (Quest 6)
-- `trophy-hero-image` — Hero video/image at top with golden border. Uses `<video autoplay loop muted playsinline>` with image fallback. (Quest 7)
-- `trophy-cabinet` — Wooden shelf cabinet with drag & drop medal placement + live counter (Quest 7)
-- `medal-factory` — Game-like factory UI with custom dropdowns, produce button, and animated medal result (Quest 7)
-- `trophy-select` — Click a placed medal to crown it as golden trophy with pulse animation (Quest 7)
-- `twin-shared` / `twin-unique` — Numbered text inputs for twin comparison (legacy, replaced by twin-sort)
-- `superpower-survey` — Name + power dropdown for 5 people
-- `support-map` — Categorized name + message inputs
-- `story` — Styled text block for parent-written stories
-- `achievement-picker` — Placeholder for parent-provided achievements (legacy, replaced by trophy-cabinet)
+| Type | Purpose | Quest |
+|------|---------|-------|
+| `info` | Read-only text | — |
+| `textarea` / `reflection` | Text input | — |
+| `family-flow` | Sequential cards → family tree | 1 |
+| `kahoot-guide` | Numbered step list | 2 |
+| `checklist` | Checkboxes | 2 |
+| `multiselect` | Multiple choice checkboxes | — |
+| `investigation-quiz` | Multi-step quiz + images, progressive unlock | 3 |
+| `hero-journey` | Accordion collapsibles with instructions | 4 |
+| `power-stones` | Toggle stone icons (strengths) | 4 |
+| `message-bubbles` | Single-select cards | 4 |
+| `brain-meters` | Sliders + buttons + brain map reveal | 5 |
+| `brain-cards` | Flip cards + "זה אני!" claim buttons | 5 |
+| `drag-select` | Single-select sentence cards | 5 |
+| `twin-sort` | Drag & drop into 3 bins (Guy/Both/Mika); wrong answers shake/bounce | 6 |
+| `twin-madlibs` | Dropdowns in sentence template | 6 |
+| `trophy-hero-image` | Hero video/image with golden border | 7 |
+| `trophy-cabinet` | Wooden shelf + drag & drop medals + live counter | 7 |
+| `medal-factory` | Factory UI with custom dropdowns, produce button, animated result | 7 |
+| `trophy-select` | Click placed medal → golden trophy pulse | 7 |
+| `superpower-survey` | Name + power dropdown (5 people) | 8 |
+| `support-map` | Categorized name + message inputs | 9 |
+| `story` | Styled text block | — |
 
-## Quest Status (as of April 2026)
+## Quest Status (April 2026)
 
-| Quest | Status | Interactive Elements |
-|-------|--------|---------------------|
-| 1 - שורשים | Complete | Family flow + illustrated tree |
-| 2 - משחק המשפחה | Complete | Kahoot guide + checklist |
-| 3 - תיק החקירה | Complete | 4-step investigation quiz with images |
-| 4 - הגיבור שנולד | Complete | Accordion cards + power stones + message bubbles |
-| 5 - המוח שלי עובד אחרת | Complete | Brain meters + brain bubble map + flip cards |
-| 6 - תאום אבל אני | Complete | 2x card sorting (drag & drop) + mad-libs blessing |
-| 7 - הדרך שעשיתי | Complete | Trophy cabinet (drag & drop) + medal factory + golden trophy |
-| 8 - הסופרפאוורס שלי | Needs content | Superpower survey (5 people) |
+| Quest | Status | Content |
+|-------|--------|---------|
+| 1 - שורשים | Complete | Family flow + tree |
+| 2 - משחק המשפחה | Complete | Kahoot + checklist |
+| 3 - תיק החקירה | Complete | 4-step quiz + images |
+| 4 - הגיבור שנולד | Complete | Accordion + stones + bubbles |
+| 5 - המוח שלי עובד אחרת | Complete | Meters + map + flip cards |
+| 6 - תאום אבל אני | Complete | 2x drag & drop + mad-libs |
+| 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
+| 8 - הסופרפאוורס שלי | Complete | 8 secret envelopes (real messages) + power select |
 | 9 - האנשים שלי | Needs content | Support map |
 | 10 - מי אני עכשיו | Needs content | Personal manifesto |
 
 ## Design System
-- **Theme**: Dark lava/volcanic game style with bright neon accents
-- **Map Background**: `map-bg.png` — lava game map from itch.io asset pack
-- **Body Background**: `#1a1025` (dark purple)
-- **Banner**: Dark gradient with gold/orange/pink gradient text (Bungee font)
-- **Cards**: White with chunky borders, rounded corners (20px), drop shadows
-- **Buttons**: Chunky game buttons with bottom shadows (3D effect)
-- **Node styles**: Green neon glow (completed), yellow neon pulse (next), dark volcanic stone (locked)
-- **Path colors**: Lava orange (`#ff8f00`) default, bright green (`#76ff03`) completed
-- **Colors**: See CSS `:root` variables
-- **Direction**: RTL (Hebrew), with LTR isolation for XP numbers
-- **Brainrot characters**: 7 SAB voxel PNGs, static positioned (no animations), uniform 90px size
-- **Accessibility**: Accordion cards use `aria-expanded`, buttons use semantic HTML, clear visual affordances for autistic user
+| Element | Value |
+|---------|-------|
+| Theme | Dark lava/volcanic game + bright neon |
+| Background | `map-bg.png` (map); `#1a1025` (body) |
+| Banner | Dark gradient, gold/orange/pink text (Bungee) |
+| Cards | White, 20px rounded, chunky borders, shadows |
+| Buttons | Chunky game style, bottom shadow (3D) |
+| Completed nodes | Green neon glow |
+| Next node | Yellow neon pulse |
+| Locked nodes | Dark volcanic stone |
+| Path: default | `#ff8f00` (lava orange) |
+| Path: completed | `#76ff03` (bright green) |
+| Text direction | RTL (Hebrew); XP numbers use ltr + isolate |
+| Characters | 7 SAB voxel PNGs, 90px, static |
+| Accessibility | Clear instructions, visual affordances, progress counters (autistic user friendly) |
 
-## Important Constraints
-- **Hebrew RTL**: All text is right-to-left. Numbers in XP display need `direction: ltr; unicode-bidi: isolate`
-- **No frameworks**: Must stay vanilla HTML/CSS/JS
-- **Photo filenames**: Hebrew characters in filenames (e.g., `סבא מישה (מצד אבא).jpg`), twin photos use `.jpeg` extension
-- **Photo face centering**: Each photo has custom `object-position` via `photoPos` field in quests.js
-- **Accessibility for autistic user**: Clear instructions, visual affordances (e.g., "לחץ לפתיחה 🔽"), counters showing progress, no ambiguous interactions
-- **Brainrot characters**: Only SAB (Steal a Brainrot) voxel PNGs from the Figures folder. No emoji, no other meme images. All 90px, static.
-- **Map scaling**: All 10 nodes + characters must fit in one viewport (100vh) without scrolling
-- **Family tree image**: `photos/family-tree-bg.png` compressed to ~800KB for web performance (original was 6MB)
-- **Cache busting**: JS files use timestamp-based cache busting (`document.write` in index.html) to prevent stale code on GitHub Pages
+## Constraints
+- **Hebrew RTL**: Numbers in XP need `direction: ltr; unicode-bidi: isolate`
+- **No frameworks**: Vanilla only
+- **Photo filenames**: Hebrew characters (e.g., `סבא מישה (מצד אבא).jpg`); twins use `.jpeg`
+- **Photo centering**: Custom `object-position` via `photoPos` field in quests.js
+- **Brainrot**: SAB voxel PNGs only, all 90px, static (no emoji, no animations)
+- **Map scaling**: All 10 nodes + chars fit in 100vh, no scrolling
+- **Family tree image**: ~800KB compressed (original 6MB)
+- **Cache busting**: Auto via timestamps in index.html
 
 ## Common Tasks
 
-### Adding/editing a quest
-Edit `quests.js` — add to the `QUESTS` array following the existing pattern. Each quest needs: id, name, subtitle, icon, mapIcon, xp, message, color, intro, tasks[], artifact.
+**Add/edit quest**: Edit `quests.js` QUESTS array. Required: id, name, subtitle, icon, mapIcon, xp, message, color, intro, tasks[], artifact.
 
-### Adding a new task type
-1. Add the `case` in the task rendering `switch` in `showQuest()` in app.js
-2. Add validation in `getQuestValidation()` if the task requires user interaction
-3. Call `updateCompleteButton()` in each click/change handler
-4. Add CSS styles in style.css
+**Add task type**: (1) Add case in `showQuest()` switch (app.js), (2) Add validation in `getQuestValidation()`, (3) Call `updateCompleteButton()` in handlers, (4) Add CSS in style.css.
 
-### Adding quest validation
-Edit `getQuestValidation()` in app.js. Add a `case` for your task type that checks `responses` and pushes to `missing[]` if incomplete. The complete button auto-disables when validation fails.
+**Add validation**: Edit `getQuestValidation()` in app.js. Add case for task type; push to `missing[]` if incomplete.
 
-### Changing map node positions
-Edit `MAP_POSITIONS` in `quests.js`. Values are percentages (x: 0-100, y: 0-100). Ensure all nodes stay within viewport (y max ~75%, x range 10-85%).
+**Change map positions**: Edit `MAP_POSITIONS` in quests.js (x: 0-100, y: 0-100; max y ~75%).
 
-### Changing family tree photo positions
-Edit the `treePositions` array inside `renderFamilyTree()` in `app.js`. Each entry has `idx` (member index in flowMembers), `left`/`top` percentages relative to the tree template image, and `cls` (ftree-gp, ftree-parent, ftree-child, or ftree-hero).
+**Change family tree photos**: Edit `treePositions` in `renderFamilyTree()` (app.js). Each: `idx` (member index), `left`/`top` (%), `cls` (ftree-gp, ftree-parent, ftree-child, ftree-hero).
 
-### Adding/changing brainrot characters
-Edit `BRAINROT_CHARS` array in `app.js`. Each entry: `{ img, top, right/left, size }`. All should be 90px. Add PNGs with transparent backgrounds to `brainrot/` folder.
+**Add brainrot chars**: Edit `BRAINROT_CHARS` (app.js). Each: `{ img, top, right/left, size }` (all 90px). Add PNGs to brainrot/ folder.
 
-### Deploying
-```bash
-git add . && git commit -m "description" && git push
-```
-GitHub Pages auto-deploys from `master` branch. Allow 1-2 minutes for deployment. JS/CSS cache busting is automatic via timestamps.
+**Deploy**: `git add . && git commit -m "description" && git push`. Auto-deploys from master (1-2 min). Cache busting is automatic.
 
-### Resetting quest progress
-Full reset:
+**Reset progress**:
 ```javascript
+// Full reset
 localStorage.removeItem('bar-mitzvah-quest');
 location.reload();
-```
 
-Reset from a specific quest (e.g., keep quests 1-5, reset 6+):
-```javascript
+// Partial (keep quests 1-5, reset 6+)
 let s = JSON.parse(localStorage.getItem('bar-mitzvah-quest'));
 s.completedQuests = s.completedQuests.filter(id => id <= 5);
 [6,7,8,9,10].forEach(id => delete s.responses[id]);
@@ -196,9 +175,9 @@ location.reload();
 ```
 
 ## Known Issues / TODO
-- Quests 8-10 need parent-provided content
+- Quests 8-10 need parent content
 - Hero Book PDF export is basic (browser print)
-- Mobile responsive design not yet fully implemented
-- Completed quests should show artifact preview on map (deferred)
-- Presentation export not implemented yet
-- Family tree photo positions may need fine-tuning on different screen sizes
+- Mobile responsive design incomplete
+- Completed quest artifact preview on map (deferred)
+- Presentation export not implemented
+- Family tree photo positions may need fine-tuning per screen size
