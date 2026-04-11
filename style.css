@@ -1673,69 +1673,134 @@ select.task-select {
     margin-top: 8px;
 }
 
-/* ===== Secret Envelopes (Quest 8) ===== */
+/* ===== Secret Envelopes - Flip Cards (Quest 8) ===== */
+.env-progress {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #673AB7;
+    margin-bottom: 16px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+    border-radius: 14px;
+    border: 2px solid #ce93d8;
+}
+
+.env-progress.all-done {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-color: #66bb6a;
+    color: #2e7d32;
+    font-size: 1.2rem;
+}
+
 .env-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
 }
 
 .env-card {
-    border: 3px solid var(--env-color, #7C4DFF);
-    border-radius: 18px;
-    overflow: hidden;
+    perspective: 800px;
+    height: 220px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    background: #fff;
 }
 
-.env-card:hover:not(.opened) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--env-color) 30%, transparent);
+.env-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s ease;
+    transform-style: preserve-3d;
 }
 
-.env-closed {
-    padding: 18px 20px;
-    font-size: 1.1rem;
+.env-card.opened .env-card-inner {
+    transform: rotateY(180deg);
+}
+
+.env-card-front,
+.env-card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    border: 3px solid var(--env-color, #7C4DFF);
+    overflow: hidden;
+}
+
+.env-card-front {
+    background: linear-gradient(145deg, color-mix(in srgb, var(--env-color) 15%, white), color-mix(in srgb, var(--env-color) 30%, white));
+    gap: 10px;
+}
+
+.env-card-front .env-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.env-card-front .env-name {
+    font-size: 1.05rem;
     font-weight: 700;
     color: #333;
     text-align: center;
-    background: color-mix(in srgb, var(--env-color) 8%, white);
 }
 
-.env-content {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.3s ease;
-    padding: 0 20px;
-    text-align: center;
+.env-card-front .env-hint {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 4px;
 }
 
-.env-card.opened .env-content {
-    max-height: 700px;
-    opacity: 1;
-    padding: 16px 20px;
+.env-card:not(.opened):hover .env-card-inner {
+    transform: rotateY(8deg);
 }
 
-.env-card.opened .env-closed {
-    background: var(--env-color);
-    color: #fff;
+.env-card:not(.opened):hover .env-card-front {
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--env-color) 35%, transparent);
 }
 
-.env-quote {
-    font-size: 1.05rem;
+.env-card-back {
+    background: #fff;
+    transform: rotateY(180deg);
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.env-card-back .env-quote {
+    font-size: 0.95rem;
     font-weight: 600;
     color: #333;
-    line-height: 1.7;
+    line-height: 1.6;
     font-style: italic;
-    margin: 0 0 8px;
+    text-align: center;
+    margin: 0;
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
 }
 
-.env-from {
+.env-card-back .env-from {
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--env-color);
+    text-align: center;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+/* Long messages (like Odelia) - taller card, scrollable back */
+.env-card.env-long {
+    height: 320px;
+}
+.env-card.env-long .env-card-back .env-quote {
+    font-size: 0.75rem;
+    line-height: 1.45;
+    align-items: flex-start;
 }
 
 /* ===== Cinema Videos (Quest 9) ===== */

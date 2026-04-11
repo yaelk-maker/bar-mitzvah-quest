@@ -1591,19 +1591,34 @@ function openQuest(questId) {
 
             case 'secret-envelopes':
                 taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const totalEnv = task.envelopes.length;
+                let openedCount = task.envelopes.filter((_, i) => savedResponses[`envelope_${i}`] === true).length;
+                const envProgress = document.createElement('div');
+                envProgress.className = 'env-progress' + (openedCount === totalEnv ? ' all-done' : '');
+                envProgress.textContent = openedCount === totalEnv
+                    ? 'וואו! גילית את כל כוחות העל שלך! ⚡'
+                    : `פתחת ${openedCount} מתוך ${totalEnv} מעטפות סודיות!`;
+                taskEl.appendChild(envProgress);
                 const envWrap = document.createElement('div');
                 envWrap.className = 'env-wrap';
                 task.envelopes.forEach((env, eIdx) => {
                     const envKey = `envelope_${eIdx}`;
                     const isOpened = savedResponses[envKey] === true;
+                    const isLong = env.quote.length > 400;
                     const envEl = document.createElement('div');
-                    envEl.className = 'env-card' + (isOpened ? ' opened' : '');
+                    envEl.className = 'env-card' + (isOpened ? ' opened' : '') + (isLong ? ' env-long' : '');
                     envEl.style.setProperty('--env-color', env.color);
                     envEl.innerHTML = `
-                        <div class="env-closed">✉️ מעטפה מ${env.from}</div>
-                        <div class="env-content">
-                            <p class="env-quote">"${env.quote}"</p>
-                            <span class="env-from">— ${env.from}</span>
+                        <div class="env-card-inner">
+                            <div class="env-card-front">
+                                <span class="env-icon">✉️</span>
+                                <span class="env-name">מעטפה סודית מ${env.from}</span>
+                                <span class="env-hint">לחץ לגלות!</span>
+                            </div>
+                            <div class="env-card-back">
+                                <p class="env-quote">"${env.quote}"</p>
+                                <span class="env-from">— ${env.from}</span>
+                            </div>
                         </div>
                     `;
                     envEl.addEventListener('click', () => {
@@ -1612,6 +1627,11 @@ function openQuest(questId) {
                         if (!state.responses[questId]) state.responses[questId] = {};
                         state.responses[questId][envKey] = true;
                         saveState(state);
+                        openedCount++;
+                        envProgress.className = 'env-progress' + (openedCount === totalEnv ? ' all-done' : '');
+                        envProgress.textContent = openedCount === totalEnv
+                            ? 'וואו! גילית את כל כוחות העל שלך! ⚡'
+                            : `פתחת ${openedCount} מתוך ${totalEnv} מעטפות סודיות!`;
                         updateCompleteButton();
                     });
                     envWrap.appendChild(envEl);
