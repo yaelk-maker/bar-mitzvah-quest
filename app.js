@@ -1,13 +1,13 @@
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
     // === STEAL A BRAINROT VOXEL CHARACTERS — positioned per user arrows ===
-    { img: 'brainrot/sab-tralalero.png', top: '10%', right: '18%', size: '90px' },
-    { img: 'brainrot/sab-shark.png',     top: '6%',  right: '5%',  size: '90px' },
-    { img: 'brainrot/sab-spaghetti.png', top: '22%', left: '2%',   size: '90px' },
-    { img: 'brainrot/sab-blue.png',      top: '28%', right: '5%',  size: '90px' },
-    { img: 'brainrot/sab-giftbox.png',   top: '48%', left: '2%',   size: '90px' },
-    { img: 'brainrot/sab-bat.png',       top: '48%', right: '5%',  size: '90px' },
-    { img: 'brainrot/sab-67.png',        top: '68%', left: '15%',  size: '90px' },
+    { img: 'brainrot/sab-tralalero.png', top: '10%', right: '18%', size: '120px' },
+    { img: 'brainrot/sab-shark.png',     top: '6%',  right: '5%',  size: '120px' },
+    { img: 'brainrot/sab-spaghetti.png', top: '22%', left: '2%',   size: '120px' },
+    { img: 'brainrot/sab-blue.png',      top: '28%', right: '5%',  size: '120px' },
+    { img: 'brainrot/sab-giftbox.png',   top: '48%', left: '2%',   size: '120px' },
+    { img: 'brainrot/sab-bat.png',       top: '48%', right: '5%',  size: '120px' },
+    { img: 'brainrot/sab-67.png',        top: '68%', left: '15%',  size: '120px' },
 ];
 
 // ===== Lava particles (subtle embers floating on the map) =====
@@ -96,8 +96,11 @@ function updateXPBar() {
 // ===== Screen Navigation =====
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + id).classList.add('active');
+    const screen = document.getElementById('screen-' + id);
+    screen.classList.add('active');
+    // Reset both window scroll and the screen's own scroll container
     window.scrollTo(0, 0);
+    screen.scrollTop = 0;
 }
 
 function showHome() {
@@ -411,7 +414,7 @@ function openQuest(questId) {
                                 const nextStep = iqWrap.querySelector(`.iq-step[data-step="${sIdx + 1}"]`);
                                 if (nextStep) {
                                     nextStep.classList.remove('locked');
-                                    setTimeout(() => nextStep.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
+                                    setTimeout(() => nextStep.scrollIntoView({ behavior: 'smooth', block: 'start' }), 800);
                                 }
                                 // Check if all solved
                                 const allNowSolved = task.steps.every((_, si) => {
@@ -1621,7 +1624,13 @@ function openQuest(questId) {
                         </div>
                     `;
                     envEl.addEventListener('click', () => {
-                        if (envEl.classList.contains('opened')) return;
+                        // Toggle: click again to close
+                        if (envEl.classList.contains('opened')) {
+                            envEl.classList.remove('opened');
+                            return;
+                        }
+                        // Close any other open envelope first
+                        envWrap.querySelectorAll('.env-card.opened').forEach(c => c.classList.remove('opened'));
                         envEl.classList.add('opened');
                         if (!state.responses[questId]) state.responses[questId] = {};
                         state.responses[questId][envKey] = true;
@@ -1669,10 +1678,33 @@ function openQuest(questId) {
                     const vidEl = document.createElement('div');
                     vidEl.className = 'cin-video-box';
                     vidEl.innerHTML = `
-                        <div class="cin-video-title">${vid.title}</div>
-                        <video src="photos/${vid.src}" controls playsinline class="cin-video"
-                               onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרטון יתווסף בקרוב...</div>'"></video>
+                        <div class="cin-video-title">${vid.title}<span class="cin-hint">לחץ לצפייה</span></div>
                     `;
+                    vidEl.addEventListener('click', () => {
+                        // Create overlay
+                        const overlay = document.createElement('div');
+                        overlay.className = 'cin-overlay';
+                        overlay.innerHTML = `
+                            <div class="cin-overlay-inner">
+                                <div class="cin-overlay-title">${vid.title}</div>
+                                <button class="cin-overlay-close">✕</button>
+                                <video src="photos/${vid.src}" controls autoplay playsinline
+                                       onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרטון יתווסף בקרוב...</div>'"></video>
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+                        requestAnimationFrame(() => overlay.classList.add('visible'));
+                        const video = overlay.querySelector('video');
+                        const closeOverlay = () => {
+                            if (video) video.pause();
+                            overlay.classList.remove('visible');
+                            setTimeout(() => overlay.remove(), 300);
+                        };
+                        // Close on: X button, click outside, or video end
+                        overlay.querySelector('.cin-overlay-close').addEventListener('click', (e) => { e.stopPropagation(); closeOverlay(); });
+                        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
+                        if (video) video.addEventListener('ended', () => { setTimeout(closeOverlay, 1000); });
+                    });
                     cinWrap.appendChild(vidEl);
                 });
                 taskEl.appendChild(cinWrap);

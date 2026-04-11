@@ -489,7 +489,7 @@ const QUESTS = [
                     { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
                     { src: "Videos - step 9/סרטון - ציליה.mp4", title: "ברכה מציליה" },
                     { src: "Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
-                    { src: "Videos - step 9/placeholder_6.mp4", title: "ברכה 6" },
+                    { src: "Videos - step 9/סרטון - רעיה.mp4", title: "ברכה מרעיה" },
                     { src: "Videos - step 9/placeholder_7.mp4", title: "ברכה 7" },
                     { src: "Videos - step 9/placeholder_8.mp4", title: "ברכה 8" },
                     { src: "Videos - step 9/placeholder_9.mp4", title: "ברכה 9" },
