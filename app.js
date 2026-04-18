@@ -1885,6 +1885,7 @@ function openQuest(questId) {
                 if (!state.responses[qId]) state.responses[qId] = {};
                 state.responses[qId][key] = el.checked;
                 saveState(state);
+                updateCompleteButton();
             });
         });
     }, 100);
