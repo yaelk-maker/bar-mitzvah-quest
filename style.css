@@ -1103,15 +1103,16 @@ select.task-select option {
 /* ===== Inspiration Cards ===== */
 .inspiration-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 18px;
-    perspective: 900px;
 }
 
 .inspiration-card {
-    height: 200px;
+    height: 220px;
     cursor: pointer;
     position: relative;
+    perspective: 900px;
+    direction: ltr;
 }
 
 .ic-inner {
@@ -1129,6 +1130,7 @@ select.task-select option {
 .ic-front, .ic-back {
     position: absolute;
     inset: 0;
+    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     border-radius: var(--radius-sm);
     display: flex;
@@ -1139,6 +1141,7 @@ select.task-select option {
     border: 2px solid var(--card-color, rgba(100, 200, 255, 0.25));
     box-shadow: 0 0 18px color-mix(in srgb, var(--card-color) 30%, transparent),
                 inset 0 0 12px rgba(0, 0, 0, 0.3);
+    direction: rtl;
 }
 
 .ic-front {
@@ -1174,15 +1177,16 @@ select.task-select option {
     background: rgba(15, 15, 35, 0.9);
     backdrop-filter: blur(12px);
     transform: rotateY(180deg);
-    gap: 10px;
+    gap: 8px;
     text-align: center;
+    overflow-y: auto;
 }
 
 .ic-example {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text-dark);
-    line-height: 1.7;
-    padding: 8px 12px;
+    line-height: 1.5;
+    padding: 6px 10px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     border-right: 3px solid var(--card-color);
