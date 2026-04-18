@@ -1260,8 +1260,8 @@ function openQuest(questId) {
                                     </div>
                                     <div class="ne-greeting">
                                         <p class="ne-greeting-text">
-                                            "${task.greeting}
-                                            <span class="ne-signature">${task.signature}</span>"
+                                            ${task.greeting}
+                                            <span class="ne-signature">${task.signature}</span>
                                         </p>
                                     </div>
                                 </div>
