@@ -1194,8 +1194,9 @@ select.task-select option {
     margin: 0;
 }
 
-.inspiration-card:hover .ic-inner {
-    filter: brightness(1.1);
+.inspiration-card:hover {
+    transform: translateY(-3px);
+    transition: transform 0.2s;
 }
 
 /* ===== Checklist ===== */
