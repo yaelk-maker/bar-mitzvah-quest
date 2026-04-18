@@ -2754,12 +2754,22 @@ body.ne-modal-open {
 }
 
 .cb-card-line {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 500;
     color: #ffffff;
-    margin: 8px 0;
-    line-height: 1.5;
-    letter-spacing: 0.3px;
+    margin: 0 0 14px;
+    line-height: 1.65;
+    letter-spacing: 0.2px;
+}
+
+.cb-card-line:last-child {
+    margin-bottom: 0;
+}
+
+.cb-card-line strong {
+    color: #FFD54F;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255, 213, 79, 0.35);
 }
 
 .cb-finale {

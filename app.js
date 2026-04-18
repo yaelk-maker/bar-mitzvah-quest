@@ -1899,8 +1899,8 @@ function openQuest(questId) {
                             <div class="cb-card-body">
                                 <div class="cb-card-title">${data.title || ''}</div>
                                 <div class="cb-card-summary">
-                                    <div class="cb-card-line">🗡️ ${data.weapon || ''}</div>
-                                    <div class="cb-card-line">🎯 ${data.goal || ''}</div>
+                                    <p class="cb-card-line">תמיד תזכור את כוח-העל שלך: <strong>${data.weapon || ''}</strong> 🗡️</p>
+                                    <p class="cb-card-line">והכי חשוב להמשך הדרך, תזכור <strong>${data.goal || ''}</strong> 🎯</p>
                                 </div>
                                 <div class="cb-finale">${task.completionMessage}</div>
                             </div>
