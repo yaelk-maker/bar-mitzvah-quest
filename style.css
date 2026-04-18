@@ -347,6 +347,20 @@ body::before {
     font-size: 2.5rem;
 }
 
+/* Photo-based map node icon (replaces emoji) */
+.map-node-img-circle {
+    padding: 0;
+    overflow: hidden;
+}
+
+.map-node-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
 .map-node-label {
     font-size: 1rem;
     font-weight: 900;

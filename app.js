@@ -149,9 +149,12 @@ function renderQuestMap() {
                     <div class="map-node-xp">XP ${quest.xp}+</div>
                 `;
             } else {
+                const iconHtml = quest.mapIconImg
+                    ? `<img src="${quest.mapIconImg}" class="map-node-img" alt="">`
+                    : `<span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>`;
                 node.innerHTML = `
-                    <div class="map-node-circle map-node-complete-circle">
-                        <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
+                    <div class="map-node-circle map-node-complete-circle${quest.mapIconImg ? ' map-node-img-circle' : ''}">
+                        ${iconHtml}
                         <span class="map-node-check">✓</span>
                     </div>
                     <div class="map-node-label">${quest.name}</div>
@@ -160,9 +163,12 @@ function renderQuestMap() {
             }
             node.addEventListener('click', () => openQuest(quest.id));
         } else if (isNext) {
+            const iconHtml = quest.mapIconImg
+                ? `<img src="${quest.mapIconImg}" class="map-node-img" alt="">`
+                : `<span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>`;
             node.innerHTML = `
-                <div class="map-node-circle map-node-next-circle">
-                    <span class="map-node-emoji">${quest.mapIcon || quest.icon}</span>
+                <div class="map-node-circle map-node-next-circle${quest.mapIconImg ? ' map-node-img-circle' : ''}">
+                    ${iconHtml}
                 </div>
                 <div class="map-node-label">${quest.name}</div>
                 <div class="map-node-subtitle">${quest.subtitle}</div>
