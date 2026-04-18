@@ -2600,6 +2600,20 @@ body.ne-modal-open {
     padding: 20px 16px;
 }
 
+/* Card-builder dropdowns: brighter color + clearer font for dark theme */
+.cb-select {
+    font-family: 'Heebo', 'Arial', sans-serif;
+    font-weight: 700;
+    color: #FFD54F;
+    letter-spacing: 0.3px;
+}
+
+.cb-select option {
+    color: #FFD54F;
+    background: #1a1025;
+    font-weight: 700;
+}
+
 .cb-reveal-btn {
     display: block;
     width: 100%;
