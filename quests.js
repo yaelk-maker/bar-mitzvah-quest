@@ -632,7 +632,7 @@ const QUESTS = [
         icon: "🌟",
         mapIcon: "🌟",
         xp: 100,
-        message: "זה אני, בן 13, ואני גאה",
+        message: "זה אני, בן 13 ואני לא מוותר לעצמי . . .",
         color: "#FF5722",
         intro: "הגעת לסוף המסע! הגיע הזמן ליצור את קלף הבר מצווה שלך - הקלף המנצח!",
         tasks: [
@@ -644,8 +644,8 @@ const QUESTS = [
                     { id: "weapon", prefix: "הנשק הסודי שלי:", options: ["חיוך כובש", "זיכרון מטורף", "מוח שלא מוותר"] },
                     { id: "goal", prefix: "המטרה שלי לשנה הבאה:", options: ["לטרוף את העולם", "ללמוד המון דברים חדשים", "להמשיך להיות גיבור"] }
                 ],
-                image: "guy_bar_mitzvah_card.jpg",
-                fallbackImage: "גיא ילד יום הולדת.jpg",
+                image: "Guy - final step.jpeg",
+                fallbackImage: "Guy - final step.jpeg",
                 revealButtonText: "חשוף את קלף הבר מצווה שלי! 🏆",
                 completionMessage: "גיא, אתה מוכן לבר המצווה! מזל טוב! 🎉"
             }
