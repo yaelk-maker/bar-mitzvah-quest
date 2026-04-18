@@ -1703,11 +1703,48 @@ body.ne-modal-open {
     background: rgba(251, 191, 36, 0.08);
 }
 
+.ne-option.ne-correct {
+    border-color: rgba(0, 230, 118, 0.75);
+    background: rgba(0, 230, 118, 0.15);
+    box-shadow: 0 0 10px rgba(0, 230, 118, 0.25);
+}
+
+.ne-option.ne-wrong {
+    border-color: rgba(239, 68, 68, 0.75);
+    background: rgba(239, 68, 68, 0.15);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
 .ne-option input[type="radio"] {
     accent-color: #fbbf24;
     width: 18px;
     height: 18px;
     cursor: pointer;
+}
+
+.ne-question-feedback {
+    margin-top: 10px;
+    padding: 0 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    min-height: 0;
+    transition: all 0.2s ease;
+}
+
+.ne-question-feedback:not(:empty) {
+    min-height: 22px;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+.ne-qfb-correct {
+    color: #86efac;
+    background: rgba(0, 230, 118, 0.12);
+}
+
+.ne-qfb-wrong {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.14);
 }
 
 .ne-option-text {
@@ -1821,24 +1858,31 @@ body.ne-modal-open {
 }
 
 .ne-greeting {
-    flex: 1 1 320px;
+    flex: 1 1 340px;
+    display: flex;
+    align-items: center;
+    max-height: 420px;
 }
 
 .ne-greeting-text {
-    background: rgba(0, 0, 0, 0.45);
-    border: 2px solid rgba(251, 191, 36, 0.35);
-    border-radius: 16px;
-    padding: 18px 20px;
+    background: transparent;
+    border: none;
+    padding: 0 10px;
+    margin: 0;
     color: #fff;
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-size: 1.35rem;
+    line-height: 1.9;
+    font-weight: 500;
+    text-align: right;
 }
 
 .ne-signature {
     display: block;
-    margin-top: 10px;
+    margin-top: 14px;
     font-weight: 800;
+    font-size: 1.4rem;
     color: #fcd34d;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.35);
 }
 
 .ne-completion-message {
