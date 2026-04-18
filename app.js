@@ -767,13 +767,37 @@ function openQuest(questId) {
                 }
                 break;
 
-            case 'kahoot-guide':
-                taskEl.innerHTML = `
-                    <label class="task-label">${task.content}</label>
-                    <ol class="kahoot-steps">
-                        ${task.steps.map(s => `<li>${s}</li>`).join('')}
-                    </ol>
-                `;
+            case 'inspiration-cards':
+                taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
+                const icGrid = document.createElement('div');
+                icGrid.className = 'inspiration-grid';
+                task.cards.forEach((card, cIdx) => {
+                    const icKey = `inspiration_${tIdx}_${cIdx}`;
+                    const isFlipped = savedResponses[icKey];
+                    const cardEl = document.createElement('div');
+                    cardEl.className = `inspiration-card${isFlipped ? ' flipped' : ''}`;
+                    cardEl.style.setProperty('--card-color', card.color);
+                    cardEl.innerHTML = `
+                        <div class="ic-inner">
+                            <div class="ic-front">
+                                <span class="ic-icon">${card.icon}</span>
+                                <span class="ic-title">${card.title}</span>
+                            </div>
+                            <div class="ic-back">
+                                ${card.examples.map(ex => `<p class="ic-example">"${ex}"</p>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                    cardEl.addEventListener('click', () => {
+                        cardEl.classList.toggle('flipped');
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][icKey] = true;
+                        saveState(state);
+                        updateCompleteButton();
+                    });
+                    icGrid.appendChild(cardEl);
+                });
+                taskEl.appendChild(icGrid);
                 break;
 
             case 'checklist':
@@ -1943,6 +1967,14 @@ function getQuestValidation(questId) {
                 break;
             case 'card-builder':
                 if (!responses['card_revealed']) missing.push('קלף הבר מצווה');
+                break;
+            case 'inspiration-cards':
+                const anyFlipped = task.cards.some((_, i) => responses[`inspiration_${tIdx}_${i}`]);
+                if (!anyFlipped) missing.push('כרטיסיות ההשראה');
+                break;
+            case 'checklist':
+                const allChecked = task.items.every((_, i) => responses[`check_${tIdx}_${i}`]);
+                if (!allChecked) missing.push('רשימת המשימות');
                 break;
         }
     });
