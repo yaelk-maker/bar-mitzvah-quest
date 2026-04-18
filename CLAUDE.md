@@ -93,7 +93,7 @@ bar-mitzvah-quest/
 | `brain-cards` | Flip cards + "זה אני!" claim buttons | 5 |
 | `drag-select` | Single-select sentence cards | 5 |
 | `twin-sort` | Drag & drop into 3 bins (Guy/Both/Mika); wrong answers shake/bounce | 6 |
-| `twin-madlibs` | Dropdowns in sentence template | 6 |
+| `neta-envelope` | Locked gold envelope → trivia modal (3 Q's on Neta) → unlock video + greeting | 6 |
 | `trophy-hero-image` | Hero video/image with golden border | 7 |
 | `trophy-cabinet` | Wooden shelf + drag & drop medals + live counter | 7 |
 | `medal-factory` | Factory UI with custom dropdowns, produce button, animated result | 7 |
@@ -114,7 +114,7 @@ bar-mitzvah-quest/
 | 3 - תיק החקירה | Complete | 4-step quiz + images |
 | 4 - הגיבור שנולד | Complete | Accordion + stones + bubbles |
 | 5 - המוח שלי עובד אחרת | Complete | Meters + map + flip cards |
-| 6 - תאום אבל אני | Complete | 2x drag & drop + mad-libs |
+| 6 - שבט האחים של גיא | Complete | 2x drag & drop (twins) + Neta trivia envelope |
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
 | 8 - הסופרפאוורס שלי | Complete | 8 scattered envelope cards (real messages) + power select |
 | 9 - האנשים שלי | Partial | 10 video title cards with overlay player (6 real + 4 placeholder) + emotion board |
