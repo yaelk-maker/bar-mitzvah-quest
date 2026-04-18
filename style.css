@@ -2673,11 +2673,6 @@ body.ne-modal-open {
     50% { transform: translateY(-8px); }
 }
 
-/* Quest 10 hero card gets a wider canvas than the default task block */
-.task-block:has(.cb-wrap) {
-    max-width: 1280px;
-}
-
 .cb-card {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     border: 6px solid #FFD54F;
@@ -2699,51 +2694,41 @@ body.ne-modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 20px;
 }
 
 .cb-card-img {
     width: auto;
     max-width: 100%;
-    max-height: 520px;
-    min-height: 380px;
+    max-height: 640px;
+    min-height: 480px;
     object-fit: contain;
     display: block;
-    border-radius: 14px;
+    border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
-/* Summary block sits clearly below the image, visually loud */
 .cb-card-body {
-    padding: 36px 32px 40px;
+    padding: 32px 28px 36px;
     text-align: center;
-    background: linear-gradient(180deg, rgba(255, 213, 79, 0.14) 0%, rgba(255, 87, 34, 0.10) 100%);
-    border-top: 4px solid #FFD54F;
 }
 
 .cb-card-title {
-    font-size: 3rem;
+    font-size: 2.6rem;
     font-weight: 900;
     color: #FFD54F;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     font-family: 'Bungee', cursive;
-    text-shadow: 0 0 28px rgba(255, 213, 79, 0.65);
-    letter-spacing: 1.5px;
-    line-height: 1.15;
+    text-shadow: 0 0 24px rgba(255, 213, 79, 0.5);
+    letter-spacing: 1px;
 }
 
 .cb-card-line {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin: 14px 0;
-    letter-spacing: 0.4px;
-    padding: 10px 16px;
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 14px;
-    display: inline-block;
-    min-width: 60%;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f5f5f8;
+    margin: 12px 0;
+    letter-spacing: 0.3px;
 }
 
 .cb-finale {
