@@ -96,9 +96,25 @@ function syncToCloud(state) {
     }
 }
 
+const LAST_RESET_KEY = 'quest-last-reset';
+
 function mergeStates(local, cloud) {
     if (!cloud) return local;
     if (!local) return cloud;
+
+    // Cross-device reset: if cloud has a newer resetAt than what we've seen,
+    // wipe local and trust cloud as source of truth.
+    const cloudReset = cloud.resetAt || 0;
+    const lastSeenReset = parseInt(localStorage.getItem(LAST_RESET_KEY) || '0', 10);
+    if (cloudReset > lastSeenReset) {
+        localStorage.setItem(LAST_RESET_KEY, String(cloudReset));
+        return {
+            completedQuests: cloud.completedQuests || [],
+            responses: cloud.responses || {},
+            currentQuest: cloud.currentQuest || null,
+            resetAt: cloudReset
+        };
+    }
 
     const merged = {
         completedQuests: [...new Set([
@@ -106,7 +122,8 @@ function mergeStates(local, cloud) {
             ...(cloud.completedQuests || [])
         ])].sort((a, b) => a - b),
         responses: { ...cloud.responses, ...local.responses },
-        currentQuest: local.currentQuest || cloud.currentQuest || null
+        currentQuest: local.currentQuest || cloud.currentQuest || null,
+        resetAt: Math.max(local.resetAt || 0, cloudReset)
     };
 
     Object.keys(cloud.responses || {}).forEach(key => {
@@ -117,3 +134,44 @@ function mergeStates(local, cloud) {
 
     return merged;
 }
+
+// Cross-device reset — bump resetAt so all other devices wipe on next load.
+// Usage from browser console:
+//   resetAllProgress()         -> full reset (all quests)
+//   resetAllProgress([10])     -> reset only specific quest ids
+async function resetAllProgress(questIds) {
+    const now = Date.now();
+    let newState;
+
+    if (!questIds || questIds.length === 0) {
+        // Full reset
+        newState = {
+            completedQuests: [],
+            responses: {},
+            currentQuest: null,
+            resetAt: now
+        };
+    } else {
+        // Partial reset — keep others, remove specified ids
+        const current = JSON.parse(localStorage.getItem('bar-mitzvah-quest') || '{}');
+        const responses = { ...(current.responses || {}) };
+        questIds.forEach(id => delete responses[id]);
+        newState = {
+            completedQuests: (current.completedQuests || []).filter(id => !questIds.includes(id)),
+            responses,
+            currentQuest: null,
+            resetAt: now
+        };
+    }
+
+    localStorage.setItem('bar-mitzvah-quest', JSON.stringify(newState));
+    localStorage.setItem(LAST_RESET_KEY, String(now));
+
+    if (firebaseReady && dbRef) {
+        await dbRef.set(newState);
+    }
+
+    console.log('✓ Progress reset. Other devices will sync on next load.');
+    location.reload();
+}
+window.resetAllProgress = resetAllProgress;
