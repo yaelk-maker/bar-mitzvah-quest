@@ -41,11 +41,6 @@ const QUESTS = [
                     { name: "מיקה", relation: "אחות תאומה", photo: "photos/אחות תאומה מיקה.jpg", photoPos: "center 40%", generation: "דור 3 - הילדים" },
                     { name: "גיא", relation: "זה אתה!", photo: "photos/גיא ילד יום הולדת.jpg", photoPos: "center 30%", generation: "דור 3 - הילדים" }
                 ]
-            },
-            {
-                type: "reflection",
-                label: "מה הדבר המשותף לכל המשפחה שלך?",
-                placeholder: "כתוב כאן..."
             }
         ],
         artifact: {
