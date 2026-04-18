@@ -565,8 +565,8 @@ const QUESTS = [
                 videos: [
                     { src: "Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
                     { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
-                    { src: "Videos - step 9/סרטון - שפירא.mp4", title: "ברכה משפירא" },
-                    { src: "Videos - step 9/סרטון - אירה וטום.mp4", title: "ברכה מאירה וטום" },
+                    { src: "Videos - step 9/סרטון - משפחת שפירא.mp4", title: "ברכה ממשפחת שפירא" },
+                    { src: "Videos - step 9/סרטון - אירה ותום.mp4", title: "ברכה מאירה ותום" },
                     { src: "Videos - step 9/סרטון - רעיה.mp4", title: "ברכה מרעיה" },
                     { src: "Videos - step 9/סרטון - אליה.mp4", title: "ברכה מאליה" },
                     { src: "Videos - step 9/סרטון - ציליה.mp4", title: "ברכה מציליה" },
