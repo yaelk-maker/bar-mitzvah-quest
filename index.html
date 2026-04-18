@@ -78,9 +78,16 @@
         </div>
     </div>
 
+    <!-- Firebase SDK (compat for vanilla JS) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+    <div id="sync-status"></div>
+
     <script>
         // Cache-busting: append timestamp to script loads
         var v = new Date().getTime();
+        document.write('<script src="firebase-sync.js?v=' + v + '"><\/script>');
         document.write('<script src="quests.js?v=' + v + '"><\/script>');
         document.write('<script src="app.js?v=' + v + '"><\/script>');
     </script>

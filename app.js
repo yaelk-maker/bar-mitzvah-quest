@@ -77,6 +77,8 @@ function loadState() {
 
 function saveState(state) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    syncToCloud(state);
+    showSyncStatus('☁️ נשמר');
 }
 
 let state = loadState();
@@ -2080,8 +2082,32 @@ function exportPresentation() {
     // Future: generate slides from quest data
 }
 
+// ===== Sync Status Indicator =====
+function showSyncStatus(text) {
+    const el = document.getElementById('sync-status');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.add('visible');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
 // ===== Init =====
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     renderBrainrotChars();
+
+    const fbOk = await initFirebase();
+
+    if (fbOk) {
+        await showPasscodeScreen();
+        showSyncStatus('☁️ מסנכרן...');
+        const cloudState = await syncFromCloud();
+        const localState = loadState();
+        state = mergeStates(localState, cloudState);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        syncToCloud(state);
+        showSyncStatus('☁️ מסונכרן!');
+    }
+
     showHome();
 });

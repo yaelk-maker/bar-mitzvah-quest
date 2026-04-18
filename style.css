@@ -3303,3 +3303,110 @@ select.task-select option {
     .survey-person { flex-direction: column; }
     .support-person { flex-direction: column; }
 }
+
+/* ===== Passcode Overlay ===== */
+#passcode-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 5, 20, 0.95);
+    backdrop-filter: blur(20px);
+}
+
+.passcode-box {
+    background: var(--glass-bg);
+    border: var(--border-thick);
+    border-radius: var(--radius);
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: var(--shadow-card);
+}
+
+.passcode-box h2 {
+    font-family: 'Bungee', cursive;
+    color: var(--accent-yellow);
+    font-size: 1.6rem;
+    margin: 0 0 8px;
+}
+
+.passcode-box p {
+    color: var(--text-medium);
+    font-family: 'Heebo', sans-serif;
+    margin: 0 0 24px;
+    font-size: 1rem;
+}
+
+#passcode-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    border: 2px solid rgba(100, 200, 255, 0.2);
+    background: var(--bg-input);
+    color: var(--text-dark);
+    font-family: 'Heebo', sans-serif;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+}
+
+#passcode-input:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+}
+
+#passcode-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--accent-green), #00c853);
+    color: #111;
+    font-family: 'Heebo', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-chunky);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#passcode-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+}
+
+#passcode-error {
+    color: var(--accent-red);
+    font-family: 'Heebo', sans-serif;
+    margin-top: 12px;
+    font-size: 0.95rem;
+}
+
+/* ===== Sync Status Indicator ===== */
+#sync-status {
+    position: fixed;
+    bottom: 12px;
+    left: 12px;
+    z-index: 9000;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-medium);
+    background: var(--glass-bg);
+    border: 1px solid rgba(100, 200, 255, 0.15);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+#sync-status.visible {
+    opacity: 1;
+}
