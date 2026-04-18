@@ -1305,13 +1305,11 @@ function openQuest(questId) {
                                                 </label>
                                             `).join('')}
                                         </div>
+                                        <div class="ne-question-feedback" aria-live="polite"></div>
                                     </div>
                                 `).join('')}
                             </div>
                             <div class="ne-modal-feedback" aria-live="polite"></div>
-                            <div class="ne-modal-actions">
-                                <button type="button" class="ne-submit-btn">${task.submitButtonText}</button>
-                            </div>
                         </div>
                     `;
                     document.body.appendChild(overlay);
@@ -1327,51 +1325,50 @@ function openQuest(questId) {
                         if (e.target === overlay) closeModal();
                     });
 
-                    overlay.querySelector('.ne-submit-btn').addEventListener('click', () => {
-                        const feedback = overlay.querySelector('.ne-modal-feedback');
-                        const answers = {};
-                        let answeredCount = 0;
-                        let allCorrect = true;
+                    const answers = {};
+                    const correctByQuestion = task.questions.map(() => false);
 
-                        task.questions.forEach((qq, qi) => {
-                            const selected = overlay.querySelector(`input[name="ne-q-${tIdx}-${qi}"]:checked`);
-                            const qEl = overlay.querySelector(`.ne-question[data-qidx="${qi}"]`);
-                            qEl.classList.remove('ne-wrong');
-                            if (selected) {
-                                answeredCount++;
-                                const val = parseInt(selected.value);
+                    overlay.querySelectorAll('.ne-question').forEach((qEl, qi) => {
+                        const qq = task.questions[qi];
+                        const qFeedback = qEl.querySelector('.ne-question-feedback');
+                        const optionLabels = qEl.querySelectorAll('.ne-option');
+
+                        qEl.querySelectorAll('input[type="radio"]').forEach((radio, oi) => {
+                            radio.addEventListener('change', () => {
+                                const val = parseInt(radio.value);
                                 answers[`q${qi}`] = val;
-                                if (val !== qq.correct) {
-                                    allCorrect = false;
-                                    qEl.classList.add('ne-wrong');
+                                const isCorrect = val === qq.correct;
+                                correctByQuestion[qi] = isCorrect;
+
+                                optionLabels.forEach(lbl => lbl.classList.remove('ne-correct', 'ne-wrong'));
+                                radio.closest('.ne-option').classList.add(isCorrect ? 'ne-correct' : 'ne-wrong');
+                                qEl.classList.toggle('ne-wrong', !isCorrect);
+                                qEl.classList.toggle('ne-correct', isCorrect);
+
+                                if (isCorrect) {
+                                    qFeedback.className = 'ne-question-feedback ne-qfb-correct';
+                                    qFeedback.textContent = '✔️ נכון! אתה באמת מכיר את נטע';
+                                } else {
+                                    qFeedback.className = 'ne-question-feedback ne-qfb-wrong';
+                                    qFeedback.textContent = '❌ לא מדויק — נסה שוב 😉';
                                 }
-                            } else {
-                                allCorrect = false;
-                            }
+
+                                if (correctByQuestion.every(Boolean)) {
+                                    const finalFeedback = overlay.querySelector('.ne-modal-feedback');
+                                    finalFeedback.className = 'ne-modal-feedback ne-feedback-success';
+                                    finalFeedback.textContent = '🎉 כל התשובות נכונות! פותחים את המעטפה...';
+                                    neUnlocked = true;
+                                    if (!state.responses[questId]) state.responses[questId] = {};
+                                    state.responses[questId][neKey] = { unlocked: true, answers };
+                                    saveState(state);
+                                    updateCompleteButton();
+                                    setTimeout(() => {
+                                        closeModal();
+                                        renderNetaEnvelope();
+                                    }, 1100);
+                                }
+                            });
                         });
-
-                        if (answeredCount < task.questions.length) {
-                            feedback.className = 'ne-modal-feedback ne-feedback-info';
-                            feedback.textContent = 'סמן תשובה לכל 3 השאלות 😊';
-                            return;
-                        }
-
-                        if (allCorrect) {
-                            feedback.className = 'ne-modal-feedback ne-feedback-success';
-                            feedback.textContent = '🎉 כל התשובות נכונות! פותחים את המעטפה...';
-                            neUnlocked = true;
-                            if (!state.responses[questId]) state.responses[questId] = {};
-                            state.responses[questId][neKey] = { unlocked: true, answers };
-                            saveState(state);
-                            updateCompleteButton();
-                            setTimeout(() => {
-                                closeModal();
-                                renderNetaEnvelope();
-                            }, 900);
-                        } else {
-                            feedback.className = 'ne-modal-feedback ne-feedback-retry';
-                            feedback.textContent = task.retryMessage;
-                        }
                     });
                 }
 
