@@ -634,14 +634,14 @@ function openQuest(questId) {
                             <h3 class="flow-name">${m.name}</h3>
                             <span class="flow-relation">${m.relation}</span>
                             ${!isLast ? `
-                                <label class="flow-input-label">מילה אחת שמתארת את ${m.name}:</label>
+                                <label class="flow-input-label">מילה אחת או שתיים שמתארות את ${m.name}:</label>
                                 <input type="text" class="task-input-small flow-word-input"
                                     data-quest="${questId}" data-key="${mKey}"
                                     value="${flowSaved[mKey] || ''}"
                                     placeholder="מילה אחת...">
                             ` : `
                                 <div class="flow-hero-message">🎉 זה אתה! סיימת להכיר את כל המשפחה!</div>
-                                <label class="flow-input-label">ומילה אחת שמתארת אותך?</label>
+                                <label class="flow-input-label">ומילה אחת או שתיים שמתארות אותך?</label>
                                 <input type="text" class="task-input-small flow-word-input"
                                     data-quest="${questId}" data-key="${mKey}"
                                     value="${flowSaved[mKey] || ''}"
