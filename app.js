@@ -2092,6 +2092,51 @@ function showSyncStatus(text) {
     el._timer = setTimeout(() => el.classList.remove('visible'), 2000);
 }
 
+// ===== Keyboard Navigation =====
+function getActiveScreen() {
+    const el = document.querySelector('.screen.active');
+    return el ? el.id.replace('screen-', '') : null;
+}
+
+document.addEventListener('keydown', (e) => {
+    if (document.getElementById('passcode-overlay')) return;
+
+    const tag = document.activeElement?.tagName;
+    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    const screen = getActiveScreen();
+
+    if (e.key === 'Enter' && !isTyping) {
+        e.preventDefault();
+        if (screen === 'home') {
+            const nextNode = document.querySelector('.map-node-next');
+            if (nextNode) nextNode.click();
+        } else if (screen === 'quest') {
+            const flowNext = document.querySelector('.flow-btn-next');
+            if (flowNext) {
+                flowNext.click();
+            } else {
+                const btn = document.getElementById('btn-complete');
+                if (btn && !btn.disabled) btn.click();
+            }
+        }
+    }
+
+    if (e.key === 'ArrowLeft') {
+        if (isTyping) return;
+        e.preventDefault();
+        if (screen === 'quest') {
+            const flowPrev = document.querySelector('.flow-btn-prev');
+            if (flowPrev && !flowPrev.disabled) {
+                flowPrev.click();
+            } else {
+                showHome();
+            }
+        } else if (screen === 'book') {
+            showHome();
+        }
+    }
+});
+
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', async () => {
     renderBrainrotChars();
