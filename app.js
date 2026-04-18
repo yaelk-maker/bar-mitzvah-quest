@@ -1898,11 +1898,13 @@ function openQuest(questId) {
                             </div>
                             <div class="cb-card-body">
                                 <div class="cb-card-title">${data.title || ''}</div>
-                                <div class="cb-card-line">🗡️ ${data.weapon || ''}</div>
-                                <div class="cb-card-line">🎯 ${data.goal || ''}</div>
+                                <div class="cb-card-summary">
+                                    <div class="cb-card-line">🗡️ ${data.weapon || ''}</div>
+                                    <div class="cb-card-line">🎯 ${data.goal || ''}</div>
+                                </div>
+                                <div class="cb-finale">${task.completionMessage}</div>
                             </div>
                         </div>
-                        <div class="cb-finale">${task.completionMessage}</div>
                     `;
                     cbResult.classList.add('visible');
                     cbResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
