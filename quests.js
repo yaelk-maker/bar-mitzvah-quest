@@ -563,16 +563,15 @@ const QUESTS = [
                 type: "cinema-videos",
                 label: "סרטוני הברכה שלך:",
                 videos: [
-                    { src: "Videos - step 9/סרטון - אליה.mp4", title: "ברכה מאליה" },
-                    { src: "Videos - step 9/סרטון - יובל והמשפחה.mp4", title: "ברכה מיובל והמשפחה" },
-                    { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
-                    { src: "Videos - step 9/סרטון - ציליה.mp4", title: "ברכה מציליה" },
                     { src: "Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
+                    { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
+                    { src: "Videos - step 9/סרטון - שפירא.mp4", title: "ברכה משפירא" },
+                    { src: "Videos - step 9/סרטון - אירה וטום.mp4", title: "ברכה מאירה וטום" },
                     { src: "Videos - step 9/סרטון - רעיה.mp4", title: "ברכה מרעיה" },
-                    { src: "Videos - step 9/placeholder_7.mp4", title: "ברכה 7" },
-                    { src: "Videos - step 9/placeholder_8.mp4", title: "ברכה 8" },
-                    { src: "Videos - step 9/placeholder_9.mp4", title: "ברכה 9" },
-                    { src: "Videos - step 9/placeholder_10.mp4", title: "ברכה 10" }
+                    { src: "Videos - step 9/סרטון - אליה.mp4", title: "ברכה מאליה" },
+                    { src: "Videos - step 9/סרטון - ציליה.mp4", title: "ברכה מציליה" },
+                    { src: "Videos - step 9/סרטון - יובל והמשפחה.mp4", title: "ברכה מיובל והמשפחה" },
+                    { src: "Videos - step 9/סרטון - רפי.mp4", title: "ברכה מרפי" }
                 ]
             },
             {
@@ -588,7 +587,7 @@ const QUESTS = [
         ],
         artifact: {
             title: "קולנוע ה-VIP שלי",
-            description: "10 סרטוני ברכה + הרגש שבחרת"
+            description: "9 סרטוני ברכה + הרגש שבחרת"
         }
     },
     {
