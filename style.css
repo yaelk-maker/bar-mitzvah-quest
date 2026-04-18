@@ -1501,6 +1501,362 @@ select.task-select option {
     line-height: 1.6;
 }
 
+/* ===== Neta Envelope (Quest 6 - Part 3) ===== */
+.drop-shadow-neon { filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)); }
+.shadow-neon { box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+.animate-fadeIn { animation: neFadeIn 0.8s ease-out forwards; }
+@keyframes neFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ne-container {
+    width: 100%;
+}
+
+.ne-locked-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(46, 16, 74, 0.85) 0%, rgba(88, 28, 135, 0.75) 100%);
+    border: 3px solid rgba(251, 191, 36, 0.6);
+    border-radius: 22px;
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: 0 0 24px rgba(251, 191, 36, 0.25), inset 0 0 60px rgba(251, 191, 36, 0.08);
+    overflow: hidden;
+}
+
+.ne-locked-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.18), transparent 60%);
+    pointer-events: none;
+}
+
+.ne-locked-icon {
+    font-size: 3.5rem;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+}
+
+.ne-locked-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fbbf24;
+    margin: 6px 0 14px;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+}
+
+.ne-locked-text {
+    color: var(--text-dark);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto 22px;
+}
+
+.ne-open-btn {
+    display: inline-block;
+    padding: 14px 34px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-family: inherit;
+    color: #1a1025;
+    background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    border: 2px solid rgba(251, 191, 36, 0.9);
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(251, 191, 36, 0.45);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.ne-open-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 26px rgba(251, 191, 36, 0.7);
+}
+
+/* Modal overlay */
+.ne-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 4, 18, 0.82);
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: neFadeIn 0.25s ease-out forwards;
+}
+
+body.ne-modal-open {
+    overflow: hidden;
+}
+
+.ne-modal {
+    position: relative;
+    background: linear-gradient(135deg, #2a1047 0%, #1a0a2e 100%);
+    border: 2px solid rgba(251, 191, 36, 0.55);
+    border-radius: 22px;
+    padding: 28px 28px 22px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
+    direction: rtl;
+    text-align: right;
+}
+
+.ne-modal-close {
+    position: absolute;
+    top: 10px;
+    left: 14px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fbbf24;
+    font-size: 1.6rem;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.ne-modal-close:hover {
+    background: rgba(251, 191, 36, 0.2);
+}
+
+.ne-modal-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fbbf24;
+    text-align: center;
+    margin: 4px 0 20px;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}
+
+.ne-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.ne-question {
+    background: rgba(15, 15, 35, 0.6);
+    border: 2px solid rgba(251, 191, 36, 0.28);
+    border-radius: 16px;
+    padding: 16px 18px;
+    transition: border-color 0.25s ease, transform 0.2s ease;
+}
+
+.ne-question.ne-wrong {
+    border-color: rgba(239, 68, 68, 0.7);
+    animation: neShake 0.4s ease-in-out;
+}
+
+@keyframes neShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+.ne-question-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.ne-question-emoji {
+    font-size: 1.4rem;
+}
+
+.ne-question-text {
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.ne-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ne-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(100, 200, 255, 0.18);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.ne-option:hover {
+    border-color: rgba(251, 191, 36, 0.5);
+    background: rgba(251, 191, 36, 0.08);
+}
+
+.ne-option input[type="radio"] {
+    accent-color: #fbbf24;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.ne-option-text {
+    color: var(--text-dark);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.ne-modal-feedback {
+    margin-top: 14px;
+    min-height: 0;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.25s ease;
+}
+
+.ne-modal-feedback:not(:empty) {
+    min-height: 44px;
+    padding: 12px 14px;
+    margin-top: 16px;
+}
+
+.ne-feedback-retry {
+    background: rgba(239, 68, 68, 0.14);
+    border: 2px solid rgba(239, 68, 68, 0.45);
+    color: #fca5a5;
+}
+
+.ne-feedback-info {
+    background: rgba(100, 200, 255, 0.1);
+    border: 2px solid rgba(100, 200, 255, 0.35);
+    color: #93c5fd;
+}
+
+.ne-feedback-success {
+    background: rgba(0, 230, 118, 0.12);
+    border: 2px solid rgba(0, 230, 118, 0.45);
+    color: #86efac;
+}
+
+.ne-modal-actions {
+    margin-top: 18px;
+    text-align: center;
+}
+
+.ne-submit-btn {
+    padding: 12px 32px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-family: inherit;
+    color: #1a1025;
+    background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    border: 2px solid rgba(251, 191, 36, 0.9);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.ne-submit-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 22px rgba(251, 191, 36, 0.6);
+}
+
+/* Unlocked state */
+.ne-unlocked {
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(46, 16, 74, 0.6) 0%, rgba(88, 28, 135, 0.45) 100%);
+    border: 3px solid rgba(251, 191, 36, 0.55);
+    border-radius: 22px;
+    box-shadow: 0 0 24px rgba(251, 191, 36, 0.22);
+}
+
+.ne-success-header {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fcd34d;
+    margin: 0 0 22px;
+}
+
+.ne-unlocked-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.ne-photo-container {
+    flex: 1 1 320px;
+    max-width: 440px;
+}
+
+.ne-photo-frame {
+    padding: 6px;
+    background: rgba(252, 211, 77, 0.15);
+    border: 4px solid rgba(251, 191, 36, 0.65);
+    border-radius: 20px;
+}
+
+.ne-video {
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+}
+
+.ne-greeting {
+    flex: 1 1 320px;
+}
+
+.ne-greeting-text {
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid rgba(251, 191, 36, 0.35);
+    border-radius: 16px;
+    padding: 18px 20px;
+    color: #fff;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.ne-signature {
+    display: block;
+    margin-top: 10px;
+    font-weight: 800;
+    color: #fcd34d;
+}
+
+.ne-completion-message {
+    margin-top: 22px;
+}
+
+.ne-completion-message p {
+    background: rgba(0, 230, 118, 0.1);
+    border: 2px solid rgba(0, 230, 118, 0.35);
+    border-radius: 16px;
+    padding: 14px 18px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--accent-green);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
 /* ===== Trophy Cabinet (Quest 7) ===== */
 .trophy-hero {
     text-align: center;

@@ -1234,72 +1234,149 @@ function openQuest(questId) {
                 taskEl.appendChild(tsWrap);
                 break;
 
-            case 'twin-madlibs':
+            case 'neta-envelope':
                 taskEl.innerHTML = '';
-                const mlWrap = document.createElement('div');
-                mlWrap.className = 'ml-container';
-                const mlKey = `madlibs_${tIdx}`;
+                const neWrap = document.createElement('div');
+                neWrap.className = 'ne-container';
+                const neKey = `neta_envelope_${tIdx}`;
+                const neSaved = savedResponses[neKey] || {};
+                let neUnlocked = !!neSaved.unlocked;
 
-                mlWrap.innerHTML = `
-                    <div class="ts-stage-header">
-                        <span class="ts-stage-icon">${task.stageIcon}</span>
-                        <h3 class="ts-stage-title">${task.stageTitle}</h3>
-                    </div>
-                    <div class="ts-image-wrap">
-                        <img src="photos/${task.image}" alt="${task.stageTitle}" class="ml-image" onerror="this.style.display='none'">
-                    </div>
-                    <p class="ts-intro">${task.intro}</p>
-                `;
+                function renderNetaEnvelope() {
+                    if (neUnlocked) {
+                        neWrap.innerHTML = `
+                            <div class="ne-unlocked animate-fadeIn">
+                                <h3 class="ne-success-header drop-shadow-neon">${task.successHeader}</h3>
+                                <div class="ne-unlocked-row">
+                                    <div class="ne-photo-container">
+                                        <div class="ne-photo-frame shadow-neon">
+                                            <video src="photos/${task.video}"
+                                                   class="ne-video"
+                                                   controls autoplay loop muted playsinline
+                                                   onerror="this.outerHTML='<img src=\\'photos/${task.fallbackImage}\\' class=\\'ne-video\\' alt=\\'נטע וגיא\\'>'">
+                                                הדפדפן שלך אינו תומך בהצגת וידאו.
+                                            </video>
+                                        </div>
+                                    </div>
+                                    <div class="ne-greeting">
+                                        <p class="ne-greeting-text">
+                                            "${task.greeting}
+                                            <span class="ne-signature">${task.signature}</span>"
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="ne-completion-message">
+                                    <p>${task.completionMessage}</p>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+                    neWrap.innerHTML = `
+                        <div class="ne-locked-card">
+                            <div class="ne-locked-icon">🔒</div>
+                            <h3 class="ne-locked-title">${task.stageTitle}</h3>
+                            <p class="ne-locked-text">${task.lockedText}</p>
+                            <button type="button" class="ne-open-btn">${task.openButtonText}</button>
+                        </div>
+                    `;
+                    neWrap.querySelector('.ne-open-btn').addEventListener('click', openNetaModal);
+                }
 
-                // Build the mad-libs sentence with dropdowns
-                const mlSentence = document.createElement('div');
-                mlSentence.className = 'ml-sentence';
-                const savedMl = savedResponses[mlKey] || {};
+                function openNetaModal() {
+                    const overlay = document.createElement('div');
+                    overlay.className = 'ne-modal-overlay';
+                    overlay.innerHTML = `
+                        <div class="ne-modal" role="dialog" aria-modal="true">
+                            <button type="button" class="ne-modal-close" aria-label="סגור">×</button>
+                            <h3 class="ne-modal-title">${task.modalTitle}</h3>
+                            <div class="ne-modal-body">
+                                ${task.questions.map((qq, qi) => `
+                                    <div class="ne-question" data-qidx="${qi}">
+                                        <div class="ne-question-header">
+                                            <span class="ne-question-emoji">${qq.emoji}</span>
+                                            <span class="ne-question-text">${qi + 1}. ${qq.q}</span>
+                                        </div>
+                                        <div class="ne-options">
+                                            ${qq.options.map((opt, oi) => `
+                                                <label class="ne-option">
+                                                    <input type="radio" name="ne-q-${tIdx}-${qi}" value="${oi}">
+                                                    <span class="ne-option-text">${opt}</span>
+                                                </label>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="ne-modal-feedback" aria-live="polite"></div>
+                            <div class="ne-modal-actions">
+                                <button type="button" class="ne-submit-btn">${task.submitButtonText}</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(overlay);
+                    document.body.classList.add('ne-modal-open');
 
-                // Parse template: split on {1}, {2}, {3}
-                let templateHtml = task.template;
-                task.fields.forEach((field, fIdx) => {
-                    const selectId = `ml-select-${tIdx}-${fIdx}`;
-                    const savedVal = savedMl[field.id] || '';
-                    const optionsHtml = field.options.map(opt =>
-                        `<option value="${opt}" ${savedVal === opt ? 'selected' : ''}>${opt}</option>`
-                    ).join('');
-                    const selectHtml = `<select id="${selectId}" class="ml-select" data-field="${field.id}">
-                        <option value="">${field.placeholder}</option>${optionsHtml}
-                    </select>`;
-                    templateHtml = templateHtml.replace(`{${fIdx + 1}}`, selectHtml);
-                });
-                mlSentence.innerHTML = templateHtml;
+                    const closeModal = () => {
+                        overlay.remove();
+                        document.body.classList.remove('ne-modal-open');
+                    };
 
-                // Wire up change events
-                mlWrap.appendChild(mlSentence);
-                setTimeout(() => {
-                    mlSentence.querySelectorAll('.ml-select').forEach(sel => {
-                        sel.addEventListener('change', () => {
+                    overlay.querySelector('.ne-modal-close').addEventListener('click', closeModal);
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) closeModal();
+                    });
+
+                    overlay.querySelector('.ne-submit-btn').addEventListener('click', () => {
+                        const feedback = overlay.querySelector('.ne-modal-feedback');
+                        const answers = {};
+                        let answeredCount = 0;
+                        let allCorrect = true;
+
+                        task.questions.forEach((qq, qi) => {
+                            const selected = overlay.querySelector(`input[name="ne-q-${tIdx}-${qi}"]:checked`);
+                            const qEl = overlay.querySelector(`.ne-question[data-qidx="${qi}"]`);
+                            qEl.classList.remove('ne-wrong');
+                            if (selected) {
+                                answeredCount++;
+                                const val = parseInt(selected.value);
+                                answers[`q${qi}`] = val;
+                                if (val !== qq.correct) {
+                                    allCorrect = false;
+                                    qEl.classList.add('ne-wrong');
+                                }
+                            } else {
+                                allCorrect = false;
+                            }
+                        });
+
+                        if (answeredCount < task.questions.length) {
+                            feedback.className = 'ne-modal-feedback ne-feedback-info';
+                            feedback.textContent = 'סמן תשובה לכל 3 השאלות 😊';
+                            return;
+                        }
+
+                        if (allCorrect) {
+                            feedback.className = 'ne-modal-feedback ne-feedback-success';
+                            feedback.textContent = '🎉 כל התשובות נכונות! פותחים את המעטפה...';
+                            neUnlocked = true;
                             if (!state.responses[questId]) state.responses[questId] = {};
-                            if (!state.responses[questId][mlKey]) state.responses[questId][mlKey] = {};
-                            state.responses[questId][mlKey][sel.dataset.field] = sel.value;
+                            state.responses[questId][neKey] = { unlocked: true, answers };
                             saveState(state);
                             updateCompleteButton();
-
-                            // Check if all filled — show completion
-                            const allFilled = task.fields.every(f =>
-                                state.responses[questId][mlKey] && state.responses[questId][mlKey][f.id]
-                            );
-                            const compEl = mlWrap.querySelector('.ml-completion');
-                            if (compEl) compEl.classList.toggle('visible', allFilled);
-                        });
+                            setTimeout(() => {
+                                closeModal();
+                                renderNetaEnvelope();
+                            }, 900);
+                        } else {
+                            feedback.className = 'ne-modal-feedback ne-feedback-retry';
+                            feedback.textContent = task.retryMessage;
+                        }
                     });
-                }, 50);
+                }
 
-                // Completion message
-                const mlComp = document.createElement('div');
-                const allMlFilled = task.fields.every(f => savedMl[f.id]);
-                mlComp.className = 'ml-completion' + (allMlFilled ? ' visible' : '');
-                mlComp.innerHTML = `<p>${task.completionMessage}</p>`;
-                mlWrap.appendChild(mlComp);
-
-                taskEl.appendChild(mlWrap);
+                renderNetaEnvelope();
+                taskEl.appendChild(neWrap);
                 break;
 
             case 'trophy-hero-image':
@@ -1937,10 +2014,9 @@ function getQuestValidation(questId) {
                 const allSorted = sortData && task.cards.every((_, i) => sortData[`card_${i}`] !== undefined);
                 if (!allSorted) missing.push(task.stageTitle);
                 break;
-            case 'twin-madlibs':
-                const mlData = responses[`madlibs_${tIdx}`];
-                const allMlFields = mlData && task.fields.every(f => mlData[f.id]);
-                if (!allMlFields) missing.push('הברכה למיקה');
+            case 'neta-envelope':
+                const neData = responses[`neta_envelope_${tIdx}`];
+                if (!neData || !neData.unlocked) missing.push('פתיחת מעטפת הזהב של נטע');
                 break;
             case 'trophy-cabinet':
                 const cab = responses['cabinet'];
