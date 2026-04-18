@@ -6,7 +6,7 @@ const MAP_POSITIONS = [
     { x: 54, y: 24 },   // Quest 3 - center-right
     { x: 74, y: 18 },   // Quest 4 - far right (pulled from edge)
     { x: 70, y: 36 },   // Quest 5 - right side, drops down
-    { x: 66, y: 48 },   // Quest 6 - curves back left
+    { x: 52, y: 50 },   // Quest 6 - curves back left (moved further left to avoid overlap with Quest 5)
     { x: 44, y: 42 },   // Quest 7 - center
     { x: 20, y: 50 },   // Quest 8 - far left
     { x: 34, y: 62 },   // Quest 9 - curves right and down
@@ -392,6 +392,7 @@ const QUESTS = [
         subtitle: "מפת המסע המשותף",
         icon: "👫",
         mapIcon: "👫",
+        mapIconImg: "photos/Guy with Girls.jpg",
         xp: 100,
         message: "אני תאום ואני גם אני",
         color: "#E91E63",
