@@ -11,7 +11,7 @@ const FIREBASE_CONFIG = {
     appId: "1:172950888190:web:79c4c2947c0995f0e54faf"
 };
 
-const FAMILY_PASSCODE = "guy2026";
+const FAMILY_PASSCODE = "1907";
 
 let firebaseReady = false;
 let dbRef = null;
