@@ -4972,16 +4972,23 @@ select.task-select option { background: #fff; color: #2E1065; }
 .map-node-next .map-node-circle::before { content: none !important; }
 .map-node-next .map-node-label {
   display: inline-block !important;
-  background: linear-gradient(180deg, #FFC857, #FB8C00) !important;
-  color: #3A1D00 !important;
+  /* Center the pill on the node (the hotspot is sized to the island), so it
+     sits on the island for every step — corner or center — never in the sky. */
+  top: 50% !important;
+  bottom: auto !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  /* PINK attention pill */
+  background: linear-gradient(180deg, #FF7AB6, #DB2777) !important;
+  color: #ffffff !important;
   border: 2px solid #ffffff !important;
   font-weight: 900 !important;
-  box-shadow: 0 4px 14px rgba(251,140,0,0.6) !important;
+  box-shadow: 0 4px 14px rgba(219,39,119,0.55) !important;
   animation: currentStepPulse 1.8s ease-in-out infinite !important;
 }
 @keyframes currentStepPulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.07); }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.06); }
 }
 /* keep the current-step marker clean: just the colored name pill */
 .map-node-next .map-node-subtitle,
