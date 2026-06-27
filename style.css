@@ -4870,3 +4870,24 @@ select.task-select option { background: #fff; color: #2E1065; }
 .flow-progress-text,
 .tc-counter-text,
 .tc-counter { direction: ltr; unicode-bidi: isolate; }
+
+/* =======================================================================
+   REVIEW FIXES — WAVE 2 (gentle feedback + accessibility)
+   ======================================================================= */
+
+/* #4 twin-sort: gentle drift-back instead of a red flash + shake */
+.ts-card.gentle-return { transition: opacity .3s ease, transform .3s ease; opacity: .5; transform: scale(.9); }
+
+/* #26 Q3 quiz: soft amber "think again" cue, not a harsh red shake */
+.iq-option-btn.try-again { background: #FFF4D6 !important; border-color: #E8B84B !important; color: var(--text-dark) !important; }
+
+/* #6 Neta quiz: soften the "wrong" feedback from harsh red to a calm amber hint */
+.ne-question-feedback.ne-qfb-wrong { color: #8A5A12 !important; }
+.ne-option.ne-wrong { background: #FFF4D6 !important; border-color: #E8B84B !important; color: var(--text-dark) !important; }
+
+/* #39 Q9: show which greeting videos have been watched */
+.cin-video-box.watched { opacity: .85; position: relative; }
+.cin-video-box.watched::after { content: '✓'; position: absolute; top: 6px; inset-inline-end: 8px; color: #15803D; font-weight: 900; font-size: 1.1rem; }
+
+/* #17: envelope attribution dark ink on the near-white card (was low-contrast accent) */
+.env-card-back .env-from { color: var(--text-dark) !important; }

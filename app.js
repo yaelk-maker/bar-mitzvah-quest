@@ -409,6 +409,7 @@ function openQuest(questId) {
                                 if (!state.responses[questId]) state.responses[questId] = {};
                                 state.responses[questId][stepKey] = oIdx;
                                 saveState(state);
+                                updateCompleteButton();
                                 // Unlock next step
                                 const nextStep = iqWrap.querySelector(`.iq-step[data-step="${sIdx + 1}"]`);
                                 if (nextStep) {
@@ -425,8 +426,10 @@ function openQuest(questId) {
                                     iqWrap.querySelector('.iq-completion').classList.add('visible');
                                 }
                             } else {
-                                btn.classList.add('wrong');
-                                setTimeout(() => btn.classList.remove('wrong'), 600);
+                                // Gentle: calm hint instead of a silent red shake.
+                                btn.classList.add('try-again');
+                                showToast('לא נורא! חשוב על זה עוד רגע ונסה תשובה אחרת 🙂');
+                                setTimeout(() => btn.classList.remove('try-again'), 700);
                             }
                         });
                         optionsDiv.appendChild(btn);
@@ -1154,11 +1157,12 @@ function openQuest(questId) {
                     const correctBin = parseInt(card.dataset.correct);
                     const isCorrect = bIdx === correctBin;
                     card.classList.remove('selected', 'dragging');
-                    card.classList.add('placed', isCorrect ? 'correct' : 'wrong');
+                    card.classList.add('placed');
                     card.removeAttribute('draggable');
                     binEls[bIdx].querySelector('.ts-bin-cards').appendChild(card);
 
                     if (isCorrect) {
+                        card.classList.add('correct');
                         // Persist ONLY correct placements, so a transient wrong drop can
                         // never be saved (and so can't freeze on reload or pass validation).
                         if (!state.responses[questId]) state.responses[questId] = {};
@@ -1167,11 +1171,15 @@ function openQuest(questId) {
                         saveState(state);
                         updateCompleteButton();
                     } else {
+                        // Gentle & forgiving: no red flash / shake. A calm hint, then the
+                        // card drifts back to the pool so the child can try another box.
+                        card.classList.add('gentle-return');
+                        showToast('כמעט! אפשר לנסות קופסה אחרת 🙂');
                         setTimeout(() => {
-                            card.classList.remove('placed', 'wrong');
+                            card.classList.remove('placed', 'gentle-return');
                             card.setAttribute('draggable', 'true');
                             tsPool.appendChild(card);
-                        }, 800);
+                        }, 750);
                     }
                 }
 
@@ -1357,7 +1365,7 @@ function openQuest(questId) {
                                     qFeedback.textContent = '✔️ נכון! אתה באמת מכיר את נטע';
                                 } else {
                                     qFeedback.className = 'ne-question-feedback ne-qfb-wrong';
-                                    qFeedback.textContent = '❌ לא מדויק — נסה שוב 😉';
+                                    qFeedback.textContent = 'כמעט! אפשר לבחור תשובה אחרת 🙂';
                                 }
 
                                 if (correctByQuestion.every(Boolean)) {
@@ -1781,20 +1789,28 @@ function openQuest(questId) {
                 taskEl.innerHTML = `<label class="task-label">${task.label}</label>`;
                 const cinWrap = document.createElement('div');
                 cinWrap.className = 'cin-wrap';
-                task.videos.forEach(vid => {
+                task.videos.forEach((vid, vIdx) => {
                     const vidEl = document.createElement('div');
                     vidEl.className = 'cin-video-box';
+                    const watchedKey = `video_watched_${vIdx}`;
+                    if ((state.responses[questId] || {})[watchedKey]) vidEl.classList.add('watched');
                     vidEl.innerHTML = `
                         <div class="cin-video-title">${vid.title}<span class="cin-hint">לחץ לצפייה</span></div>
                     `;
                     vidEl.addEventListener('click', () => {
+                        // Mark watched (strict completion requires watching every greeting).
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        state.responses[questId][watchedKey] = true;
+                        saveState(state);
+                        vidEl.classList.add('watched');
+                        updateCompleteButton();
                         // Create overlay
                         const overlay = document.createElement('div');
                         overlay.className = 'cin-overlay';
                         overlay.innerHTML = `
                             <div class="cin-overlay-inner">
                                 <div class="cin-overlay-title">${vid.title}</div>
-                                <button class="cin-overlay-close">✕</button>
+                                <button class="cin-overlay-close" aria-label="סגור">✕</button>
                                 <video src="photos/${vid.src}" controls playsinline
                                        onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרטון יתווסף בקרוב...</div>'"></video>
                             </div>
@@ -1803,23 +1819,27 @@ function openQuest(questId) {
                         requestAnimationFrame(() => overlay.classList.add('visible'));
                         const video = overlay.querySelector('video');
                         // Play with sound — this runs inside the click (a user gesture),
-                        // so the browser allows unmuted autoplay. Relying on the `autoplay`
-                        // attribute alone gets force-muted by autoplay policy.
+                        // so the browser allows unmuted autoplay.
                         if (video) {
                             video.muted = false;
                             video.volume = 1;
                             const playPromise = video.play();
                             if (playPromise) playPromise.catch(() => {});
                         }
+                        const onKey = (e) => { if (e.key === 'Escape') closeOverlay(); };
                         const closeOverlay = () => {
                             if (video) video.pause();
                             overlay.classList.remove('visible');
+                            document.removeEventListener('keydown', onKey);
                             setTimeout(() => overlay.remove(), 300);
                         };
-                        // Close on: X button, click outside, or video end
-                        overlay.querySelector('.cin-overlay-close').addEventListener('click', (e) => { e.stopPropagation(); closeOverlay(); });
+                        // Close on: X button, click outside, or Escape. No surprise
+                        // auto-close when the video ends — the child closes when ready.
+                        document.addEventListener('keydown', onKey);
+                        const closeBtn = overlay.querySelector('.cin-overlay-close');
+                        closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeOverlay(); });
+                        closeBtn.focus();
                         overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
-                        if (video) video.addEventListener('ended', () => { setTimeout(closeOverlay, 1000); });
                     });
                     cinWrap.appendChild(vidEl);
                 });
@@ -2037,8 +2057,8 @@ function getQuestValidation(questId) {
                 if (!responses[`task_${tIdx}`] || !String(responses[`task_${tIdx}`]).trim()) missing.push('כתיבת התשובה שלך');
                 break;
             case 'hero-journey':
-                const anyOpened = task.stations.some(s => responses[`hj_station_${s.id}`]);
-                if (!anyOpened) missing.push('תיקי החקירה');
+                const allOpened = task.stations.every(s => responses[`hj_station_${s.id}`]);
+                if (!allOpened) missing.push('פתיחת כל תיקי החקירה');
                 break;
             case 'power-stones':
                 const anyStone = task.stones.some((_, i) => responses[`power_stone_${i}`]);
@@ -2048,8 +2068,8 @@ function getQuestValidation(questId) {
                 if (responses[`msg_bubble_${tIdx}`] === undefined) missing.push('המשפט לגיא התינוק');
                 break;
             case 'brain-meters':
-                const anyMeter = task.traits.some(t => responses[`brain_meter_${t.id}`]);
-                if (!anyMeter) missing.push('עוצמות התכונות');
+                const allMeters = task.traits.every(t => responses[`brain_meter_${t.id}`]);
+                if (!allMeters) missing.push('דירוג כל התכונות');
                 break;
             case 'brain-cards':
                 const anyCard = task.cards.some((_, i) => responses[`brain_card_${i}`]);
@@ -2078,17 +2098,22 @@ function getQuestValidation(questId) {
             case 'medal-factory':
                 const factory = responses['medal_factory'];
                 const allFactory = factory && task.fields.every(f => factory[f.id]);
-                if (!allFactory) missing.push('המדליה האישית');
+                // Strict: must also actually PRODUCE the medal, not just pick dropdowns.
+                if (!allFactory || !responses['medal_produced']) missing.push('ייצור המדליה האישית');
                 break;
             case 'trophy-select':
                 if (!responses['proudest_medal']) missing.push('בחירת הגביע');
                 break;
             case 'secret-envelopes':
-                const anyEnvOpened = task.envelopes.some((_, i) => responses[`envelope_${i}`]);
-                if (!anyEnvOpened) missing.push('המעטפות הסודיות');
+                const allEnvOpened = task.envelopes.every((_, i) => responses[`envelope_${i}`]);
+                if (!allEnvOpened) missing.push('פתיחת כל המעטפות הסודיות');
                 break;
             case 'power-select':
                 if (!responses[`power_choice_${tIdx}`]) missing.push('בחירת הכוח');
+                break;
+            case 'cinema-videos':
+                const allWatched = (task.videos || []).every((_, i) => responses[`video_watched_${i}`]);
+                if (!allWatched) missing.push('צפייה בכל הסרטונים');
                 break;
             case 'emotion-board':
                 if (responses[`emotion_${tIdx}`] === undefined) missing.push('לוח הרגשות');
