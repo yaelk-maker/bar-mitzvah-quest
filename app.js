@@ -207,6 +207,18 @@ function renderQuestMap() {
         bookNode.addEventListener('click', () => openHeroBook());
         map.appendChild(bookNode);
     }
+
+    // Fixed current-step banner — shows the name of the step Guy is on now
+    const stepBanner = document.getElementById('current-step-banner');
+    if (stepBanner) {
+        const nextEntry = allQuests.find(v => v.isNext);
+        if (nextEntry) {
+            stepBanner.innerHTML = `<span>🎯</span><span>השלב שלי: ${nextEntry.quest.name}</span>`;
+            stepBanner.classList.add('visible');
+        } else {
+            stepBanner.classList.remove('visible');
+        }
+    }
 }
 
 function renderMiniFamilyTree() {

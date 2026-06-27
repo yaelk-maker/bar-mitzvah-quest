@@ -4970,26 +4970,36 @@ select.task-select option { background: #fff; color: #2E1065; }
   animation: none !important;
 }
 .map-node-next .map-node-circle::before { content: none !important; }
-.map-node-next .map-node-label {
-  display: inline-block !important;
-  /* Center the pill on the node (the hotspot is sized to the island), so it
-     sits on the island for every step — corner or center — never in the sky. */
-  top: 50% !important;
-  bottom: auto !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  /* PINK attention pill */
-  background: linear-gradient(180deg, #FF7AB6, #DB2777) !important;
-  color: #ffffff !important;
-  border: 2px solid #ffffff !important;
-  font-weight: 900 !important;
-  box-shadow: 0 4px 14px rgba(219,39,119,0.55) !important;
-  animation: currentStepPulse 1.8s ease-in-out infinite !important;
+/* The on-island pill couldn't align with the baked map, so the current step is
+   shown via a fixed banner (#current-step-banner) instead. Keep node labels hidden. */
+.map-node-next .map-node-label { display: none !important; }
+
+/* Fixed "current step" banner — pink, bottom-center above the XP bar.
+   Decoupled from the islands so it can never be mispositioned. */
+#current-step-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 52px;
+  transform: translateX(-50%);
+  z-index: 31;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #FF7AB6, #DB2777);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(14px, 1.4vw, 19px);
+  padding: 7px 18px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(219,39,119,0.5);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: currentStepPulse 1.9s ease-in-out infinite;
 }
+#current-step-banner.visible { display: inline-flex; }
 @keyframes currentStepPulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%      { transform: translate(-50%, -50%) scale(1.06); }
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.04); }
 }
-/* keep the current-step marker clean: just the colored name pill */
-.map-node-next .map-node-subtitle,
-.map-node-next .map-node-start { display: none !important; }
