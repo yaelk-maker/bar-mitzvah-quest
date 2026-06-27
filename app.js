@@ -352,7 +352,6 @@ function openQuest(questId) {
                 taskEl.innerHTML = `<label class="task-label">${task.label || ''}</label>`;
                 const iqWrap = document.createElement('div');
                 iqWrap.className = 'iq-container';
-                const iqCompletionKey = `iq_completed`;
                 const allSolved = task.steps.every((_, si) => savedResponses[`iq_step_${si}`] !== undefined);
 
                 task.steps.forEach((step, sIdx) => {
@@ -1038,7 +1037,9 @@ function openQuest(questId) {
                     const cardKey = `brain_card_${cIdx}`;
                     const isClaimed = savedResponses[cardKey] === true;
                     const cardEl = document.createElement('div');
-                    cardEl.className = 'brain-card' + (isClaimed ? ' claimed' : '');
+                    // A claimed card renders flipped so its "✓ זה אני!" confirmation
+                    // is visible on reload (the claim lives on the card back).
+                    cardEl.className = 'brain-card' + (isClaimed ? ' claimed flipped' : '');
                     cardEl.innerHTML = `
                         <div class="brain-card-inner">
                             <div class="brain-card-front">
@@ -1144,6 +1145,19 @@ function openQuest(questId) {
                 });
                 tsWrap.appendChild(tsBinsRow);
 
+                // Progress counter (#31): how many cards are correctly sorted
+                const tsCounter = document.createElement('div');
+                tsCounter.className = 'ts-counter';
+                const tsTotal = task.cards.length;
+                const updateTsCounter = () => {
+                    const sd = (state.responses[questId] || {})[tsStageKey] || {};
+                    const done = task.cards.filter((c, i) => sd[`card_${i}`] === c.correct).length;
+                    tsCounter.innerHTML = `<span class="ts-counter-text">מויינו: <strong>${done} / ${tsTotal}</strong></span>`;
+                    tsCounter.classList.toggle('complete', done >= tsTotal);
+                };
+                tsWrap.appendChild(tsCounter);
+                updateTsCounter();
+
                 // Build card pool
                 const tsPool = document.createElement('div');
                 tsPool.className = 'ts-pool';
@@ -1173,6 +1187,7 @@ function openQuest(questId) {
                         state.responses[questId][tsStageKey][`card_${card.dataset.idx}`] = bIdx;
                         saveState(state);
                         updateCompleteButton();
+                        updateTsCounter();
                     } else {
                         // Gentle & forgiving: no red flash / shake. A calm hint, then the
                         // card drifts back to the pool so the child can try another box.

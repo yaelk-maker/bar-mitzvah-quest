@@ -4911,3 +4911,13 @@ select.task-select option { background: #fff; color: #2E1065; }
   margin: 6px auto 10px;
   max-width: 520px;
 }
+
+/* #31: twin-sort progress counter */
+.ts-counter { text-align: center; margin: 8px auto 12px; }
+.ts-counter-text { direction: ltr; unicode-bidi: isolate; background: rgba(0,0,0,0.05); border-radius: 999px; padding: 6px 16px; font-weight: 700; color: var(--text-dark); display: inline-block; }
+.ts-counter.complete .ts-counter-text { background: #DCFCE7; color: #15803D; }
+
+/* #36: opened envelopes size to their content so long quotes aren't clipped
+   by the position-based nth-child widths. */
+.env-card.opened { width: auto !important; min-width: 280px; max-width: 360px; }
+.env-card.opened .env-quote { max-height: none; overflow: visible; }
