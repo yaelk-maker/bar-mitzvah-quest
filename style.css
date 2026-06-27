@@ -4921,3 +4921,16 @@ select.task-select option { background: #fff; color: #2E1065; }
    by the position-based nth-child widths. */
 .env-card.opened { width: auto !important; min-width: 280px; max-width: 360px; }
 .env-card.opened .env-quote { max-height: none; overflow: visible; }
+
+/* =======================================================================
+   MAP: no cloud-cover on locked steps (2026-06-27)
+   Decision: keep the full island map visible (map-v3.jpg); drop the cloud
+   puffs over locked steps. Locked islands stay visible but aren't clickable
+   yet (the lock badge marks them). Decorative sky clouds are unaffected.
+   ======================================================================= */
+.map-node-locked .map-node-circle::before,
+.map-node-locked .map-node-circle::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
