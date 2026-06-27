@@ -5007,3 +5007,9 @@ select.task-select option { background: #fff; color: #2E1065; }
 /* Cursor: show a normal arrow over every step node (was showing a text I-beam
    "line" on hover). Applies to the node and all its children. */
 .map-node, .map-node *, .map-node-circle { cursor: default !important; }
+
+/* Arrow cursor across the entire map screen (containers were cursor:auto, which
+   renders a text I-beam; node hotspots are offset from the painted islands so
+   hovering an island often lands on a container). Buttons/links keep their own. */
+#screen-home,
+#screen-home *:not(button):not(a):not(input) { cursor: default !important; }
