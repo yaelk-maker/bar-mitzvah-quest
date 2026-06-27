@@ -195,8 +195,8 @@ function renderQuestMap() {
     if (state.completedQuests.length === QUESTS.length) {
         const bookNode = document.createElement('div');
         bookNode.className = 'map-node map-node-treasure';
-        bookNode.style.left = '55%';
-        bookNode.style.top = '95%';
+        bookNode.style.left = '78%';
+        bookNode.style.top = '62%';
         bookNode.innerHTML = `
             <div class="map-node-circle map-node-treasure-circle">
                 <span class="map-node-emoji">📖</span>
@@ -265,56 +265,47 @@ function drawMapPath(svg, allQuests) {
         d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr.x} ${curr.y}`;
     }
 
-    // Outer lava glow
-    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    glow.setAttribute('d', d);
-    glow.setAttribute('fill', 'none');
-    glow.setAttribute('stroke', 'rgba(255,120,0,0.3)');
-    glow.setAttribute('stroke-width', '8');
-    glow.setAttribute('stroke-linecap', 'round');
-    glow.setAttribute('filter', 'url(#pathGlow)');
-    svg.appendChild(glow);
+    // --- rope-bridge trail connecting each stage ---
+    const mkPath = (stroke, w, dash) => {
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d); p.setAttribute('fill','none');
+        p.setAttribute('stroke', stroke); p.setAttribute('stroke-width', w);
+        p.setAttribute('stroke-linecap','round'); p.setAttribute('stroke-linejoin','round');
+        if (dash) p.setAttribute('stroke-dasharray', dash);
+        svg.appendChild(p); return p;
+    };
+    mkPath('rgba(70,48,24,0.5)', '3.8');    // rope casing / shadow
+    mkPath('#A9763C', '2.9');               // rope body (dark side)
+    mkPath('#D8A862', '2.0');               // rope body (lit side)
+    mkPath('#F2D29A', '0.8');               // rope highlight
+    mkPath('#7E5328', '2.9', '0.5 3.0');    // rope twist notches
 
-    // Dark outline
-    const trailBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    trailBorder.setAttribute('d', d);
-    trailBorder.setAttribute('fill', 'none');
-    trailBorder.setAttribute('stroke', '#2a1a0a');
-    trailBorder.setAttribute('stroke-width', '5.5');
-    trailBorder.setAttribute('stroke-linecap', 'round');
-    trailBorder.setAttribute('stroke-linejoin', 'round');
-    svg.appendChild(trailBorder);
-
-    // Main lava path (orange/amber)
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', d);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#ff8f00');
-    path.setAttribute('stroke-width', '3.5');
-    path.setAttribute('stroke-dasharray', '10 6');
-    path.setAttribute('stroke-linecap', 'round');
-    svg.appendChild(path);
-
-    // Green completed overlay for completed segments
-    const completedCount = allQuests.filter(v => v.isCompleted).length;
-    if (completedCount >= 1) {
-        // Draw solid green from first to last completed + next
-        const greenEnd = Math.min(completedCount, points.length - 1);
-        const greenPoints = points.slice(0, greenEnd + 1);
-        if (greenPoints.length >= 2) {
-            let cd = `M ${greenPoints[0].x} ${greenPoints[0].y}`;
-            for (let i = 1; i < greenPoints.length; i++) {
-                const prev = greenPoints[i - 1];
-                const curr = greenPoints[i];
-                cd += ` C ${prev.x + (curr.x - prev.x) * 0.5} ${prev.y}, ${prev.x + (curr.x - prev.x) * 0.5} ${curr.y}, ${curr.x} ${curr.y}`;
+    // wooden plank rungs, rotated to follow the path direction
+    const qm = document.getElementById('quest-map');
+    const W = (qm && qm.clientWidth) || 900, H = (qm && qm.clientHeight) || 500;
+    let bridge = document.getElementById('trail-stones');
+    if (!bridge && qm) { bridge = document.createElement('div'); bridge.id = 'trail-stones'; qm.insertBefore(bridge, qm.firstChild); }
+    if (bridge) {
+        bridge.innerHTML = '';
+        for (let i = 1; i < points.length; i++) {
+            const p0 = points[i-1], p3 = points[i];
+            const cp1 = { x: p0.x + (p3.x-p0.x)*0.5, y: p0.y };
+            const cp2 = { x: p0.x + (p3.x-p0.x)*0.5, y: p3.y };
+            const dist = Math.hypot((p3.x-p0.x)/100*W, (p3.y-p0.y)/100*H);
+            const count = Math.max(3, Math.round(dist / 24));
+            for (let s = 1; s < count; s++) {
+                const t = s/count, mt = 1-t;
+                const x = mt*mt*mt*p0.x + 3*mt*mt*t*cp1.x + 3*mt*t*t*cp2.x + t*t*t*p3.x;
+                const y = mt*mt*mt*p0.y + 3*mt*mt*t*cp1.y + 3*mt*t*t*cp2.y + t*t*t*p3.y;
+                const dxu = 3*mt*mt*(cp1.x-p0.x) + 6*mt*t*(cp2.x-cp1.x) + 3*t*t*(p3.x-cp2.x);
+                const dyu = 3*mt*mt*(cp1.y-p0.y) + 6*mt*t*(cp2.y-cp1.y) + 3*t*t*(p3.y-cp2.y);
+                const ang = Math.atan2(dyu*H, dxu*W) * 180/Math.PI;
+                const pl = document.createElement('div');
+                pl.className = 'trail-plank';
+                pl.style.left = x + '%'; pl.style.top = y + '%';
+                pl.style.transform = 'translate(-50%,-50%) rotate(' + (ang+90) + 'deg)';
+                bridge.appendChild(pl);
             }
-            const donePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            donePath.setAttribute('d', cd);
-            donePath.setAttribute('fill', 'none');
-            donePath.setAttribute('stroke', '#76ff03');
-            donePath.setAttribute('stroke-width', '3.5');
-            donePath.setAttribute('stroke-linecap', 'round');
-            svg.appendChild(donePath);
         }
     }
 }
@@ -632,7 +623,7 @@ function openQuest(questId) {
                             </div>
                             <span class="flow-progress-text">${idx + 1} / ${flowMembers.length}</span>
                         </div>
-                        ${showGenHeader ? `<div class="flow-generation">${m.generation}</div>` : ''}
+                        <div class="flow-generation${showGenHeader ? '' : ' flow-generation-empty'}">${showGenHeader ? m.generation : ''}</div>
                         <div class="flow-person ${isLast ? 'flow-person-hero' : ''}">
                             <div class="flow-photo">
                                 <img src="${m.photo}" alt="${m.name}" style="${photoStyle}">
@@ -677,10 +668,19 @@ function openQuest(questId) {
                     });
 
                     nextBtn.addEventListener('click', () => {
-                        // Always save the word input
+                        // Require a word for this person before moving on
+                        if (wordInput && !wordInput.value.trim()) {
+                            showToast('כתוב מילה אחת או שתיים לפני שממשיכים 🙂');
+                            wordInput.focus();
+                            wordInput.classList.remove('flow-shake');
+                            void wordInput.offsetWidth; // restart animation
+                            wordInput.classList.add('flow-shake');
+                            return;
+                        }
+                        // Save the word input
                         if (wordInput) {
                             if (!state.responses[questId]) state.responses[questId] = {};
-                            state.responses[questId][mKey] = wordInput.value;
+                            state.responses[questId][mKey] = wordInput.value.trim();
                             saveState(state);
                         }
                         if (isLast) {
@@ -1158,19 +1158,19 @@ function openQuest(questId) {
                     card.removeAttribute('draggable');
                     binEls[bIdx].querySelector('.ts-bin-cards').appendChild(card);
 
-                    if (!state.responses[questId]) state.responses[questId] = {};
-                    if (!state.responses[questId][tsStageKey]) state.responses[questId][tsStageKey] = {};
-                    state.responses[questId][tsStageKey][`card_${card.dataset.idx}`] = bIdx;
-                    saveState(state);
-                    updateCompleteButton();
-
-                    if (!isCorrect) {
+                    if (isCorrect) {
+                        // Persist ONLY correct placements, so a transient wrong drop can
+                        // never be saved (and so can't freeze on reload or pass validation).
+                        if (!state.responses[questId]) state.responses[questId] = {};
+                        if (!state.responses[questId][tsStageKey]) state.responses[questId][tsStageKey] = {};
+                        state.responses[questId][tsStageKey][`card_${card.dataset.idx}`] = bIdx;
+                        saveState(state);
+                        updateCompleteButton();
+                    } else {
                         setTimeout(() => {
                             card.classList.remove('placed', 'wrong');
                             card.setAttribute('draggable', 'true');
                             tsPool.appendChild(card);
-                            delete state.responses[questId][tsStageKey][`card_${card.dataset.idx}`];
-                            saveState(state);
                         }, 800);
                     }
                 }
@@ -1184,9 +1184,10 @@ function openQuest(questId) {
                     card.dataset.idx = cardData.origIdx;
                     card.textContent = cardData.text;
 
-                    if (savedBin !== undefined) {
-                        const isCorrect = parseInt(savedBin) === cardData.correct;
-                        card.classList.add('placed', isCorrect ? 'correct' : 'wrong');
+                    if (savedBin !== undefined && parseInt(savedBin) === cardData.correct) {
+                        // Only correct placements are restored; any stale wrong value
+                        // falls through to the draggable branch (never stuck).
+                        card.classList.add('placed', 'correct');
                         const targetBin = binEls[savedBin];
                         if (targetBin) targetBin.querySelector('.ts-bin-cards').appendChild(card);
                     } else {
@@ -1956,16 +1957,25 @@ function openQuest(questId) {
     } else {
         btn.textContent = 'סיימתי את המשימה! ✓';
         btn.classList.remove('completed');
-        // Hide the complete button for quests with family-flow until tree is shown
-        const hasFlow = quest.tasks.some(t => t.type === 'family-flow');
-        if (hasFlow) {
-            footer.style.display = 'none';
-        } else {
-            footer.style.display = '';
+        // For family-flow, hide the complete button ONLY while stepping through the
+        // members; once every member is filled the family tree is shown, so the
+        // footer must be visible (otherwise the quest is a dead-end on reopen).
+        const flowTask = quest.tasks.find(t => t.type === 'family-flow');
+        let hideFooter = false;
+        if (flowTask) {
+            const r = state.responses[questId] || {};
+            const flowComplete = flowTask.members.every((_, i) => {
+                const v = r[`member_${i}`];
+                return v !== undefined && String(v).trim() !== '';
+            });
+            hideFooter = !flowComplete;
         }
-        // Validate before enabling
+        footer.style.display = hideFooter ? 'none' : '';
+        // Keep the button CLICKABLE even when invalid — clicking runs completeQuest()
+        // which shows the Hebrew "what's still missing" toast. A natively-disabled
+        // button gives an ASD user no feedback at all.
         const { valid } = getQuestValidation(questId);
-        btn.disabled = !valid;
+        btn.disabled = false;
         btn.classList.toggle('not-ready', !valid);
     }
 
@@ -1993,6 +2003,10 @@ function openQuest(questId) {
 function autoSaveInput(el) {
     const qId = el.dataset.quest;
     const key = el.dataset.key;
+    // Guard: selects in card-builder / medal-factory have their own handlers and
+    // carry no data-quest/data-key — without this guard they wrote a junk
+    // responses["undefined"]["undefined"] entry into state and Firebase.
+    if (qId === undefined || key === undefined) return;
     if (!state.responses[qId]) state.responses[qId] = {};
     state.responses[qId][key] = el.value;
     saveState(state);
@@ -2007,6 +2021,21 @@ function getQuestValidation(questId) {
 
     quest.tasks.forEach((task, tIdx) => {
         switch (task.type) {
+            case 'family-flow':
+                const flowIncomplete = task.members.some((_, i) => {
+                    const v = responses[`member_${i}`];
+                    return v === undefined || String(v).trim() === '';
+                });
+                if (flowIncomplete) missing.push('מילה על כל בן משפחה');
+                break;
+            case 'investigation-quiz':
+                const allSolved = (task.steps || []).every((_, si) => responses[`iq_step_${si}`] !== undefined);
+                if (!allSolved) missing.push('פתרון כל תעלומות החקירה');
+                break;
+            case 'textarea':
+            case 'reflection':
+                if (!responses[`task_${tIdx}`] || !String(responses[`task_${tIdx}`]).trim()) missing.push('כתיבת התשובה שלך');
+                break;
             case 'hero-journey':
                 const anyOpened = task.stations.some(s => responses[`hj_station_${s.id}`]);
                 if (!anyOpened) missing.push('תיקי החקירה');
@@ -2031,7 +2060,9 @@ function getQuestValidation(questId) {
                 break;
             case 'twin-sort':
                 const sortData = responses[`twin_sort_${tIdx}`];
-                const allSorted = sortData && task.cards.every((_, i) => sortData[`card_${i}`] !== undefined);
+                // Require every card to be placed in its CORRECT bin — not merely
+                // placed — so a stale/wrong placement can never satisfy completion.
+                const allSorted = sortData && task.cards.every((c, i) => sortData[`card_${i}`] === c.correct);
                 if (!allSorted) missing.push(task.stageTitle);
                 break;
             case 'neta-envelope':
@@ -2084,7 +2115,9 @@ function updateCompleteButton() {
     if (!questId || state.completedQuests.includes(questId)) return;
     const btn = document.getElementById('btn-complete');
     const { valid } = getQuestValidation(questId);
-    btn.disabled = !valid;
+    // Keep clickable; .not-ready conveys "not finished yet" but a click still
+    // surfaces the missing-items toast via completeQuest().
+    btn.disabled = false;
     btn.classList.toggle('not-ready', !valid);
 }
 
@@ -2127,6 +2160,7 @@ function showXPGain(quest) {
     overlay.className = 'xp-overlay';
     overlay.innerHTML = `
         <div class="xp-popup">
+            <div class="xp-stars"><span class="xp-star xp-star-1">⭐</span><span class="xp-star xp-star-2">⭐</span><span class="xp-star xp-star-3">⭐</span></div>
             <div class="xp-popup-icon">${quest.icon}</div>
             <h3>משימה הושלמה!</h3>
             <div class="xp-gain">+${quest.xp} XP</div>
@@ -2135,11 +2169,32 @@ function showXPGain(quest) {
         </div>
     `;
     document.body.appendChild(overlay);
+    launchConfetti(overlay);
     setTimeout(() => overlay.classList.add('visible'), 50);
     setTimeout(() => {
         overlay.classList.remove('visible');
-        setTimeout(() => overlay.remove(), 300);
-    }, 2000);
+        setTimeout(() => overlay.remove(), 350);
+    }, 3000);
+}
+
+// ===== Confetti burst (dependency-free) =====
+function launchConfetti(parent) {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const colors = ['#EC4899', '#FB923C', '#FBBF24', '#22C55E', '#38BDF8', '#9333EA'];
+    const layer = document.createElement('div');
+    layer.className = 'confetti-layer';
+    for (let i = 0; i < 70; i++) {
+        const p = document.createElement('span');
+        p.className = 'confetti-piece';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.background = colors[i % colors.length];
+        p.style.animationDelay = (Math.random() * 0.5) + 's';
+        p.style.animationDuration = (1.8 + Math.random() * 1.4) + 's';
+        if (i % 3 === 0) p.style.borderRadius = '50%';
+        layer.appendChild(p);
+    }
+    parent.appendChild(layer);
+    setTimeout(() => layer.remove(), 3400);
 }
 
 // ===== Toast =====

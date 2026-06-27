@@ -1,16 +1,16 @@
 // Quest data model - all 10 quests for Guy's Bar Mitzvah journey
 // Map positions for each quest (percentage-based, desktop-first)
 const MAP_POSITIONS = [
-    { x: 14, y: 18 },   // Quest 1 - top left START (well below banner)
-    { x: 32, y: 16 },   // Quest 2 - drift right
-    { x: 54, y: 24 },   // Quest 3 - center-right
-    { x: 74, y: 18 },   // Quest 4 - far right (pulled from edge)
-    { x: 70, y: 36 },   // Quest 5 - right side, drops down
-    { x: 52, y: 50 },   // Quest 6 - curves back left (moved further left to avoid overlap with Quest 5)
-    { x: 44, y: 42 },   // Quest 7 - center
-    { x: 20, y: 50 },   // Quest 8 - far left
-    { x: 34, y: 62 },   // Quest 9 - curves right and down
-    { x: 52, y: 74 },   // Quest 10 - TREASURE: bottom-center
+    { x: 12, y: 79 },   // Q1 שורשים — tree island (bottom-left)
+    { x: 33, y: 80 },   // Q2 משחק המשפחה — K! island
+    { x: 20, y: 63 },   // Q3 תיק החקירה — magnifier island
+    { x: 37, y: 58 },   // Q4 הגיבור שנולד — superhero island
+    { x: 30, y: 49 },   // Q5 המוח — brain island
+    { x: 52, y: 52 },   // Q6 שבט האחים — family-photo island
+    { x: 43, y: 37 },   // Q7 הדרך — trophy island
+    { x: 68, y: 40 },   // Q8 הסופרפאוורס — fist island
+    { x: 56, y: 24 },   // Q9 האנשים — heart island
+    { x: 87, y: 15 },   // Q10 מי אני עכשיו — boy-photo island (top-right)
 ];
 
 const QUESTS = [

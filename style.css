@@ -1,7 +1,7 @@
 /* ===== ROBLOX BRAINROT GAME STYLE ===== */
 /* Bright, colorful, chunky, FUN! */
 
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Bungee&family=Baloo+2:wght@600;700;800&display=swap');
 
 :root {
     --bg-sky: #4fc3f7;
@@ -89,8 +89,8 @@ body::before {
     height: 100vh;
     max-height: 100vh;
     /* Map background image */
-    background: url('map-bg.png') center center / cover no-repeat;
-    background-color: #1a1025;
+    background: linear-gradient(180deg, #AEDCF2 0%, #CDEBFA 40%, #E7F6E9 100%);
+    background-color: #BFE3F5;
     overflow: hidden;
 }
 
@@ -3978,3 +3978,895 @@ body.ne-modal-open {
 #sync-status.visible {
     opacity: 1;
 }
+
+
+/* ===== candy.css overrides (bundled) ===== */
+/* =======================================================================
+   CANDY THEME — paint-swap layer (Phases 1 & 2)
+   Loaded AFTER style.css. Keeps all layout math; swaps the visual language
+   from dark "RPG quest-log" to a bright, calm, candy-saga look.
+   (Baloo 2 font is loaded by the @import at the top of style.css.)
+   ======================================================================= */
+
+/* ---- 1. Palette: redefine the design tokens (flips most text + var surfaces) ---- */
+:root {
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --text-dark: #2E1065;          /* deep grape ink — primary text */
+  --text-medium: #6B5B86;        /* muted slate-grape — secondary */
+  --accent-yellow: #FBBF24;
+  --accent-orange: #FB923C;
+  --accent-pink: #EC4899;
+  --accent-green: #22C55E;
+  --accent-blue: #38BDF8;
+  --accent-purple: #9333EA;
+  --accent-red: #EF4444;
+  --accent-cyan: #06B6D4;
+  --success: #22C55E;
+  --locked-bg: #E2E8F0;
+  --locked-text: #94A3B8;
+  --radius: 22px;
+  --radius-sm: 16px;
+  --shadow-chunky: 0 6px 0 rgba(124,58,237,0.25);
+  --shadow-card: 0 12px 36px rgba(124,58,237,0.16);
+  --border-thick: 2px solid rgba(124,58,237,0.20);
+  --glass-bg: #ffffff;
+  --glass-border: rgba(124,58,237,0.16);
+  --glass-glow: 0 8px 24px rgba(124,58,237,0.10);
+  --candy-cream: #FFF9F0;
+  --candy-ink: #2E1065;
+  --font-display: 'Baloo 2', 'Heebo', sans-serif;
+}
+
+/* ---- 2. Body & ambient ---- */
+body {
+  background:
+    radial-gradient(1100px 620px at 82% -8%, #FCE7F3 0%, rgba(252,231,243,0) 55%),
+    radial-gradient(1000px 640px at -5% 8%, #DBEAFE 0%, rgba(219,234,254,0) 52%),
+    linear-gradient(180deg, #F4ECFB 0%, #EDF4FF 100%);
+  background-attachment: fixed;
+  color: var(--text-dark);
+}
+
+/* soften the dark particle field into faint candy bokeh */
+body::before {
+  background:
+    radial-gradient(3px 3px at 18% 26%, rgba(236,72,153,0.18) 0%, transparent 100%),
+    radial-gradient(3px 3px at 62% 68%, rgba(56,189,248,0.16) 0%, transparent 100%),
+    radial-gradient(3px 3px at 82% 22%, rgba(251,191,36,0.18) 0%, transparent 100%),
+    radial-gradient(3px 3px at 38% 82%, rgba(147,51,234,0.14) 0%, transparent 100%);
+  opacity: 0.5;
+}
+
+/* ====================================================================
+   3. SAGA MAP
+   ==================================================================== */
+.map-container {
+  background:
+    url('scenery.svg') center bottom / 100% auto no-repeat,
+    radial-gradient(360px 360px at 84% 12%, #FFF6D6 0%, rgba(255,246,214,0) 62%),
+    linear-gradient(180deg, #A6D8F4 0%, #BFE6F8 34%, #D9F2F0 62%, #E9F8EA 100%);
+  background-color: #BFE3F5;
+}
+/* distant drifting clouds across the sky (uses cloud.svg) */
+.map-container::before {
+  background-image:
+    url('cloud.svg'), url('cloud.svg'), url('cloud.svg'),
+    url('cloud.svg'), url('cloud.svg'), url('cloud.svg');
+  background-repeat: no-repeat;
+  background-size: 200px auto, 150px auto, 240px auto, 170px auto, 130px auto, 190px auto;
+  background-position: 6% 22%, 40% 12%, 70% 18%, 90% 40%, 18% 60%, 60% 64%;
+  opacity: 0.85;
+}
+/* soft cloud bank along the bottom horizon */
+.map-container::after {
+  height: 24%;
+  background:
+    url('cloud.svg') -40px bottom / 300px auto no-repeat,
+    url('cloud.svg') 60% 96% / 360px auto no-repeat,
+    url('cloud.svg') right -30px bottom / 320px auto no-repeat,
+    linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.4) 72%, rgba(255,255,255,0.7) 100%);
+  opacity: 0.95;
+}
+
+/* floating storybook title over the top sky — reads as part of the map */
+.map-banner {
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  height: auto !important;
+  padding: 10px 24px 8px !important;
+  background: none !important;
+  border-bottom: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+}
+.map-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.4vw, 2.9rem) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-stroke: 2.5px #6D28D9;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 rgba(76,29,149,0.55), 0 7px 16px rgba(76,29,149,0.45);
+  letter-spacing: 0.5px;
+}
+/* slim translucent XP pill under the title */
+.map-xp {
+  background: rgba(255,255,255,0.85);
+  border: 2px solid rgba(124,58,237,0.28);
+  border-radius: 999px;
+  padding: 4px 12px;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.22);
+}
+.map-xp-bar {
+  background: #F0E4FF;
+  border: 2px solid rgba(124,58,237,0.25);
+}
+.map-xp-fill {
+  background: linear-gradient(90deg, #FB923C, #FBBF24, #F59E0B);
+  box-shadow: 0 0 10px rgba(251,191,36,0.5);
+}
+.map-xp-text { color: #9333EA; text-shadow: none; }
+
+/* path strokes are drawn by JS as SVG; soften the drop shadow */
+.map-path-svg { filter: drop-shadow(0 2px 3px rgba(124,58,237,0.18)); }
+
+/* rope-bridge: wooden plank rungs (DOM markers from JS) */
+#trail-stones { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.trail-plank {
+  position: absolute;
+  width: 30px; height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #E2B776 0%, #C28A48 40%, #9A6730 75%, #7A4F24 100%);
+  border: 1px solid #5E3D1C;
+  box-shadow: inset 0 1.5px 0 rgba(255,235,200,0.6), inset 0 -1.5px 0 rgba(60,35,12,0.4), 0 3px 4px rgba(40,28,12,0.4);
+}
+
+/* ---------- FLOATING ISLANDS ----------
+   Every quest node becomes its own grassy island drifting in the sky.
+   Nodes are positioned by inline left/top % from JS — we only paint
+   the island art AROUND each node, never moving it. */
+
+/* strip the flat circle; the island art is drawn behind the icon */
+.map-node-circle,
+.map-node-complete-circle,
+.map-node-next-circle,
+.map-node-treasure-circle,
+.map-node-locked-circle {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  width: 96px;
+  height: 96px;
+}
+/* the grassy floating-island tile, behind the quest icon */
+.map-node-circle::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 152px; height: 142px;
+  transform: translate(-50%, -36%);
+  background: url('island.svg') center / contain no-repeat;
+  z-index: -1;
+  filter: drop-shadow(0 12px 12px rgba(60,80,120,0.28));
+}
+/* a small cloud puff drifting beneath each island */
+.map-node-circle::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 100%;
+  width: 120px; height: 48px;
+  transform: translate(-50%, -16%);
+  background: url('cloud.svg') center / contain no-repeat;
+  opacity: 0.9;
+  z-index: 0;
+  pointer-events: none;
+}
+/* the quest icon = the island's little landmark, lifted onto the grass */
+.map-node-emoji {
+  font-size: 2.7rem;
+  position: relative;
+  z-index: 1;
+  transform: translateY(-12px);
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.25));
+}
+.map-node-circle .map-node-img,
+.ftree-mini {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  box-shadow: 0 3px 8px rgba(40,40,80,0.3), 0 0 0 3px #fff;
+}
+
+/* DONE — lush, fully visible island */
+.map-node-done .map-node-circle::before {
+  filter: drop-shadow(0 13px 12px rgba(34,120,60,0.32)) saturate(1.06);
+}
+
+/* gentle, natural variation between islands (kept green & lush like the mockup) */
+.map-node-done:nth-child(2n) .map-node-circle::before { filter: hue-rotate(-8deg) saturate(1.08) drop-shadow(0 12px 12px rgba(34,120,60,0.3)); }
+.map-node-done:nth-child(3n) .map-node-circle::before { filter: hue-rotate(10deg) saturate(1.0) drop-shadow(0 12px 12px rgba(34,120,60,0.3)); }
+
+/* NEXT — current island: highlighted glow + gentle bob */
+.map-node-next .map-node-circle::before {
+  filter: drop-shadow(0 0 16px rgba(251,191,36,0.95)) drop-shadow(0 13px 12px rgba(60,80,120,0.28)) brightness(1.05);
+  animation: islandBob 2.6s ease-in-out infinite;
+}
+.map-node-next .map-node-emoji { animation: islandBob 2.6s ease-in-out infinite; }
+@keyframes islandBob {
+  0%,100% { transform: translate(-50%, -36%); }
+  50%     { transform: translate(-50%, -44%); }
+}
+/* the icon bob keyframe keeps its own offset */
+.map-node-next .map-node-emoji { animation-name: iconBob; }
+@keyframes iconBob {
+  0%,100% { transform: translateY(-8px); }
+  50%     { transform: translateY(-15px); }
+}
+
+/* TREASURE (Hero Book) — golden, gently glowing island */
+.map-node-treasure .map-node-circle::before {
+  filter: drop-shadow(0 0 16px rgba(251,191,36,0.85)) drop-shadow(0 13px 12px rgba(60,80,120,0.28));
+  animation: islandBob 3.2s ease-in-out infinite;
+}
+
+/* LOCKED — hidden behind cloud cover (island + label disappear) */
+.map-node-locked { pointer-events: none; }
+.map-node-locked .map-node-label,
+.map-node-locked .map-node-subtitle,
+.map-node-locked .map-node-xp,
+.map-node-locked .map-node-step,
+.map-node-locked .map-node-emoji,
+.map-node-locked .map-node-check { display: none !important; }
+/* faint island, lost in the mist */
+.map-node-locked .map-node-circle::before {
+  filter: grayscale(0.5) brightness(1.1) blur(1.5px);
+  opacity: 0.45;
+}
+/* a thick cloud bank fully covering the island */
+.map-node-locked .map-node-circle::after {
+  width: 168px; height: 150px;
+  top: 50%;
+  transform: translate(-50%, -40%);
+  background: url('cloud.svg') center / contain no-repeat;
+  opacity: 1;
+  z-index: 6;
+  filter: drop-shadow(0 8px 12px rgba(120,140,170,0.4));
+}
+
+/* keep the gold-star "done" badge + clean label / xp / start plates */
+.map-node-check {
+  background: #FBBF24;
+  box-shadow: 0 3px 0 #B45309;
+  border: 2px solid #fff;
+  color: #7A3E00;
+  z-index: 2;
+}
+.map-node-label {
+  font-family: var(--font-display);
+  color: #4C1D95;
+  background: #fff;
+  border: 2px solid rgba(124,58,237,0.15);
+  box-shadow: 0 4px 12px rgba(124,58,237,0.18);
+  position: relative;
+  z-index: 1;
+}
+.map-node-subtitle { color: var(--text-medium); }
+.map-node-xp {
+  background: var(--accent-green);
+  box-shadow: 0 3px 0 #15803D;
+  position: relative;
+  z-index: 1;
+}
+.map-node-start {
+  font-family: var(--font-display);
+  background: linear-gradient(160deg, #FB923C, #EC4899);
+  box-shadow: 0 4px 0 #BE185D, 0 0 14px rgba(236,72,153,0.4);
+}
+
+/* soften the brainrot mascots so they read as gentle flavor, not noise */
+.brainrot { opacity: 0.72 !important; filter: drop-shadow(0 6px 10px rgba(60,40,90,0.25)); }
+
+/* ====================================================================
+   4. QUEST SHELL
+   ==================================================================== */
+.quest-header {
+  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(252,248,255,0.94));
+  border-bottom: 3px solid rgba(124,58,237,0.16);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.12);
+}
+.btn-back {
+  font-family: var(--font-display);
+  background: #fff;
+  color: #7C3AED;
+  border: 2px solid #DDD0FF;
+  box-shadow: 0 4px 0 #E6DAFF;
+}
+.btn-back:active { box-shadow: 0 1px 0 #E6DAFF; }
+.quest-badge { border: 3px solid #fff; box-shadow: 0 5px 14px rgba(124,58,237,0.2); }
+.quest-title { font-family: var(--font-display); color: #2E1065; }
+
+.quest-intro {
+  background: linear-gradient(160deg, #FFF7EB, #FFFBF3);
+  border: 2px solid rgba(251,146,60,0.45);
+  border-right: 7px solid var(--accent-orange);
+  box-shadow: 0 8px 22px rgba(251,146,60,0.12);
+  color: #5C4A2E;
+}
+.quest-message {
+  background: linear-gradient(160deg, #FFF1F7, #FFF7FB);
+  border: 2px solid rgba(236,72,153,0.4);
+  box-shadow: 0 8px 22px rgba(236,72,153,0.1);
+  color: #7A2E54;
+}
+.message-label { color: var(--accent-pink); }
+
+/* ---- task surfaces ---- */
+.task-block, .family-flow-block {
+  background: #ffffff;
+  border: 2px solid var(--glass-border);
+  box-shadow: var(--glass-glow);
+  color: var(--text-dark);
+}
+.task-info { color: var(--text-medium); }
+.task-label { color: var(--text-dark); }
+
+textarea.task-input,
+input[type="text"].task-input-small,
+select.task-select {
+  background: #FBF7FF;
+  border: 2px solid rgba(124,58,237,0.22);
+  color: #2E1065;
+}
+textarea.task-input::placeholder,
+input[type="text"].task-input-small::placeholder { color: rgba(46,16,101,0.4); }
+textarea.task-input:focus,
+input[type="text"].task-input-small:focus,
+select.task-select:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 4px rgba(147,51,234,0.18);
+  background: #fff;
+}
+select.task-select option { background: #fff; color: #2E1065; }
+
+.story-box {
+  background: #FFF7EB;
+  border-right: 6px solid var(--accent-orange);
+  color: #5C4A2E;
+  box-shadow: 0 6px 18px rgba(251,146,60,0.1);
+}
+.story-parchment {
+  background: linear-gradient(135deg, #FFF6E2, #FDEFCF);
+  color: #5A4424;
+  border: 2px solid rgba(200,150,60,0.4);
+}
+
+/* ---- footer + complete button ---- */
+.quest-footer {
+  background: linear-gradient(transparent, rgba(244,236,251,0.96) 42%);
+}
+.btn-complete {
+  font-family: var(--font-display);
+  background: linear-gradient(160deg, #34D399, #22C55E);
+  box-shadow: 0 7px 0 #15803D, 0 12px 22px rgba(34,197,94,0.3);
+}
+.btn-complete:hover:not(:disabled) {
+  box-shadow: 0 9px 0 #15803D, 0 0 25px rgba(34,197,94,0.3), 0 14px 28px rgba(34,197,94,0.25);
+}
+.btn-complete:active:not(:disabled) { box-shadow: 0 3px 0 #15803D; }
+.btn-complete:disabled, .btn-complete.completed {
+  background: linear-gradient(160deg, #E2E8F0, #CBD5E1);
+  color: #94A3B8;
+  box-shadow: 0 4px 0 #94A3B8;
+  text-shadow: none;
+}
+
+/* ====================================================================
+   5. PER-MECHANIC SURFACES (lighten hardcoded-dark cards)
+   ==================================================================== */
+
+/* generic light-card treatment shared by many mechanic surfaces */
+.drag-select-option,
+.check-item, .select-item,
+.ts-card,
+.ml-select,
+.iq-step,
+.iq-option-btn,
+.hj-card,
+.ps-stone,
+.mb-bubble,
+.meter-row,
+.meter-level-btn,
+.brain-map-box,
+.emo-btn,
+.env-card,
+.cin-video-box,
+.family-member,
+.survey-person,
+.support-person,
+.mf-select,
+.ic-front, .ic-back,
+.tc-counter {
+  background: #FBF7FF;
+  border-color: rgba(124,58,237,0.18);
+  color: var(--text-dark);
+}
+
+.drag-select-option:hover,
+.iq-option-btn:hover:not(:disabled),
+.mb-bubble:hover,
+.check-item:hover, .select-item:hover {
+  border-color: var(--accent-purple);
+  background: #F4ECFF;
+}
+.drag-select-option.selected {
+  border-color: var(--accent-green);
+  background: #ECFDF3;
+  box-shadow: 0 0 12px rgba(34,197,94,0.18);
+}
+.drag-select-option.selected::before { color: var(--accent-green); }
+
+.check-item:has(input:checked) {
+  border-color: var(--accent-green);
+  background: #ECFDF3;
+  box-shadow: 0 0 12px rgba(34,197,94,0.18);
+}
+
+/* family flow */
+.flow-generation { background: var(--accent-purple); box-shadow: 0 3px 0 #6B21A8; }
+.flow-name { color: var(--text-dark); }
+.flow-relation { background: rgba(147,51,234,0.12); color: #7C3AED; }
+.flow-input-label { color: var(--text-dark); }
+.flow-hero-message {
+  background: #FFF7EB;
+  border: 2px solid rgba(251,191,36,0.5);
+  color: #B45309;
+}
+.flow-btn-prev { background: #EEE6FB; color: #7C3AED; box-shadow: 0 4px 0 #D6C7F2; }
+.flow-btn-prev:hover:not(:disabled) { background: #E4D8F8; }
+.flow-btn-next { background: var(--accent-blue); box-shadow: 0 4px 0 #0369A1; }
+.flow-btn-done { background: var(--accent-green); box-shadow: 0 4px 0 #15803D; }
+
+/* inspiration cards */
+.ic-front { background: #fff; }
+.ic-back { background: #FBF7FF; }
+.ic-front::after { color: var(--text-medium); }
+.ic-title { color: var(--text-dark); }
+.ic-example { background: #F4ECFF; color: var(--text-dark); }
+
+/* twin sort */
+.ts-stage-title { color: var(--text-dark); }
+.ts-intro { color: var(--text-medium); }
+.ts-bin {
+  background: color-mix(in srgb, var(--bin-color) 12%, #ffffff);
+  border: 3px dashed var(--bin-color);
+}
+.ts-bin:hover { background: color-mix(in srgb, var(--bin-color) 20%, #ffffff); }
+.ts-bin.drag-over { background: color-mix(in srgb, var(--bin-color) 28%, #ffffff); }
+.ts-bin-label { color: var(--text-dark); }
+.ts-card { box-shadow: 0 3px 0 rgba(124,58,237,0.12); }
+.ts-card.correct { background: #ECFDF3; border-color: #22C55E; color: #15803D; }
+.ts-card.wrong { background: #FEF2F2; border-color: #EF4444; }
+
+/* mad libs */
+.ml-sentence { background: #FFF1F7; border: 2px solid rgba(236,72,153,0.35); color: var(--text-dark); }
+.ml-select { background: #fff; color: #BE185D; border: 2px solid rgba(236,72,153,0.5); }
+.ml-completion p { background: #ECFDF3; border: 2px solid rgba(34,197,94,0.3); color: #15803D; }
+
+/* neta envelope */
+.ne-locked-card {
+  background: linear-gradient(135deg, #FFF7E6, #FFF1F7);
+  border: 3px solid rgba(245,158,11,0.55);
+  box-shadow: 0 12px 30px rgba(245,158,11,0.18);
+}
+.ne-locked-title { color: #B45309; text-shadow: none; }
+.ne-locked-text { color: var(--text-dark); }
+.ne-open-btn { color: #fff; background: linear-gradient(160deg, #FB923C, #F59E0B); border-color: #F59E0B; box-shadow: 0 6px 0 #B45309; }
+.ne-modal { background: linear-gradient(135deg, #FFFBF4, #FFF7FB); border: 2px solid rgba(245,158,11,0.5); color: var(--text-dark); }
+.ne-modal-overlay { background: rgba(46,16,101,0.45); }
+.ne-modal-title { color: #B45309; text-shadow: none; }
+.ne-question { background: #FBF7FF; border: 2px solid rgba(245,158,11,0.25); }
+.ne-question-text { color: var(--text-dark); }
+.ne-option { background: #fff; border: 2px solid rgba(124,58,237,0.16); }
+.ne-option:hover { border-color: rgba(245,158,11,0.5); background: #FFF8EC; }
+.ne-option.ne-correct { background: #ECFDF3; border-color: rgba(34,197,94,0.7); }
+.ne-option.ne-wrong { background: #FEF2F2; border-color: rgba(239,68,68,0.7); }
+.ne-option-text { color: var(--text-dark); }
+.ne-submit-btn { color: #fff; background: linear-gradient(160deg, #FB923C, #F59E0B); border-color: #F59E0B; box-shadow: 0 5px 0 #B45309; }
+.ne-unlocked { background: linear-gradient(135deg, #FFF7E6, #FFF1F7); border: 3px solid rgba(245,158,11,0.5); }
+.ne-success-header { color: #B45309; }
+.ne-photo-frame { background: rgba(251,191,36,0.18); border: 4px solid rgba(245,158,11,0.55); }
+.ne-greeting-text { color: var(--text-dark); }
+.ne-signature { color: #B45309; text-shadow: none; }
+.ne-completion-message p { background: #ECFDF3; border: 2px solid rgba(34,197,94,0.3); color: #15803D; }
+.ne-qfb-correct { color: #15803D; background: #ECFDF3; }
+.ne-qfb-wrong { color: #B91C1C; background: #FEF2F2; }
+
+/* trophy cabinet + factory */
+.tc-counter { background: #FFF7EB; border: 2px solid rgba(251,191,36,0.4); }
+.tc-counter-text { color: #B45309; }
+.tc-counter.complete { background: #ECFDF3; border-color: rgba(34,197,94,0.4); }
+.trophy-hero-caption { color: #EA580C; text-shadow: none; }
+.mf-wrap { background: #FBF4FF; border: 2px solid rgba(147,51,234,0.25); }
+.mf-header-title { color: #9333EA; }
+.mf-prefix { color: var(--text-dark); }
+.mf-select { background: #fff; color: #6D28D9; border: 2px solid rgba(147,51,234,0.3); }
+.mf-select-wrap::after { color: #9333EA; }
+.mf-produce-btn { background: #F1E9FB; color: #B9A6D6; border-color: rgba(147,51,234,0.12); }
+.mf-produce-btn.ready { background: linear-gradient(160deg, #FBBF24, #F59E0B); color: #7A3E00; border-color: #F59E0B; box-shadow: 0 5px 0 #B45309; }
+.mf-produced-medal { background: #FFF7EB; border: 3px solid rgba(251,191,36,0.5); }
+.mf-produced-text { color: #B45309; }
+.mf-produced-detail { color: var(--text-medium); }
+.tselect-hint { color: var(--text-medium); }
+.tselect-text { color: #B45309; }
+
+/* secret envelopes (Q8) — light cards */
+.env-progress { background: #FBF4FF; border: 2px solid rgba(147,51,234,0.25); color: #9333EA; }
+.env-progress.all-done { background: #ECFDF3; border-color: rgba(34,197,94,0.3); color: #15803D; }
+.env-card {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--env-color) 8%, #ffffff), color-mix(in srgb, var(--env-color) 16%, #ffffff));
+  border: 2px solid var(--env-color, #9333EA);
+  box-shadow: 0 8px 20px rgba(124,58,237,0.12);
+  color: var(--text-dark);
+}
+.env-card-front .env-name { color: var(--text-dark); }
+.env-card-front .env-hint { color: var(--text-medium); }
+.env-card-back .env-quote { color: var(--text-dark); }
+
+/* cinema (Q9) */
+.cin-video-box { background: #fff; border: 2px solid #38BDF8; box-shadow: 0 8px 20px rgba(56,189,248,0.18); }
+.cin-video-title { color: #0284C7; }
+.cin-video-title .cin-hint { color: var(--text-medium); }
+
+/* emotion board */
+.emo-btn { background: #FBF7FF; }
+.emo-btn.selected { background: color-mix(in srgb, var(--emo-color) 18%, #ffffff); }
+.emo-text { color: var(--text-dark); }
+
+/* card builder (Q10) — keep the trading card dark/dramatic; lighten the form */
+.cb-form { background: #FFF6EF; border: 2px solid rgba(251,146,60,0.4); }
+.cb-reveal-btn { background: #FBE9DC; color: #D89B7E; border-color: rgba(251,146,60,0.2); }
+.cb-reveal-btn.ready { background: linear-gradient(160deg, #FB923C, #EC4899); color: #fff; border-color: #EA580C; }
+
+/* surveys / support */
+.survey-person { background: #FBF4FF; border: 2px solid rgba(147,51,234,0.25); }
+.support-cat { background: var(--accent-blue); box-shadow: 0 3px 0 #0369A1; }
+.support-person { background: #F0F9FF; border: 2px solid rgba(56,189,248,0.3); }
+
+/* investigation quiz */
+.iq-step { background: #FBF7FF; }
+.iq-step.solved { background: #ECFDF3; border-color: var(--accent-green); }
+.iq-step-number { background: var(--accent-blue); }
+.iq-step.solved .iq-step-number { background: var(--accent-green); }
+.iq-step-title { color: var(--text-dark); }
+.iq-story { color: var(--text-medium); }
+.iq-question { color: var(--text-dark); }
+.iq-option-btn:hover:not(:disabled) { background: #F0F9FF; border-color: var(--accent-blue); }
+.iq-option-btn.correct { background: #ECFDF3; border-color: var(--accent-green); color: #15803D; }
+.iq-option-btn.wrong { background: #FEF2F2; border-color: var(--accent-red); }
+.iq-reveal-story { background: #F4ECFF; color: var(--text-dark); }
+.iq-caption { color: var(--text-medium); }
+.iq-completion p { background: #ECFDF3; border: 2px solid rgba(34,197,94,0.3); color: #15803D; }
+
+/* hero journey */
+.hj-instruction { background: #FFF7EB; border: 2px solid rgba(251,146,60,0.4); color: #B45309; }
+.hj-card { background: #FBF7FF; }
+.hj-card-header:hover { background: rgba(147,51,234,0.06); }
+.hj-card-icon { background: color-mix(in srgb, var(--station-color) 16%, #ffffff); }
+.hj-card-title { color: var(--text-dark); }
+.hj-card-hint { color: var(--text-medium); }
+.hj-card-body p { background: color-mix(in srgb, var(--station-color) 12%, #ffffff); color: var(--text-dark); }
+
+/* power stones */
+.ps-stone.lit { background: color-mix(in srgb, var(--stone-color) 20%, #ffffff); border-color: var(--stone-color); }
+.ps-text { color: var(--text-dark); }
+
+/* message bubbles */
+.mb-bubble.selected { background: #F0F9FF; border-color: var(--accent-blue); }
+
+/* brain meters + cards */
+.meter-row { background: #FBF7FF; }
+.meter-name { color: var(--text-dark); }
+.meter-bar-track { background: #EDE4FB; }
+.meter-level-btn { background: #fff; color: var(--text-medium); }
+.meter-level-btn:hover { background: #F4ECFF; border-color: rgba(147,51,234,0.3); }
+.brain-map-box { background: #FBF7FF; }
+.brain-map-box.highlight { background: #F4ECFF; border-color: rgba(147,51,234,0.5); }
+.brain-map-title { color: var(--text-dark); }
+.brain-map-desc { color: var(--text-medium); }
+.brain-card-front { background: linear-gradient(135deg, #A78BFA, #8B5CF6); }
+.brain-card-back { background: linear-gradient(135deg, #6EE7B7, #34D399); }
+.brain-card-title { color: #fff; }
+.brain-card-desc { color: #fff; }
+.btn-claim { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.55); color: #fff; }
+.btn-claim:hover { background: rgba(255,255,255,0.4); }
+.btn-claim.claimed { background: #fff; border-color: #fff; color: #15803D; }
+
+/* ====================================================================
+   6. CELEBRATION + OVERLAYS
+   ==================================================================== */
+.xp-overlay { background: rgba(46,16,101,0.5); backdrop-filter: blur(4px); }
+.xp-popup {
+  background: #ffffff;
+  border: 3px solid rgba(251,191,36,0.6);
+  box-shadow: 0 0 0 8px rgba(251,191,36,0.12), 0 24px 60px rgba(124,58,237,0.35);
+}
+.xp-popup h3 { color: var(--text-dark); font-family: var(--font-display); }
+.xp-gain { font-family: var(--font-display); color: var(--accent-orange); text-shadow: 0 3px 0 #FDE68A; }
+.xp-message { color: var(--text-medium); }
+.xp-next { background: var(--accent-green); box-shadow: 0 3px 0 #15803D; }
+
+/* star rating row */
+.xp-stars { display: flex; gap: 10px; justify-content: center; margin-bottom: 6px; }
+.xp-star { font-size: 2.4rem; transform: scale(0); animation: starPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards; filter: drop-shadow(0 3px 0 #B45309); }
+.xp-star-1 { animation-delay: 0.15s; }
+.xp-star-2 { animation-delay: 0.35s; transform: scale(0) translateY(-8px); }
+.xp-star-3 { animation-delay: 0.55s; }
+@keyframes starPop { 0% { transform: scale(0) rotate(-30deg); } 70% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+
+/* confetti */
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 120; }
+.confetti-piece { position: absolute; top: -16px; width: 11px; height: 16px; opacity: 0.95; animation-name: confettiFall; animation-timing-function: linear; animation-iteration-count: 1; }
+@keyframes confettiFall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(680deg); opacity: 0.9; } }
+
+.toast {
+  background: #ffffff;
+  border: 2px solid rgba(251,146,60,0.5);
+  color: var(--text-dark);
+  box-shadow: 0 12px 30px rgba(124,58,237,0.2);
+}
+
+/* ====================================================================
+   7. HERO BOOK
+   ==================================================================== */
+.book-header {
+  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(252,248,255,0.94));
+  border-bottom: 3px solid rgba(124,58,237,0.16);
+}
+.book-header h2 { font-family: var(--font-display); color: #2E1065; }
+.book-page { background: #ffffff; border: 2px solid var(--glass-border); box-shadow: var(--glass-glow); }
+.title-page { background: linear-gradient(135deg, #FFF7EB, #FFF1F7, #F4ECFF); }
+.title-page h1 { font-family: var(--font-display); color: var(--accent-orange); text-shadow: 0 3px 0 #FDE68A; }
+.title-page h2 { color: var(--text-dark); }
+.title-page p { color: var(--text-medium); }
+.book-message { color: var(--text-medium); }
+.book-response { border-bottom: 2px dashed rgba(124,58,237,0.18); color: var(--text-dark); }
+.btn-export {
+  font-family: var(--font-display);
+  background: #fff;
+  color: #7C3AED;
+  border: 2px solid #DDD0FF;
+  box-shadow: 0 4px 0 #E6DAFF;
+}
+.btn-export:hover { background: var(--accent-purple); color: #fff; border-color: var(--accent-purple); box-shadow: 0 4px 0 #6B21A8; }
+
+/* ====================================================================
+   8. ENTRY / PASSCODE  (warmer splash)
+   ==================================================================== */
+#passcode-overlay {
+  background:
+    radial-gradient(800px 500px at 80% 0%, #FCE7F3 0%, rgba(252,231,243,0) 55%),
+    radial-gradient(700px 500px at 0% 20%, #DBEAFE 0%, rgba(219,234,254,0) 55%),
+    linear-gradient(160deg, #7C3AED, #9333EA 45%, #EC4899);
+  backdrop-filter: none;
+}
+.passcode-box {
+  background: #ffffff;
+  border: none;
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(46,16,101,0.4);
+}
+.passcode-box h2 { font-family: var(--font-display); color: #9333EA; }
+.passcode-box p { color: var(--text-medium); }
+#passcode-input { background: #FBF7FF; border: 2px solid rgba(124,58,237,0.25); color: #2E1065; }
+#passcode-input:focus { border-color: var(--accent-purple); box-shadow: 0 0 0 4px rgba(147,51,234,0.18); }
+#passcode-btn {
+  font-family: var(--font-display);
+  background: linear-gradient(160deg, #34D399, #22C55E);
+  color: #fff;
+  box-shadow: 0 6px 0 #15803D;
+}
+#passcode-btn:hover { box-shadow: 0 6px 22px rgba(34,197,94,0.4); }
+#passcode-error { color: var(--accent-red); }
+
+#sync-status {
+  background: #ffffff;
+  border: 1px solid rgba(124,58,237,0.18);
+  color: var(--text-medium);
+  box-shadow: 0 4px 12px rgba(124,58,237,0.12);
+}
+
+/* ====================================================================
+   9. RESPONSIVE — tablet & phone first (the natural device)
+   ==================================================================== */
+@media (max-width: 900px) {
+  .map-banner { height: auto; padding: 10px 16px; }
+  .map-title { font-size: 1.5rem; }
+  .map-xp-bar { width: 200px; }
+  .map-path-svg, .quest-map { top: 64px; margin-top: 64px; }
+  .quest-header, .book-header { padding: 14px 18px; }
+  .quest-title { font-size: 1.3rem; }
+  .quest-body { padding: 20px 16px 180px; }
+  .quest-footer { padding: 16px 16px 28px; }
+  .drag-select-options, .iq-options, .mb-container,
+  .brain-meters, .hj-accordion, .superpower-survey,
+  .support-map, .multiselect, .inspiration-grid { grid-template-columns: 1fr; }
+  .ts-bins { grid-template-columns: 1fr; }
+  .book-body { padding: 20px 16px; }
+  .book-footer { padding: 16px 16px 32px; flex-direction: column; }
+}
+
+/* larger, friendlier touch targets for limited motor control */
+@media (pointer: coarse) {
+  .ts-card, .tc-medal { padding: 14px 18px; font-size: 0.95rem; }
+  .iq-option-btn, .meter-level-btn { min-height: 60px; }
+  .ne-option, .check-item, .select-item, .drag-select-option { padding: 16px 18px; }
+}
+
+/* ====================================================================
+   10. CALM MODE — honor reduced-motion (key for sensory comfort)
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ====================================================================
+   11. MOCKUP-ART MAP MODE
+   Use the painted mockup itself as the map art. Every island, icon,
+   Hebrew name, checkmark, bridge and the Start button is painted in.
+   The app's generated visuals are hidden; nodes become invisible
+   click-hotspots over each island, with dynamic CLOUD cover for locked
+   steps and a glow ring on the current step.
+   ==================================================================== */
+.map-container {
+  background: url('map-v3.jpg') center top / 100% 100% no-repeat !important;
+  background-color: #BFE3F5 !important;
+}
+.map-container::before, .map-container::after { display: none !important; }
+/* node layer must span the FULL map so node %s map onto the mockup art
+   (the fixed app banner sits on top and hides the mockup's own title strip) */
+#quest-map { margin-top: 0 !important; height: 100vh !important; }
+#map-path-svg, #trail-stones, #brainrot-container { display: none !important; }
+
+/* every icon AND its Hebrew name banner are painted into the mockup —
+   hide ALL generated node visuals; nodes are transparent tap targets only */
+.map-node-circle::before,
+.map-node-circle::after { display: none !important; }
+.map-node-emoji,
+.map-node-img,
+.map-node-circle .map-node-img,
+.ftree-mini,
+.map-node-subtitle,
+.map-node-xp,
+.map-node-step,
+.map-node-check,
+.map-node-start { display: none !important; }
+
+/* Hebrew step header — floating pill above the painted icon */
+.map-node-label {
+  display: none !important;
+  position: absolute !important;
+  left: 50% !important;
+  bottom: calc(50% + 4.8vh) !important;
+  transform: translateX(-50%) !important;
+  white-space: normal !important;
+  max-width: min(26vw, 230px) !important;
+  text-align: center !important;
+  font-family: var(--font-display) !important;
+  font-weight: 800 !important;
+  font-size: clamp(12px, 1.15vw, 17px) !important;
+  line-height: 1.18 !important;
+  color: #4C1D95 !important;
+  background: rgba(255,255,255,0.96) !important;
+  border: 2px solid rgba(124,58,237,0.18) !important;
+  border-radius: 14px !important;
+  padding: 4px 12px !important;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.22) !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+}
+/* the book island already has its title + button painted in — don't double them */
+.map-node-treasure .map-node-label,
+.map-node-treasure .map-node-start { display: none !important; }
+
+/* node = transparent hotspot sized to its painted island */
+.map-node-circle {
+  width: 13vw !important;
+  height: 15vh !important;
+  min-width: 90px;
+  background: none !important;
+}
+.map-node:hover:not(.map-node-locked) { transform: translate(-50%, -50%) scale(1.04); }
+
+/* NEXT — gently pulsing glow ring marking the current island */
+.map-node-next .map-node-circle {
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 4px rgba(251,191,36,0.55), 0 0 26px 8px rgba(251,191,36,0.5) !important;
+  animation: nextRing 1.8s ease-in-out infinite !important;
+}
+@keyframes nextRing {
+  0%,100% { box-shadow: 0 0 0 4px rgba(251,191,36,0.5), 0 0 22px 6px rgba(251,191,36,0.4); }
+  50%     { box-shadow: 0 0 0 8px rgba(251,191,36,0.25), 0 0 34px 12px rgba(251,191,36,0.6); }
+}
+
+/* LOCKED — hide the island behind a bank of clouds (two puffs for cover) */
+.map-node-locked { pointer-events: none; }
+.map-node-locked .map-node-circle::before,
+.map-node-locked .map-node-circle::after {
+  display: block !important;
+  content: '' !important;
+  position: absolute;
+  background: url('cloud.svg') center / contain no-repeat;
+  z-index: 6;
+  opacity: 1;
+  filter: drop-shadow(0 10px 16px rgba(120,140,170,0.45));
+  pointer-events: none;
+}
+.map-node-locked .map-node-circle::before {
+  left: 36%; top: 42%;
+  width: 15vw; height: 13vh; min-width: 150px;
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+.map-node-locked .map-node-circle::after {
+  left: 64%; top: 56%;
+  width: 14vw; height: 12vh; min-width: 140px;
+  transform: translate(-50%, -50%) rotate(3deg);
+}
+
+/* =======================================================================
+   DESIGN-BRANCH FIXES (2026-06-27)
+   ======================================================================= */
+
+/* NOTE: request #1 ("hide name + icon for locked steps") is NOT achievable in
+   CSS here — the island names + scene icons are baked into map-v3.jpg, so the
+   clouds were the only cover. Reverted; awaiting a map-approach decision
+   (clean overlay-based map vs. nicer cover art). */
+
+/* FIX 2: gentle shake when trying to advance the family flow with an empty word */
+@keyframes flowShake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-7px); }
+  40%,80% { transform: translateX(7px); }
+}
+.flow-shake { animation: flowShake 0.4s; border-color: var(--accent-red, #ff1744) !important; }
+
+/* FIX 3: identical layout for every family member (consistent header space,
+   fixed card height, stable photo position regardless of which member). */
+.flow-generation { min-height: 46px; display: flex; align-items: center; justify-content: center; margin: 4px 0; }
+.flow-generation-empty { visibility: hidden; }
+.family-flow-block .flow-person { min-height: 300px; align-content: center; }
+
+/* =======================================================================
+   REVIEW FIXES — WAVE 1 (2026-06-27)
+   ======================================================================= */
+
+/* #3 (high): brain-card BACK is light mint-green — white text failed contrast.
+   Scope dark ink to the back only (front stays white-on-purple). */
+.brain-card-back .brain-card-title,
+.brain-card-back .brain-card-desc { color: var(--text-dark) !important; }
+.brain-card-back .btn-claim { color: #14532D !important; border-color: #14532D !important; background: rgba(255,255,255,0.72) !important; }
+.brain-card-back .btn-claim.claimed { background: #15803D !important; border-color: #15803D !important; color: #fff !important; }
+
+/* #1 (high): complete button is now always clickable; .not-ready signals
+   "not finished yet" but stays an obvious, tappable button (click -> missing toast). */
+.btn-complete.not-ready {
+  filter: grayscale(0.35);
+  opacity: 0.92;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.18);
+}
+
+/* #20 / #43: counters like "N / M" must stay left-to-right inside RTL text. */
+.flow-progress-text,
+.tc-counter-text,
+.tc-counter { direction: ltr; unicode-bidi: isolate; }
