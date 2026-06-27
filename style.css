@@ -4891,3 +4891,23 @@ select.task-select option { background: #fff; color: #2E1065; }
 
 /* #17: envelope attribution dark ink on the near-white card (was low-contrast accent) */
 .env-card-back .env-from { color: var(--text-dark) !important; }
+
+/* =======================================================================
+   REVIEW FIXES — WAVE 2c (accessibility + polish)
+   ======================================================================= */
+
+/* #34: opened envelopes sit upright so the message is easy to read
+   (overrides the decorative nth-child rotation while open). */
+.env-card.opened { transform: rotate(0deg) scale(1.02) !important; z-index: 5; }
+
+/* #16: tap-to-place hint under the twin-sort intro */
+.ts-hint {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-medium, #5A524D);
+  background: rgba(0,0,0,0.04);
+  border-radius: 12px;
+  padding: 6px 12px;
+  margin: 6px auto 10px;
+  max-width: 520px;
+}

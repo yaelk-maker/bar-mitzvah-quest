@@ -87,10 +87,35 @@ async function syncFromCloud() {
     }
 }
 
+// Pure merge used at WRITE time inside a Firebase transaction. No side effects
+// (it may run several times on contention), so it must NOT touch localStorage.
+function mergeForWrite(cloud, local) {
+    if (!cloud) return local;
+    // If the cloud was reset more recently than this device knows about, respect
+    // the reset rather than resurrecting stale local progress.
+    if ((cloud.resetAt || 0) > (local.resetAt || 0)) return cloud;
+    const completedQuests = [...new Set([
+        ...(cloud.completedQuests || []),
+        ...(local.completedQuests || [])
+    ])].sort((a, b) => a - b);
+    const responses = { ...(cloud.responses || {}) };
+    Object.keys(local.responses || {}).forEach(qid => {
+        responses[qid] = { ...(responses[qid] || {}), ...(local.responses[qid] || {}) };
+    });
+    return {
+        completedQuests,
+        responses,
+        currentQuest: (local.currentQuest != null) ? local.currentQuest : (cloud.currentQuest || null),
+        resetAt: Math.max(local.resetAt || 0, cloud.resetAt || 0)
+    };
+}
+
 function syncToCloud(state) {
     if (!firebaseReady || !dbRef) return;
     try {
-        dbRef.set(state);
+        // Merge into the live cloud value instead of a blind set(), so a save from
+        // one device can't clobber another device's concurrent progress.
+        dbRef.transaction(current => mergeForWrite(current, state));
     } catch (e) {
         console.error("Firebase write failed:", e);
     }

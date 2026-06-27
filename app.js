@@ -752,7 +752,7 @@ function openQuest(questId) {
                             </div>
                         </div>
                         <div class="flow-nav" style="margin-top:16px">
-                            <button class="flow-btn flow-btn-prev">→ חזרה לרשימה</button>
+                            <button class="flow-btn flow-btn-prev">→ חזרה לעריכת המשפחה</button>
                         </div>
                     `;
 
@@ -798,9 +798,11 @@ function openQuest(questId) {
                         </div>
                     `;
                     cardEl.addEventListener('click', () => {
-                        cardEl.classList.toggle('flipped');
+                        // Persist the ACTUAL flip state (not write-once true), so a card
+                        // the user flipped back closed doesn't reopen on reload.
+                        const flipped = cardEl.classList.toggle('flipped');
                         if (!state.responses[questId]) state.responses[questId] = {};
-                        state.responses[questId][icKey] = true;
+                        state.responses[questId][icKey] = flipped;
                         saveState(state);
                         updateCompleteButton();
                     });
@@ -1124,6 +1126,7 @@ function openQuest(questId) {
                         <img src="photos/${task.image}" alt="${task.stageTitle}" class="ts-image" onerror="this.style.display='none'">
                     </div>
                     <p class="ts-intro">${task.intro}</p>
+                    <p class="ts-hint">אפשר לגרור כרטיס לקופסה, או ללחוץ על כרטיס ואז על הקופסה 🙂</p>
                 `;
 
                 // Build bins
@@ -1414,6 +1417,12 @@ function openQuest(questId) {
                 tcCounter.innerHTML = `<span class="tc-counter-text">מדליות בארון: <strong>${savedCabinetCount} / ${tcMin}</strong></span>`;
                 if (savedCabinetCount >= tcMin) tcCounter.classList.add('complete');
                 tcWrap.appendChild(tcCounter);
+
+                // Accessibility hint: tap-to-place works too (drag is hard with CP)
+                const tcHint = document.createElement('p');
+                tcHint.className = 'tselect-hint';
+                tcHint.textContent = 'אפשר לגרור מדליה למדף, או ללחוץ על מדליה ואז על המדף 🙂';
+                tcWrap.appendChild(tcHint);
 
                 function updateMedalCounter() {
                     const count = state.responses[questId] && state.responses[questId]['cabinet']
@@ -2309,6 +2318,9 @@ function getActiveScreen() {
 
 document.addEventListener('keydown', (e) => {
     if (document.getElementById('passcode-overlay')) return;
+    // Don't let map/quest shortcuts fire behind a modal/overlay (could orphan it
+    // or complete a quest behind the Neta trivia popup).
+    if (document.querySelector('.ne-modal-overlay') || document.querySelector('.cin-overlay')) return;
 
     const tag = document.activeElement?.tagName;
     const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
@@ -2352,8 +2364,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const fbOk = await initFirebase();
 
+    // Always gate on the family passcode — even if Firebase failed to init,
+    // so a sync error can never silently bypass the entry screen.
+    await showPasscodeScreen();
+
     if (fbOk) {
-        await showPasscodeScreen();
         showSyncStatus('☁️ מסנכרן...');
         const cloudState = await syncFromCloud();
         const localState = loadState();
@@ -2361,6 +2376,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         syncToCloud(state);
         showSyncStatus('☁️ מסונכרן!');
+    } else {
+        // Local-only fallback when Firebase is unavailable.
+        state = loadState();
     }
 
     showHome();
