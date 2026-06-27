@@ -5,7 +5,7 @@ Gamified Bar Mitzvah identity quest PWA for Guy (12.5, Bar Mitzvah July 19, 2026
 
 ## Tech Stack
 - **Vanilla HTML/CSS/JS** — no frameworks, no build step
-- **PWA** with manifest.json, localStorage state persistence
+- **PWA** with manifest.json; state persisted to Firebase Realtime Database (source of truth) + localStorage cache; family passcode `1907`
 - **Hosted**: https://yaelk-maker.github.io/bar-mitzvah-quest/ (GitHub Pages, `master` branch)
 - **Repo**: https://github.com/yaelk-maker/bar-mitzvah-quest (public)
 - **Fonts**: Heebo (Hebrew) + Bungee (titles) from Google Fonts
@@ -17,6 +17,7 @@ bar-mitzvah-quest/
 ├── index.html          # Main HTML: home map, quest, hero book (3 screens)
 ├── app.js              # State, navigation, quest rendering, map, validation
 ├── quests.js           # Quest data (10 quests) + MAP_POSITIONS
+├── firebase-sync.js    # Firebase cloud sync, family passcode, cross-device reset
 ├── style.css           # Lava/volcanic game theme
 ├── map-bg.png          # Lava map background (itch.io asset pack)
 ├── manifest.json, icon-192.png, icon-512.png  # PWA files
@@ -30,6 +31,7 @@ bar-mitzvah-quest/
 │   ├── placeholder_twins_kids.jpeg   # Quest 6
 │   ├── placeholder_twins_teens.jpeg  # Quest 6
 │   ├── guy_soccer_video.mp4          # Quest 7 (autoplay loop)
+│   ├── Guy - final step.jpeg         # Quest 10 (Bar Mitzvah card photo)
 │   └── [11 Hebrew-named family photos]
 ├── Videos - step 9/    # Quest 9 greeting videos (Hebrew filenames)
 ├── brainrot/           # SAB voxel character PNGs (7 figures, 120px each)
@@ -39,10 +41,18 @@ bar-mitzvah-quest/
 ## Architecture
 
 ### State Management
-- Key: `bar-mitzvah-quest` in localStorage
-- Shape: `{ completedQuests: number[], responses: { [questId]: { [key]: value } }, currentQuest: number | null }`
+- Key: `bar-mitzvah-quest` in localStorage (fast local cache)
+- Shape: `{ completedQuests: number[], responses: { [questId]: { [key]: value } }, currentQuest: number | null, resetAt: number }`
 - Functions: `loadState()` / `saveState()`
-- Reset: `localStorage.removeItem('bar-mitzvah-quest')` in browser console
+- Reset: prefer `resetAllProgress()` (see Cloud Sync below) so all devices wipe. Local-only fallback: `localStorage.removeItem('bar-mitzvah-quest')` in console.
+
+### Cloud Sync (firebase-sync.js)
+- **Firebase Realtime Database** is the source of truth; localStorage is the local cache.
+- DB ref: `quest-progress`. Config + `databaseURL` live in `firebase-sync.js`.
+- **Family passcode**: `1907` — passcode overlay (`showPasscodeScreen()`) gates entry on load; once entered, `sessionStorage['quest-passcode-ok']` skips it for the session.
+- **Merge**: `mergeStates(local, cloud)` unions `completedQuests`, deep-merges `responses` (local wins per-key), keeps the latest `resetAt`.
+- **Cross-device reset**: `resetAt` is a timestamp. If cloud's `resetAt` is newer than the device's last-seen (`quest-last-reset` in localStorage), the device wipes and trusts cloud.
+- Reset helpers (browser console): `resetAllProgress()` = full wipe everywhere; `resetAllProgress([10])` = reset only the given quest ids everywhere. Both bump `resetAt`.
 
 ### Screens (toggled via `.active` CSS class)
 | Screen | Purpose |
@@ -103,9 +113,10 @@ bar-mitzvah-quest/
 | `cinema-videos` | Scattered title cards → fullscreen overlay video player | 9 |
 | `emotion-board` | Emotion selection grid | 9 |
 | `support-map` | Categorized name + message inputs | 9 |
+| `card-builder` | Build a Bar Mitzvah "winning card": dropdown fields (prefix + options) → reveal trading card with hero photo | 10 |
 | `story` | Styled text block | — |
 
-## Quest Status (April 2026)
+## Quest Status (June 2026)
 
 | Quest | Status | Content |
 |-------|--------|---------|
@@ -118,7 +129,7 @@ bar-mitzvah-quest/
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
 | 8 - הסופרפאוורס שלי | Complete | 8 scattered envelope cards (real messages) + power select |
 | 9 - האנשים שלי | Partial | 10 video title cards with overlay player (6 real + 4 placeholder) + emotion board |
-| 10 - מי אני עכשיו | Needs content | Personal manifesto |
+| 10 - מי אני עכשיו | Complete | `card-builder` — "הקלף המנצח": 3 dropdown fields (title / secret weapon / next-year goal) → reveal Bar Mitzvah trading card with hero photo |
 
 ## Design System
 | Element | Value |
@@ -172,26 +183,28 @@ bar-mitzvah-quest/
 
 **Deploy**: `git add . && git commit -m "description" && git push`. Auto-deploys from master (1-2 min). Cache busting is automatic.
 
-**Reset progress**:
+**Reset progress** (cross-device, via Firebase — preferred):
 ```javascript
-// Full reset
-localStorage.removeItem('bar-mitzvah-quest');
+// Full reset — wipes this device AND every other device on next load
+resetAllProgress();
 location.reload();
 
-// Partial (keep quests 1-5, reset 6+)
-let s = JSON.parse(localStorage.getItem('bar-mitzvah-quest'));
-s.completedQuests = s.completedQuests.filter(id => id <= 5);
-[6,7,8,9,10].forEach(id => delete s.responses[id]);
-s.currentQuest = null;
-localStorage.setItem('bar-mitzvah-quest', JSON.stringify(s));
+// Partial reset — reset only specific quest ids everywhere (keep the rest)
+resetAllProgress([6, 7, 8, 9, 10]);
+location.reload();
+```
+Local-only fallback (does NOT propagate to other devices):
+```javascript
+localStorage.removeItem('bar-mitzvah-quest');
 location.reload();
 ```
 
 ## Known Issues / TODO
-- Quest 10 needs content
 - Quest 9 has 4 placeholder videos remaining
+- Quest 8 source material `מטפים מעצימים שלב 8.docx` not yet incorporated/committed
 - Hero Book PDF export is basic (browser print)
 - Mobile responsive design not supported (PC-first)
 - Completed quest artifact preview on map (deferred)
 - Presentation export not implemented
 - Family tree photo positions may need fine-tuning per screen size
+- Firebase config + family passcode (`1907`) are committed in client JS (public repo) — acceptable for this private family use, but not secret
