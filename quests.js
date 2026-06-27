@@ -16,7 +16,7 @@ const MAP_POSITIONS = [
 const QUESTS = [
     {
         id: 1,
-        name: "שורשים",
+        name: "עץ השורשים",
         subtitle: "היסטוריה משפחתית",
         icon: "🌳",
         mapIcon: "🌳",
@@ -50,7 +50,7 @@ const QUESTS = [
     },
     {
         id: 2,
-        name: "משחק המשפחה",
+        name: "משחק הכרות",
         subtitle: "אתגר Kahoot",
         icon: "🎮",
         mapIcon: "🎮",
@@ -187,7 +187,7 @@ const QUESTS = [
     },
     {
         id: 3,
-        name: "תיק החקירה המשפחתי",
+        name: "חקירה משפחתית",
         subtitle: "חידון גילוי משפחתי",
         icon: "🔍",
         mapIcon: "🔍",
@@ -330,7 +330,7 @@ const QUESTS = [
     },
     {
         id: 5,
-        name: "המוח שלי עובד אחרת",
+        name: "המוח המיוחד שלי",
         subtitle: "המוח המיוחד שלי",
         icon: "🧠",
         mapIcon: "🧠",
@@ -388,7 +388,7 @@ const QUESTS = [
     },
     {
         id: 6,
-        name: "שבט האחים של גיא – צוות העל שלי",
+        name: "השבט שלי",
         subtitle: "מפת המסע המשותף",
         icon: "👫",
         mapIcon: "👫",
@@ -548,7 +548,7 @@ const QUESTS = [
     },
     {
         id: 8,
-        name: "הסופרפאוורס שלי",
+        name: "Super powers",
         subtitle: "המעטפות הסודיות",
         icon: "⚡",
         mapIcon: "⚡",

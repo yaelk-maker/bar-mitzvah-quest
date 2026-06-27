@@ -208,26 +208,12 @@ function renderQuestMap() {
         map.appendChild(bookNode);
     }
 
-    // Fixed current-step banner — shows the name of the step Guy is on now.
-    // Use the names as painted on the island map (these differ from quest.name).
-    const MAP_STEP_NAMES = {
-        1: 'עץ השורשים',
-        2: 'משחק הכרות',
-        3: 'חקירה משפחתית',
-        4: 'הגיבור שנולד',
-        5: 'המוח המיוחד שלי',
-        6: 'השבט שלי',
-        7: 'הדרך שעשיתי',
-        8: 'Super powers',
-        9: 'האנשים שלי',
-        10: 'מי אני עכשיו',
-    };
+    // Fixed current-step banner — quest.name now matches the island map names.
     const stepBanner = document.getElementById('current-step-banner');
     if (stepBanner) {
         const nextEntry = allQuests.find(v => v.isNext);
         if (nextEntry) {
-            const stepName = MAP_STEP_NAMES[nextEntry.quest.id] || nextEntry.quest.name;
-            stepBanner.innerHTML = `<span>🎯</span><span>השלב שלי: ${stepName}</span>`;
+            stepBanner.innerHTML = `<span>🎯</span><span>השלב שלי: ${nextEntry.quest.name}</span>`;
             stepBanner.classList.add('visible');
         } else {
             stepBanner.classList.remove('visible');
