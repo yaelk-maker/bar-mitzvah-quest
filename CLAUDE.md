@@ -8,8 +8,9 @@ Gamified Bar Mitzvah identity quest PWA for Guy (12.5, Bar Mitzvah July 19, 2026
 - **PWA** with manifest.json; state persisted to Firebase Realtime Database (source of truth) + localStorage cache; family passcode `1907`
 - **Hosted**: https://yaelk-maker.github.io/bar-mitzvah-quest/ (GitHub Pages, `master` branch)
 - **Repo**: https://github.com/yaelk-maker/bar-mitzvah-quest (public)
-- **Fonts**: Heebo (Hebrew) + Bungee (titles) from Google Fonts
-- **Cache busting**: JS files use timestamp query params (auto-generated in index.html)
+- **Fonts**: Heebo (Hebrew body) + Bungee / Frank Ruhl Libre / Baloo 2 (display) from Google Fonts
+- **Cache busting**: JS files use timestamp query params (auto-generated in index.html). `style.css` uses a manual `?v=...` tag — **bump it on every deploy that changes CSS** (currently `?v=20260628live`)
+- **Design**: bright "floating islands in the sky" theme (see Design System). UI iterated via claude.ai/design exports + manual integration; design work happens on a `design` branch then merges to `master`.
 
 ## File Structure
 ```
@@ -18,8 +19,11 @@ bar-mitzvah-quest/
 ├── app.js              # State, navigation, quest rendering, map, validation
 ├── quests.js           # Quest data (10 quests) + MAP_POSITIONS
 ├── firebase-sync.js    # Firebase cloud sync, family passcode, cross-device reset
-├── style.css           # Lava/volcanic game theme
-├── map-bg.png          # Lava map background (itch.io asset pack)
+├── style.css           # Bright "floating islands" theme (active). Built as a base
+│                       #   layer + override layer; bump ?v= tag in index.html on CSS deploys
+├── map-v3.jpg          # ACTIVE map background — floating islands (names/scenes baked in)
+├── cloud.svg           # Decorative drifting sky clouds
+├── map-bg.png          # LEGACY lava map background (no longer used)
 ├── manifest.json, icon-192.png, icon-512.png  # PWA files
 ├── photos/             # Family/stage photos + video
 │   ├── family-tree-bg.png            # Illustrated family tree template
@@ -57,28 +61,35 @@ bar-mitzvah-quest/
 ### Screens (toggled via `.active` CSS class)
 | Screen | Purpose |
 |--------|---------|
-| `screen-home` | Treasure map with winding path, quest nodes, brainrot chars |
+| `screen-home` | Floating-islands map (`map-v3.jpg`), quest hotspots, rope-bridge trail, brainrot chars, bottom-center XP bar + current-step pink banner |
 | `screen-quest` | Individual quest (height: 100vh; overflow-y: auto) |
 | `screen-book` | Hero Book: all completed quest responses |
 
 ### Quest Progression
 - Sequential unlock: Quest N+1 unlocks after Quest N completes
 - Each quest: 100 XP (1000 total for all 10)
-- Completed: green checkmark on map
-- Next available: yellow pulse
-- Locked: grey circle + lock icon (no name)
+- The whole island map is always visible (an overview). Steps are not hidden.
+- **Completed / current / locked** = clickable / clickable / not-clickable. Clickable steps show a `pointer` (hand) cursor; locked steps and the rest of the map show a plain arrow.
+- **Current step** is indicated by a fixed pink banner `#current-step-banner` ("השלב שלי: <name>") pinned bottom-center above the XP bar — NOT an on-island marker (the baked map's island positions don't align with node coordinates, so on-island overlays float off). Populated from the next quest in the map render.
+- Completion popup (`showXPGain`): stars + confetti + a **clickable** green "המשימה הבאה נפתחה!" button (`.xp-next`, role=button) → dismisses + returns to map; backdrop click also dismisses; 3s auto-close fallback.
 
-### Quest Validation
-`getQuestValidation(questId)` checks per-task-type requirements. Complete button starts disabled, enables only when all sections pass. On click, re-validates and shows Hebrew toast with missing items.
+### Quest Validation & completion
+`getQuestValidation(questId)` checks per-task-type requirements and returns `{ valid, missing }`.
+- **Strict completion** (per user decision): require ALL items — open all hero-journey files, rate all brain-meters, open all 8 secret-envelopes, produce the medal (medal-factory), watch all Q9 videos, solve all investigation-quiz steps, twin-sort placed in the **correct** bin, etc.
+- **Quest 2 is exempt** — `getQuestValidation` early-returns `valid` for `questId === 2` (its Kahoot is live/in-person, must never block progress).
+- The Complete button stays **clickable even when invalid** (NOT natively disabled — a disabled button gives an ASD user no feedback). It carries a `.not-ready` style; clicking when invalid runs `completeQuest()` which shows the Hebrew "what's missing" toast.
+- **Gentle, forgiving wrong-answer feedback** (per user decision): no harsh red flash / snap-back / hard gates. twin-sort wrong drop = calm hint + soft drift-back; Q3 quiz + Neta quiz wrong = soft amber hint, retryable.
 
 ### Map System
-- Background: `map-bg.png` (lava, dark theme)
-- Banner: 72px centered gradient header with "מסע הגיבורים של גיא"
-- Nodes: 90px circles, x/y percentages defined in `MAP_POSITIONS` (quests.js)
-- SVG curves: lava-orange trail + bright green completed overlay
-- Characters: 7 SAB voxel PNGs, 120px each, static positioned (BRAINROT_CHARS in app.js)
-- XP bar: 300px wide, gold on dark background
-- No scrolling: all 10 nodes + chars fit in 100vh
+- Background: `map-v3.jpg` — floating islands in a bright sky. **Island names + scene icons are baked into this image** (so they can't be hidden/recolored via CSS, and node coordinates only approximately align with the painted islands).
+- Title banner: top-center "מסע הגיבורים של גיא" (Bungee/display, white with purple stroke).
+- Nodes: transparent hotspots (`13vw × 15vh`) sized to each island, positioned by `MAP_POSITIONS` (quests.js). DOM `.map-node-label`s are hidden (the baked map shows the names). Locked-step cloud cover was removed.
+- Trail: rope-bridge style drawn as SVG in `drawMapPath()` (replaced the old lava path).
+- `cloud.svg`: decorative drifting sky clouds.
+- Characters: 7 SAB voxel PNGs, 120px, static (BRAINROT_CHARS in app.js).
+- **XP bar**: compact, pinned **bottom-center** (`.map-xp`, fixed). Current-step pink banner sits just above it.
+- Cursor: arrow across the map; clickable steps (`.map-node-done/-next/-treasure`) show `pointer`.
+- No scrolling: everything fits in 100vh.
 
 ### Family Tree (Quest 1)
 - Background: `photos/family-tree-bg.png` (illustrated tree with circular slots)
@@ -92,7 +103,8 @@ bar-mitzvah-quest/
 | `info` | Read-only text | — |
 | `textarea` / `reflection` | Text input | — |
 | `family-flow` | Sequential cards → family tree | 1 |
-| `kahoot-guide` | Numbered step list | 2 |
+| `kahoot-guide` | Numbered step list | (legacy) |
+| `inspiration-cards` | Flip cards (persist actual flip state) | 2 |
 | `checklist` | Checkboxes | 2 |
 | `multiselect` | Multiple choice checkboxes | — |
 | `investigation-quiz` | Multi-step quiz + images, progressive unlock | 3 |
@@ -102,7 +114,7 @@ bar-mitzvah-quest/
 | `brain-meters` | Sliders + buttons + brain map reveal | 5 |
 | `brain-cards` | Flip cards + "זה אני!" claim buttons | 5 |
 | `drag-select` | Single-select sentence cards | 5 |
-| `twin-sort` | Drag & drop into 3 bins (Guy/Both/Mika); wrong answers shake/bounce | 6 |
+| `twin-sort` | Drag & drop (or tap-to-place) into bins; only CORRECT placements persist; wrong = gentle hint + soft drift-back (no red shake); live "מויינו X/N" counter | 6 |
 | `neta-envelope` | Locked gold envelope → trivia modal (3 Q's on Neta) → unlock video + greeting | 6 |
 | `trophy-hero-image` | Hero video/image with golden border | 7 |
 | `trophy-cabinet` | Wooden shelf + drag & drop medals + live counter | 7 |
@@ -118,47 +130,49 @@ bar-mitzvah-quest/
 
 ## Quest Status (June 2026)
 
+Step names match the island map (`quest.name` is the single source of truth — used by map, banner, and quest-screen headers).
+
 | Quest | Status | Content |
 |-------|--------|---------|
-| 1 - שורשים | Complete | Family flow + tree |
-| 2 - משחק המשפחה | Complete | Kahoot + checklist |
-| 3 - תיק החקירה | Complete | 4-step quiz + images |
-| 4 - הגיבור שנולד | Complete | Accordion + stones + bubbles |
-| 5 - המוח שלי עובד אחרת | Complete | Meters + map + flip cards |
-| 6 - שבט האחים של גיא | Complete | 2x drag & drop (twins) + Neta trivia envelope |
+| 1 - עץ השורשים | Complete | Family flow + tree |
+| 2 - משחק הכרות | Complete (**optional** — never blocks) | Inspiration cards + checklist + textarea (live Kahoot game) |
+| 3 - חקירה משפחתית | Complete | 4-step investigation quiz + images |
+| 4 - הגיבור שנולד | Complete | Accordion + power stones + message bubbles |
+| 5 - המוח המיוחד שלי | Complete | Meters + brain map + flip cards |
+| 6 - השבט שלי | Complete | 2x drag & drop (twins) + Neta trivia envelope |
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
-| 8 - הסופרפאוורס שלי | Complete | 8 scattered envelope cards (real messages) + power select |
-| 9 - האנשים שלי | Partial | 10 video title cards with overlay player (6 real + 4 placeholder) + emotion board |
-| 10 - מי אני עכשיו | Complete | `card-builder` — "הקלף המנצח": 3 dropdown fields (title / secret weapon / next-year goal) → reveal Bar Mitzvah trading card with hero photo |
+| 8 - Super powers | Complete | 8 scattered envelope cards (real messages) + power select |
+| 9 - האנשים שלי | Partial | 10 greeting-video cards + overlay player (some placeholder videos) + emotion board |
+| 10 - מי אני עכשיו | Complete | `card-builder` — Bar Mitzvah trading card (title / secret weapon / next-year goal) + hero photo |
 
-## Design System
+> Note: step 8's label is **English ("Super powers")** because that's what's painted on `map-v3.jpg`; switch to Hebrew only if the map art is updated too.
+
+## Design System (bright "floating islands" theme)
+The old dark lava/neon theme was replaced. `style.css` is layered: a base layer + a
+bright "candy/islands" override layer that wins the cascade. Newer fixes are appended
+at the end of `style.css` (highest priority).
+
 | Element | Value |
 |---------|-------|
-| Theme | Dark glassmorphism + neon gaming (RPG quest log) |
-| Background | `map-bg.png` (map); `#1a1025` (body) |
-| Banner | 72px dark gradient, gold/orange/pink text (Bungee) |
-| Cards | Dark glass `rgba(15,15,35,0.75)`, `backdrop-filter: blur(12px)`, neon borders |
-| Inputs | Dark bg `rgba(0,0,0,0.4)`, white text, neon blue focus glow |
-| Buttons | Chunky game style, green neon glow on hover with `scale(1.03)` |
-| Quest layout | Full-width PC, `max-width: 1400px` body, `900px` task blocks centered |
-| Completed nodes | Green neon glow, 90px circles |
-| Next node | Yellow neon pulse |
-| Locked nodes | Dark volcanic stone |
-| Path: default | `#ff8f00` (lava orange) |
-| Path: completed | `#76ff03` (bright green) |
-| Text: primary | `#e8e8f0` (light on dark) |
-| Text: secondary | `#b0b0d0` (muted light) |
-| Neon border | `rgba(100, 200, 255, 0.25)` (cyan glow) |
-| Text direction | RTL (Hebrew); XP numbers use ltr + isolate |
+| Theme | Bright, friendly floating-islands-in-the-sky (kid RPG) |
+| Background | sky gradient + `map-v3.jpg` islands; light page (`#FBFAF8`-ish) |
+| Title | Bungee/display, white with purple stroke (`#6D28D9`) |
+| Cards / panels | Light/white panels, soft shadows, rounded |
+| Accents | sakura pink `#FF7AB6`/`#DB2777`, purple `#9333EA`, gold/orange `#FB8C00`, teal/green, sky-blue |
+| Current-step banner | Pink pill (`#FF7AB6→#DB2777`), white bold text, bottom-center |
+| Completed nodes | clickable (pointer) | 
+| Current node | shown via the pink banner (no on-island ring) |
+| Locked nodes | visible island, not clickable (arrow cursor) |
+| Text | dark ink on light panels (avoid pure black/white); RTL |
+| RTL numbers | XP / "N/M" counters use `direction: ltr; unicode-bidi: isolate` |
 | Characters | 7 SAB voxel PNGs, 120px, static |
-| Scrollbar | Custom dark: translucent cyan thumb on dark track |
-| Accessibility | Clear instructions, visual affordances, progress counters (autistic user friendly) |
+| Accessibility | clear instructions, large affordances, progress counters, gentle/forgiving feedback (ASD-friendly) |
 
 ## Constraints
 - **Hebrew RTL**: Numbers in XP need `direction: ltr; unicode-bidi: isolate`
 - **No frameworks**: Vanilla only
 - **PC-first design**: Optimized for desktop; mobile not currently supported
-- **Dark theme**: All new components must use dark glass backgrounds, neon borders, light text (`var(--text-dark)` / `var(--text-medium)`). Never use `#fff`, `#333`, or `color-mix(..., white)`
+- **Bright islands theme**: New components use light panels + the bright accent palette (pinks/purple/gold/teal), dark ink text on light. Append new style overrides at the END of `style.css` so they win the layered cascade. (The old "dark glass / never use #fff" rule is obsolete.)
 - **Photo filenames**: Hebrew characters (e.g., `סבא מישה (מצד אבא).jpg`); twins use `.jpeg`
 - **Photo centering**: Custom `object-position` via `photoPos` field in quests.js
 - **Brainrot**: SAB voxel PNGs only, all 120px, static (no emoji, no animations)
@@ -175,13 +189,13 @@ bar-mitzvah-quest/
 
 **Add validation**: Edit `getQuestValidation()` in app.js. Add case for task type; push to `missing[]` if incomplete.
 
-**Change map positions**: Edit `MAP_POSITIONS` in quests.js (x: 0-100, y: 0-100; max y ~75%).
+**Change map positions**: Edit `MAP_POSITIONS` in quests.js (x/y %, quest-id order: Q1=tree island … Q10=top-right). These are tuned to the islands painted in `map-v3.jpg` and only approximately align — re-tuning all 10 is the proper fix if precise node/island alignment is ever needed.
 
 **Change family tree photos**: Edit `treePositions` in `renderFamilyTree()` (app.js). Each: `idx` (member index), `left`/`top` (%), `cls` (ftree-gp, ftree-parent, ftree-child, ftree-hero).
 
 **Add brainrot chars**: Edit `BRAINROT_CHARS` (app.js). Each: `{ img, top, right/left, size }` (all 120px). Add PNGs to brainrot/ folder.
 
-**Deploy**: `git add . && git commit -m "description" && git push`. Auto-deploys from master (1-2 min). Cache busting is automatic.
+**Deploy**: Do UI work on a `design` branch, then fast-forward/merge into `master` and push. Auto-deploys from `master` (1-2 min). **Bump `style.css?v=` in index.html** when CSS changed (JS is timestamp-busted automatically).
 
 **Reset progress** (cross-device, via Firebase — preferred):
 ```javascript
@@ -200,11 +214,18 @@ location.reload();
 ```
 
 ## Known Issues / TODO
-- Quest 9 has 4 placeholder videos remaining
-- Quest 8 source material `מטפים מעצימים שלב 8.docx` not yet incorporated/committed
+- **Hero Book data gaps**: `openHeroBook()` only renders string responses, so Quest 4 (power stones + chosen message) and Quest 10 (card-builder object) and the custom factory medal **don't appear** in the book. To fix with the finale work.
+- **Finale / storybook** (paused, designed not built): "Hero Movie" highlight reel + print-ready storybook (A4, QR codes to greeting videos). See brainstorm in chat history.
+- Quest 9 still has some placeholder greeting videos
+- `map-v3.jpg` bakes in island names/scenes → can't hide/recolor per-step; "Super powers" label is English
 - Hero Book PDF export is basic (browser print)
 - Mobile responsive design not supported (PC-first)
-- Completed quest artifact preview on map (deferred)
-- Presentation export not implemented
-- Family tree photo positions may need fine-tuning per screen size
 - Firebase config + family passcode (`1907`) are committed in client JS (public repo) — acceptable for this private family use, but not secret
+- Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`, `Song for the movie.mpeg`) are scratch/abandoned assets, not used by the app
+
+## Session log (2026-06-27/28) — what shipped to `master`
+- Integrated the bright floating-islands redesign (map-v3.jpg, cloud.svg, restyled style.css, rope-bridge trail, island MAP_POSITIONS)
+- Ran a 14-agent UI/UX/QA review (43 findings); fixed 39: strict completion, gentle feedback, accessibility (tap hints, contrast, video Esc), Firebase merge-on-write, passcode-always-shown, junk `responses.undefined` key, RTL counters, etc.
+- Family flow: require a word per member + consistent card layout
+- Map polish: removed locked-step clouds, moved XP bar bottom-center, fixed current-step pink banner, arrow/pointer cursors, clickable completion popup button
+- Renamed steps app-wide to match the map; made Quest 2 optional
