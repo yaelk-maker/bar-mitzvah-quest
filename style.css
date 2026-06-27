@@ -5013,3 +5013,10 @@ select.task-select option { background: #fff; color: #2E1065; }
    hovering an island often lands on a container). Buttons/links keep their own. */
 #screen-home,
 #screen-home *:not(button):not(a):not(input) { cursor: default !important; }
+
+/* Clickable steps (completed, current, and the Hero Book node) show a hand
+   cursor to signal they can be opened. Locked steps stay a plain arrow.
+   Scoped under #screen-home to outrank the broad arrow rule above. */
+#screen-home .map-node-done, #screen-home .map-node-done *,
+#screen-home .map-node-next, #screen-home .map-node-next *,
+#screen-home .map-node-treasure, #screen-home .map-node-treasure * { cursor: pointer !important; }
