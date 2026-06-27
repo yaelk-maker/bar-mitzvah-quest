@@ -4959,3 +4959,30 @@ select.task-select option { background: #fff; color: #2E1065; }
   max-width: 42vw !important;
 }
 .map-xp-text { font-size: 0.9rem !important; white-space: nowrap; }
+
+/* =======================================================================
+   CURRENT STEP highlight (2026-06-27)
+   Remove the off-center pulsing ring around the current step's icon; instead
+   draw attention with a bright colored name pill under the symbol.
+   ======================================================================= */
+.map-node-next .map-node-circle {
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3) !important;
+  animation: none !important;
+}
+.map-node-next .map-node-circle::before { content: none !important; }
+.map-node-next .map-node-label {
+  display: inline-block !important;
+  background: linear-gradient(180deg, #FFC857, #FB8C00) !important;
+  color: #3A1D00 !important;
+  border: 2px solid #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 14px rgba(251,140,0,0.6) !important;
+  animation: currentStepPulse 1.8s ease-in-out infinite !important;
+}
+@keyframes currentStepPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.07); }
+}
+/* keep the current-step marker clean: just the colored name pill */
+.map-node-next .map-node-subtitle,
+.map-node-next .map-node-start { display: none !important; }
