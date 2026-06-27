@@ -2235,10 +2235,24 @@ function showXPGain(quest) {
     document.body.appendChild(overlay);
     launchConfetti(overlay);
     setTimeout(() => overlay.classList.add('visible'), 50);
-    setTimeout(() => {
+
+    const dismiss = () => {
         overlay.classList.remove('visible');
         setTimeout(() => overlay.remove(), 350);
-    }, 3000);
+    };
+    // Make the green "next task unlocked" button actually clickable — tap it to
+    // continue to the map right away instead of waiting for the auto-close.
+    const nextBtn = overlay.querySelector('.xp-next');
+    if (nextBtn) {
+        nextBtn.setAttribute('role', 'button');
+        nextBtn.setAttribute('tabindex', '0');
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); dismiss(); showHome(); });
+    }
+    // Clicking the backdrop also dismisses.
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { dismiss(); showHome(); } });
+
+    // Fallback auto-close if the child doesn't tap anything.
+    setTimeout(() => { if (document.body.contains(overlay)) dismiss(); }, 3000);
 }
 
 // ===== Confetti burst (dependency-free) =====

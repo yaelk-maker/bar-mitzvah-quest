@@ -5020,3 +5020,8 @@ select.task-select option { background: #fff; color: #2E1065; }
 #screen-home .map-node-done, #screen-home .map-node-done *,
 #screen-home .map-node-next, #screen-home .map-node-next *,
 #screen-home .map-node-treasure, #screen-home .map-node-treasure * { cursor: pointer !important; }
+
+/* Completion popup: the "next task unlocked" green button is now clickable */
+.xp-next { cursor: pointer !important; transition: transform .12s ease, filter .12s ease; }
+.xp-next:hover { transform: scale(1.04); filter: brightness(1.05); }
+.xp-next:active { transform: scale(0.98); }
