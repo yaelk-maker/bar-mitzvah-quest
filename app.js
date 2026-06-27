@@ -1794,13 +1794,22 @@ function openQuest(questId) {
                             <div class="cin-overlay-inner">
                                 <div class="cin-overlay-title">${vid.title}</div>
                                 <button class="cin-overlay-close">✕</button>
-                                <video src="photos/${vid.src}" controls autoplay playsinline
+                                <video src="photos/${vid.src}" controls playsinline
                                        onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרטון יתווסף בקרוב...</div>'"></video>
                             </div>
                         `;
                         document.body.appendChild(overlay);
                         requestAnimationFrame(() => overlay.classList.add('visible'));
                         const video = overlay.querySelector('video');
+                        // Play with sound — this runs inside the click (a user gesture),
+                        // so the browser allows unmuted autoplay. Relying on the `autoplay`
+                        // attribute alone gets force-muted by autoplay policy.
+                        if (video) {
+                            video.muted = false;
+                            video.volume = 1;
+                            const playPromise = video.play();
+                            if (playPromise) playPromise.catch(() => {});
+                        }
                         const closeOverlay = () => {
                             if (video) video.pause();
                             overlay.classList.remove('visible');
