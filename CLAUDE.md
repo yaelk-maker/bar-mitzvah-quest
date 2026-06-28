@@ -215,13 +215,19 @@ location.reload();
 
 ## Known Issues / TODO
 - **Hero Book data gaps**: `openHeroBook()` only renders string responses, so Quest 4 (power stones + chosen message) and Quest 10 (card-builder object) and the custom factory medal **don't appear** in the book. To fix with the finale work.
-- **Finale / storybook** (paused, designed not built): "Hero Movie" highlight reel + print-ready storybook (A4, QR codes to greeting videos). See brainstorm in chat history.
+- **Finale / storybook** — ✅ BUILT (2026-06-28). See `finale/` + `storybook.html`:
+  - `finale/Hero-Movie.mp4` — ~3:05 highlight reel of the 10 steps set to `Song for the movie.mpeg`, 1080p, Hebrew RTL captions, Ken-Burns zoom + crossfades, audio fade-out.
+  - `storybook.html` (+ exported `finale/Hero-Storybook.pdf`) — print-ready A4 (13 pages) "Hero Book": real photos, the family blessing messages, and QR codes to the GitHub-Pages-hosted greeting videos.
+  - Reproducible builders: `finale/make_storybook.py`, `finale/make_movie.py` (repo-relative; render HTML scenes via headless Chrome, assemble MP4 with bundled ffmpeg via `imageio-ffmpeg`). See `finale/README.md`.
+  - Built from authored journey content + real family photos (NOT Guy's saved responses — test data). Movie trimmed to ~3:05 with the song faded out; ask for a full-song (~3:57) cut if a longer version is wanted.
+- **Quest 9 video path bug**: `quests.js` Quest 9 references `Videos - step 9/…mp4` but the files actually live at `photos/Videos - step 9/…mp4` (where they ARE deployed on Pages) — so in-app playback is broken until the paths are prefixed with `photos/`. (Storybook QR codes already point to the correct `photos/...` URLs.)
 - Quest 9 still has some placeholder greeting videos
 - `map-v3.jpg` bakes in island names/scenes → can't hide/recolor per-step; "Super powers" label is English
 - Hero Book PDF export is basic (browser print)
 - Mobile responsive design not supported (PC-first)
 - Firebase config + family passcode (`1907`) are committed in client JS (public repo) — acceptable for this private family use, but not secret
-- Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`, `Song for the movie.mpeg`) are scratch/abandoned assets, not used by the app
+- `Song for the movie.mpeg` (repo root) is the Suno soundtrack — now **tracked** as the source music for `finale/Hero-Movie.mp4` (used by `finale/make_movie.py`)
+- Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`) are scratch/abandoned assets, not used by the app
 
 ## Session log (2026-06-27/28) — what shipped to `master`
 - Integrated the bright floating-islands redesign (map-v3.jpg, cloud.svg, restyled style.css, rope-bridge trail, island MAP_POSITIONS)
