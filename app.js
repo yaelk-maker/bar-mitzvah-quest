@@ -327,6 +327,107 @@ function drawMapPath(svg, allQuests) {
     }
 }
 
+// ===== Shared builders (used by the quest screens AND the Hero Book) =====
+
+// Full illustrated family tree (photos over the tree template + name/word banners).
+function buildFamilyTreeHTML(members, responses) {
+    // Strip prefixes from names (סבא, סבתא, אבא, אמא, דודה)
+    const shortName = (fullName) => fullName.replace(/^(סבא|סבתא|אבא|אמא|דודה)\s+/, '');
+
+    // Two-layer positioning: photos on green circles, labels on pink banners
+    // Positions are % of the tree template image (2094x2048)
+    const treeMembers = [
+        // Top row - Grandparents (circles cy=23.5%, banner center=30.5%)
+        { idx: 0, cx: 19,   cy: 23.5, lx: 19,   ly: 30.5, cls: 'ftree-gp' },
+        { idx: 1, cx: 38.5, cy: 23.5, lx: 38.5, ly: 30.5, cls: 'ftree-gp' },
+        { idx: 2, cx: 61,   cy: 23.5, lx: 61,   ly: 30.5, cls: 'ftree-gp' },
+        { idx: 3, cx: 80,   cy: 23.5, lx: 80,   ly: 30.5, cls: 'ftree-gp' },
+        // Middle row - Parents & Aunts (circles cy=42.6%, banner center=49.7%)
+        { idx: 6, cx: 10,   cy: 42.6, lx: 10,   ly: 49.7, cls: 'ftree-parent' },
+        { idx: 4, cx: 28.2, cy: 42.6, lx: 28.2, ly: 49.7, cls: 'ftree-parent' },
+        { idx: 5, cx: 69.5, cy: 42.6, lx: 69.5, ly: 49.7, cls: 'ftree-parent' },
+        { idx: 7, cx: 88.5, cy: 42.6, lx: 88.5, ly: 49.7, cls: 'ftree-parent' },
+        // Bottom row - Children (circles cy=62%, banner center=69%)
+        { idx: 8,  cx: 32.5, cy: 62, lx: 32.5, ly: 69, cls: 'ftree-child' },
+        { idx: 10, cx: 49,   cy: 62, lx: 49,   ly: 69, cls: 'ftree-hero' },
+        { idx: 9,  cx: 64.2, cy: 62, lx: 64.2, ly: 69, cls: 'ftree-child' },
+    ];
+
+    const memberHTML = (pos) => {
+        const m = members[pos.idx];
+        const word = responses[`member_${pos.idx}`] || '';
+        const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
+        const name = shortName(m.name);
+        return `
+            <div class="ftree-photo-circle ${pos.cls}" style="left: ${pos.cx}%; top: ${pos.cy}%;">
+                <img src="${m.photo}" alt="${name}" style="${posStyle}">
+            </div>
+            <div class="ftree-label ${pos.cls}" style="left: ${pos.lx}%; top: ${pos.ly}%;">
+                <div class="ftree-label-name">${name} - ${m.relation}</div>
+                ${word ? `<div class="ftree-label-word">"${word}"</div>` : ''}
+            </div>
+        `;
+    };
+
+    return `
+        <div class="ftree">
+            <h3 class="ftree-title">🌳 עץ המשפחה של גיא 🌳</h3>
+            <div class="ftree-map">
+                ${treeMembers.map(pos => memberHTML(pos)).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Colorful cartoon brain — puffy lobes clipped to a brain silhouette, each lobe
+// colored by a trait's color and shaded by Guy's answer level (1..maxVal).
+// traits: [{id,name,icon,color}]; values: number per trait; grey renders the
+// "typical brain" comparison.
+function buildCartoonBrainSVG(traits, values, levelNames, maxVal, grey) {
+    const uid = 'cb' + (grey ? 'g' : 'u') + Math.floor(performance.now());
+    // Side-view cartoon brain silhouette (viewBox 0 0 360 300) + stem
+    const SILHOUETTE = 'M186,22 C136,10 92,26 68,58 C40,64 22,92 26,124 C12,152 20,190 44,208 C52,238 86,256 118,250 C142,272 190,274 218,258 C258,268 300,250 316,218 C340,196 344,156 328,130 C336,94 316,60 282,48 C258,20 220,14 186,22 Z';
+    const STEM = 'M232,256 C238,272 254,282 272,284 C258,290 240,290 228,282 C220,274 222,262 224,256 Z';
+    // Lobe clusters: each trait -> a cluster of puffy circles + a label anchor
+    const LOBES = [
+        { circles: [[92,78,44],[132,58,40],[70,112,36]],   label: [100, 88]  },  // 0 creativity — frontal top
+        { circles: [[62,160,42],[52,196,34],[92,186,36]],  label: [72, 178]  },  // 1 senses — front lower
+        { circles: [[184,52,44],[226,64,40],[196,96,38]],  label: [200, 72]  },  // 2 focus — parietal top
+        { circles: [[262,196,40],[232,222,36],[286,224,32]],label: [258, 214] }, // 3 movement — cerebellum area
+        { circles: [[150,150,48],[186,180,42],[130,196,38]],label: [158, 172] }, // 4 feelings — deep center
+        { circles: [[286,96,42],[302,140,38],[258,128,40]], label: [284, 120] }, // 5 memory — occipital back
+    ];
+    let defs = `<clipPath id="${uid}-clip"><path d="${SILHOUETTE}"/></clipPath>`;
+    let lobes = '';
+    let labels = '';
+    for (let i = 0; i < traits.length; i++) {
+        const t = traits[i];
+        const v = Math.max(1, Math.min(maxVal, values[i] || 2));
+        const color = grey ? '#B9BECF' : t.color;
+        const op = grey ? 0.55 : (0.30 + (v / maxVal) * 0.62);
+        const lobe = LOBES[i % LOBES.length];
+        const grow = grey ? 0 : (v - 2) * 3; // stronger answers puff up a bit
+        lobes += `<g clip-path="url(#${uid}-clip)">` + lobe.circles.map(([cx, cy, r]) =>
+            `<circle cx="${cx}" cy="${cy}" r="${r + grow}" fill="${color}" fill-opacity="${op}" stroke="${grey ? '#9AA0B5' : '#4C1D95'}" stroke-opacity="0.35" stroke-width="2"/>`
+        ).join('') + `</g>`;
+        const lvName = grey ? '' : (levelNames[v - 1] || '');
+        labels += `
+            <text x="${lobe.label[0]}" y="${lobe.label[1] - 8}" text-anchor="middle" font-size="${grey ? 15 : 15 + v}" style="paint-order:stroke" stroke="#fff" stroke-width="3" font-family="sans-serif">${t.icon}</text>
+            <text x="${lobe.label[0]}" y="${lobe.label[1] + 10}" text-anchor="middle" font-size="11" font-weight="800" fill="#3B2A63" style="paint-order:stroke" stroke="#fff" stroke-width="3" font-family="Heebo,sans-serif">${t.name.split(' ')[0]}</text>
+            ${lvName ? `<text x="${lobe.label[0]}" y="${lobe.label[1] + 24}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${t.color}" style="paint-order:stroke" stroke="#fff" stroke-width="3" font-family="Heebo,sans-serif">${lvName}</text>` : ''}
+            ${!grey && v >= maxVal ? `<text x="${lobe.label[0] + 26}" y="${lobe.label[1] - 20}" text-anchor="middle" font-size="14" font-family="sans-serif">✨</text>` : ''}
+        `;
+    }
+    return `<svg viewBox="0 0 360 300" class="cartoon-brain${grey ? ' cartoon-brain-grey' : ''}" role="img" aria-label="מפת המוח">
+        <defs>${defs}</defs>
+        <path d="${STEM}" fill="${grey ? '#D5D8E2' : '#F3D1E5'}" stroke="${grey ? '#9AA0B5' : '#4C1D95'}" stroke-width="3"/>
+        <path d="${SILHOUETTE}" fill="${grey ? '#EEF0F5' : '#FDF3FA'}" stroke="none"/>
+        ${lobes}
+        <path d="${SILHOUETTE}" fill="none" stroke="${grey ? '#9AA0B5' : '#4C1D95'}" stroke-width="4" stroke-linejoin="round"/>
+        ${labels}
+    </svg>`;
+}
+
 // ===== Open Quest =====
 function openQuest(questId) {
     const quest = QUESTS.find(q => q.id === questId);
@@ -715,58 +816,8 @@ function openQuest(questId) {
                 function renderFamilyTree() {
                     const responses = state.responses[questId] || {};
 
-                    // Strip prefixes from names (סבא, סבתא, אבא, אמא, דודה)
-                    function shortName(fullName) {
-                        return fullName.replace(/^(סבא|סבתא|אבא|אמא|דודה)\s+/, '');
-                    }
-
-                    // Two-layer positioning: photos on green circles, labels on pink banners
-                    // Positions are % of the tree template image (2094x2048)
-                    const treeMembers = [
-                        // Top row - Grandparents (circles cy=23.5%, banner center=30.5%)
-                        { idx: 0, cx: 19,   cy: 23.5, lx: 19,   ly: 30.5, cls: 'ftree-gp' },
-                        { idx: 1, cx: 38.5, cy: 23.5, lx: 38.5, ly: 30.5, cls: 'ftree-gp' },
-                        { idx: 2, cx: 61,   cy: 23.5, lx: 61,   ly: 30.5, cls: 'ftree-gp' },
-                        { idx: 3, cx: 80,   cy: 23.5, lx: 80,   ly: 30.5, cls: 'ftree-gp' },
-                        // Middle row - Parents & Aunts (circles cy=42.6%, banner center=49.7%)
-                        { idx: 6, cx: 10,   cy: 42.6, lx: 10,   ly: 49.7, cls: 'ftree-parent' },
-                        { idx: 4, cx: 28.2, cy: 42.6, lx: 28.2, ly: 49.7, cls: 'ftree-parent' },
-                        { idx: 5, cx: 69.5, cy: 42.6, lx: 69.5, ly: 49.7, cls: 'ftree-parent' },
-                        { idx: 7, cx: 88.5, cy: 42.6, lx: 88.5, ly: 49.7, cls: 'ftree-parent' },
-                        // Bottom row - Children (circles cy=62%, banner center=69%)
-                        { idx: 8,  cx: 32.5, cy: 62, lx: 32.5, ly: 69, cls: 'ftree-child' },
-                        { idx: 10, cx: 49,   cy: 62, lx: 49,   ly: 69, cls: 'ftree-hero' },
-                        { idx: 9,  cx: 64.2, cy: 62, lx: 64.2, ly: 69, cls: 'ftree-child' },
-                    ];
-
-                    function memberHTML(pos) {
-                        const m = flowMembers[pos.idx];
-                        const word = responses[`member_${pos.idx}`] || '';
-                        const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
-                        const name = shortName(m.name);
-                        // Photo circle (centered on green circle)
-                        let html = `
-                            <div class="ftree-photo-circle ${pos.cls}" style="left: ${pos.cx}%; top: ${pos.cy}%;">
-                                <img src="${m.photo}" alt="${name}" style="${posStyle}">
-                            </div>
-                        `;
-                        // Label on pink banner — single line: "name - relation"
-                        html += `
-                            <div class="ftree-label ${pos.cls}" style="left: ${pos.lx}%; top: ${pos.ly}%;">
-                                <div class="ftree-label-name">${name} - ${m.relation}</div>
-                                ${word ? `<div class="ftree-label-word">"${word}"</div>` : ''}
-                            </div>
-                        `;
-                        return html;
-                    }
-
                     taskEl.innerHTML = `
-                        <div class="ftree">
-                            <h3 class="ftree-title">🌳 עץ המשפחה של גיא 🌳</h3>
-                            <div class="ftree-map">
-                                ${treeMembers.map(pos => memberHTML(pos)).join('')}
-                            </div>
-                        </div>
+                        ${buildFamilyTreeHTML(flowMembers, responses)}
                         <div class="flow-nav" style="margin-top:16px">
                             <button class="flow-btn flow-btn-prev">→ חזרה לעריכת המשפחה</button>
                         </div>
@@ -944,56 +995,6 @@ function openQuest(questId) {
                     brainBtn.classList.toggle('ready', filled);
                 }
 
-                // Brain outline path + bubble positions inside the brain
-                const BRAIN_PATH = 'M150,25 C90,25 45,50 35,90 C25,130 30,160 50,185 C60,200 75,215 90,225 C105,235 125,245 150,248 C175,245 195,235 210,225 C225,215 240,200 250,185 C270,160 275,130 265,90 C255,50 210,25 150,25 Z';
-                const BUBBLE_POS = [
-                    { cx: 100, cy: 75 },   // creativity - top left
-                    { cx: 200, cy: 75 },   // senses - top right
-                    { cx: 75,  cy: 145 },  // focus - mid left
-                    { cx: 225, cy: 145 },  // movement - mid right
-                    { cx: 110, cy: 205 },  // feelings - bottom left
-                    { cx: 190, cy: 205 },  // memory - bottom right
-                ];
-
-                function buildBrainSVG(values, colors, labels, icons, maxVal, isTypical) {
-                    const minR = 12, maxR = 38;
-                    let defs = `<defs>`;
-                    let circles = '';
-                    let labelEls = '';
-
-                    for (let i = 0; i < values.length; i++) {
-                        const ratio = values[i] / maxVal;
-                        const r = minR + ratio * (maxR - minR);
-                        const color = isTypical ? '#aab' : colors[i];
-                        const pos = BUBBLE_POS[i];
-                        const filterId = `glow-${isTypical ? 'typ' : 'usr'}-${i}`;
-
-                        // Glow filter for large bubbles (value >= 3)
-                        if (values[i] >= 3 && !isTypical) {
-                            defs += `<filter id="${filterId}" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
-                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                            </filter>`;
-                        }
-
-                        const filterAttr = (values[i] >= 3 && !isTypical) ? ` filter="url(#${filterId})"` : '';
-                        circles += `<circle cx="${pos.cx}" cy="${pos.cy}" r="${r}" fill="${color}" fill-opacity="0.7"${filterAttr} class="brain-bubble"/>`;
-
-                        // Icon + label
-                        labelEls += `<text x="${pos.cx}" y="${pos.cy - 1}" text-anchor="middle" dominant-baseline="central" font-size="${r > 25 ? 20 : 16}" font-family="sans-serif">${icons[i]}</text>`;
-                        labelEls += `<text x="${pos.cx}" y="${pos.cy + r + 14}" text-anchor="middle" fill="${color}" font-size="10" font-weight="700" font-family="Heebo,sans-serif">${labels[i]}</text>`;
-                    }
-                    defs += `</defs>`;
-
-                    const brainFill = isTypical ? '#f0f0f5' : 'linear-gradient(#eef,#e8e0ff)';
-                    return `<svg viewBox="0 0 300 280" class="brain-map-svg">
-                        ${defs}
-                        <path d="${BRAIN_PATH}" fill="${isTypical ? '#f0f0f5' : '#ece6ff'}" stroke="${isTypical ? '#ccc' : '#9B59B6'}" stroke-width="2.5" fill-opacity="0.5"/>
-                        ${circles}
-                        ${labelEls}
-                    </svg>`;
-                }
-
                 metersWrap.addEventListener('click', () => setTimeout(checkAllMetersFilled, 50));
                 checkAllMetersFilled();
 
@@ -1007,9 +1008,6 @@ function openQuest(questId) {
                 });
 
                 function showBrainMap() {
-                    const traitLabels = task.traits.map(t => t.name.split(' ')[0]);
-                    const traitColors = task.traits.map(t => t.color);
-                    const traitIcons = task.traits.map(t => t.icon);
                     const userValues = task.traits.map(t => {
                         const level = state.responses[questId] && state.responses[questId][`brain_meter_${t.id}`];
                         return level ? task.levels.indexOf(level) + 1 : 2;
@@ -1017,8 +1015,8 @@ function openQuest(questId) {
                     const typicalValues = [2, 2, 2, 2, 2, 2];
                     const maxVal = task.levels.length;
 
-                    const typicalSVG = buildBrainSVG(typicalValues, traitColors, traitLabels, traitIcons, maxVal, true);
-                    const userSVG = buildBrainSVG(userValues, traitColors, traitLabels, traitIcons, maxVal, false);
+                    const typicalSVG = buildCartoonBrainSVG(task.traits, typicalValues, task.levels, maxVal, true);
+                    const userSVG = buildCartoonBrainSVG(task.traits, userValues, task.levels, maxVal, false);
 
                     brainResult.innerHTML = `
                         <div class="brain-map-charts">
@@ -2308,18 +2306,8 @@ function showToast(msg) {
 // dump of raw values). Missing/partial data degrades gracefully.
 const BOOK_RENDERERS = {
     1(quest, r) {
-        const members = quest.tasks[0].members;
-        const cells = members.map((m, i) => {
-            const word = (r[`member_${i}`] || '').toString().trim();
-            const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
-            return `
-                <div class="bk-family-cell${i === members.length - 1 ? ' bk-family-hero' : ''}">
-                    <div class="bk-family-photo"><img src="${m.photo}" alt="${m.name}" style="${posStyle}" loading="lazy"></div>
-                    <div class="bk-family-name">${m.name}</div>
-                    ${word ? `<div class="bk-family-word">"${word}"</div>` : ''}
-                </div>`;
-        }).join('');
-        return `<div class="bk-family-grid">${cells}</div>`;
+        // The real illustrated family tree, exactly as in Quest 1.
+        return `<div class="bk-ftree">${buildFamilyTreeHTML(quest.tasks[0].members, r)}</div>`;
     },
 
     2(quest, r) {
@@ -2368,6 +2356,14 @@ const BOOK_RENDERERS = {
         const dragTIdx = quest.tasks.indexOf(dragTask);
         let html = '';
         const rated = metersTask.traits.filter(t => r[`brain_meter_${t.id}`]);
+        if (rated.length) {
+            // The colorful cartoon brain, colored by Guy's own answers
+            const values = metersTask.traits.map(t => {
+                const level = r[`brain_meter_${t.id}`];
+                return level ? metersTask.levels.indexOf(level) + 1 : 2;
+            });
+            html += `<div class="bk-brain">${buildCartoonBrainSVG(metersTask.traits, values, metersTask.levels, metersTask.levels.length, false)}</div>`;
+        }
         if (rated.length) {
             const maxLv = metersTask.levels.length;
             html += `<p class="bk-line">מפת המוח המיוחד שלי:</p><div class="bk-meters">` +
@@ -2465,9 +2461,18 @@ const BOOK_RENDERERS = {
         let html = '';
         const watched = vidTask.videos.filter((_, i) => r[`video_watched_${i}`]).length;
         if (watched) {
-            html += `<p class="bk-line">🎬 צפיתי ב-<span class="bk-num">${watched}</span> סרטוני ברכה מהאנשים שלי:</p>
-                     <div class="bk-chips">${vidTask.videos.filter((_, i) => r[`video_watched_${i}`]).map(v => `<span class="bk-chip">${v.title}</span>`).join('')}</div>`;
+            html += `<p class="bk-line">🎬 צפיתי ב-<span class="bk-num">${watched}</span> סרטוני ברכה מהאנשים שלי.</p>`;
         }
+        // QR codes to the hosted greeting videos (pre-generated PNGs in photos/qr/)
+        html += `<p class="bk-line">📱 סרקו קוד עם הטלפון כדי לצפות בברכה:</p>
+                 <div class="bk-qr-grid">` +
+            vidTask.videos.map(v => {
+                const base = v.src.split('/').pop().replace(/\.mp4$/i, '');
+                return `<figure class="bk-qr">
+                            <img src="photos/qr/${base}.png" alt="קוד QR — ${v.title}" loading="lazy" onerror="this.closest('.bk-qr').style.display='none'">
+                            <figcaption>${v.title}</figcaption>
+                        </figure>`;
+            }).join('') + `</div>`;
         const emo = emoTask.emotions[r[`emotion_${emoTIdx}`]];
         if (emo) html += `<p class="bk-line">איך הרגשתי? <strong>${emo.icon} ${emo.text}</strong></p>`;
         return html;
@@ -2544,9 +2549,11 @@ function openHeroBook() {
         `;
     }
 
-    // The finale movie unlocks with the full journey
-    const movieBtn = document.getElementById('btn-movie');
-    if (movieBtn) movieBtn.style.display = doneCount === QUESTS.length ? '' : 'none';
+    // The finale movies unlock with the full journey
+    ['btn-movie', 'btn-movie-long'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.display = doneCount === QUESTS.length ? '' : 'none';
+    });
 
     showScreen('book');
 }
@@ -2557,15 +2564,19 @@ function exportPDF() {
     setTimeout(() => window.print(), 500);
 }
 
-// Play the finale highlight movie (finale/Hero-Movie.mp4) in the cinema overlay.
-function playHeroMovie() {
+// Play a finale movie in the cinema overlay.
+// 'short' = Hero-Movie + the "מזל טוב" moment from each blessing (~4 min)
+// 'long'  = Hero-Movie + every full blessing (~7.5 min)
+function playHeroMovie(version) {
+    const src = version === 'long' ? 'finale/Hero-Movie-Long.mp4' : 'finale/Hero-Movie-Short.mp4';
+    const title = version === 'long' ? '🎬 הסרט שלי — הגרסה המלאה' : '🎬 הסרט של המסע שלי';
     const overlay = document.createElement('div');
     overlay.className = 'cin-overlay';
     overlay.innerHTML = `
         <div class="cin-overlay-inner">
-            <div class="cin-overlay-title">🎬 הסרט של המסע שלי</div>
+            <div class="cin-overlay-title">${title}</div>
             <button class="cin-overlay-close" aria-label="סגור">✕</button>
-            <video src="finale/Hero-Movie.mp4" controls playsinline
+            <video src="${src}" controls playsinline
                    onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרט יתווסף בקרוב...</div>'"></video>
         </div>
     `;

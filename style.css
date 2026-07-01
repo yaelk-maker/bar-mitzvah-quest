@@ -5196,3 +5196,42 @@ select.task-select option { background: #fff; color: #2E1065; }
 /* Empty / progress pages */
 .book-page.bk-empty { padding: 28px 32px; text-align: center; font-size: 1.1rem; }
 .book-page.bk-empty p { margin: 6px 0; }
+
+/* =======================================================================
+   REVIEW FIXES — 2026-07-01b (cartoon brain, tree-in-book, QR codes)
+   ======================================================================= */
+
+/* Colorful cartoon brain (Quest 5 reveal + Hero Book) */
+.cartoon-brain {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(76,29,149,0.18));
+}
+.cartoon-brain-grey { max-width: 300px; filter: none; opacity: 0.9; }
+.bk-brain { margin: 6px auto 12px; }
+.bk-brain .cartoon-brain { max-width: 420px; }
+
+/* Family tree inside the Hero Book */
+.bk-ftree .ftree-map { max-width: 860px; }
+.bk-ftree .ftree-title { color: #2F6B33; }
+
+/* QR grid in Hero Book chapter 9 (scannable from the printed/PDF book too) */
+.bk-qr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+  margin: 8px 0 14px;
+}
+.bk-qr {
+  margin: 0;
+  text-align: center;
+  background: #fff;
+  border: 2px solid #E9E2F7;
+  border-radius: 14px;
+  padding: 10px 6px 8px;
+}
+.bk-qr img { width: 104px; height: 104px; image-rendering: pixelated; }
+.bk-qr figcaption { font-size: 0.85rem; font-weight: 700; margin-top: 4px; color: var(--text-dark, #2A2340); }

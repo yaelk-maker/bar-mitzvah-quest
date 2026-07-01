@@ -229,6 +229,14 @@ location.reload();
 - `Song for the movie.mpeg` (repo root) is the Suno soundtrack — now **tracked** as the source music for `finale/Hero-Movie.mp4` (used by `finale/make_movie.py`)
 - Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`) are scratch/abandoned assets, not used by the app
 
+## Session log (2026-07-01b) — brain image, tree-in-book, new videos, 2-version movie (same branch)
+- **Cartoon brain**: `buildCartoonBrainSVG()` (app.js) draws a colorful cartoon brain whose puffy lobes are colored/sized by Guy's brain-meter answers (grey variant = "typical brain"). Used in the Quest 5 reveal AND Hero Book chapter 5. Replaced the old bubble SVG.
+- **Family tree**: tree markup extracted to `buildFamilyTreeHTML()` and reused — the Hero Book chapter 1 now shows the real illustrated tree (photos + words), not a grid.
+- **New greeting videos**: Quest 9 now lists `סרטון - אמא ואבא.mp4` (parents) and `סרטון - האחיות.mp4` (Neta+Mika) FIRST — **files not yet uploaded**; drop them into `photos/Videos - step 9/` with those exact names and they play (until then the friendly placeholder shows). Two more slots are reserved as comments in quests.js / make_storybook.py / make_blessings.py.
+- **QR codes**: `photos/qr/*.png` (pre-generated, one per greeting video incl. the two pending ones — their URLs go live when the files are uploaded). Shown in Hero Book chapter 9; storybook.html regenerated with the new entries too.
+- **Final movie ×2** (`finale/make_blessings.py`): `Hero-Movie-Short.mp4` (~4 min) = Hero-Movie + only the "מזל טוב גיא" moment of each blessing; `Hero-Movie-Long.mp4` (~7.5 min) = Hero-Movie + every FULL blessing. Uniform 720p, blurred-pad framing, per-person lower-third name tags (PIL+bidi Hebrew), section/outro cards. Both playable from the Hero Book footer once all 10 steps are done.
+- **"מזל טוב" moments**: come from `finale/blessing_segments.json` (currently `null` = first 6s fallback, because this sandbox's network blocks whisper model downloads). Run `python finale/make_blessings.py --transcribe` on a normal machine to auto-detect the exact moments (faster-whisper word timestamps), then rerun the build; or hand-edit `[start, end]` seconds per video in the json.
+
 ## Session log (2026-07-01) — full UI/UX review + fixes (branch `claude/quest-accessibility-review-9ffbjj`)
 - **Hero Book rewritten as a keepsake**: `BOOK_RENDERERS` renders every quest's real content (photos, chips, meter bars, sorting bins, Neta's greeting, the 8 blessing envelopes, the final card with hero photo). Book shows completed chapters only, plus friendly empty/progress pages.
 - **Hero Book always reachable**: the painted "פתח" button on the map now works from day one (treasure hotspot moved to 78%/76% and enlarged to cover the painted book + button).

@@ -15,6 +15,11 @@ def qr_datauri(url):
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
 
 GREETINGS = [
+    ("אמא ואבא", "סרטון - אמא ואבא.mp4"),
+    ("נטע ומיקה (האחיות)", "סרטון - האחיות.mp4"),
+    # Reserved for two more videos — uncomment + rename when they arrive:
+    # ("...", "סרטון - נוסף 1.mp4"),
+    # ("...", "סרטון - נוסף 2.mp4"),
     ("סווטה (סבתא)", "סרטון - סווטה.mp4"),
     ("מרינה ומישה (סבא וסבתא)", "סרטון - מרינה ומישה.mp4"),
     ("משפחת שפירא", "סרטון - משפחת שפירא.mp4"),
