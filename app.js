@@ -147,6 +147,7 @@ function renderQuestMap() {
                     </div>
                     <div class="map-node-label">${quest.name}</div>
                     <div class="map-node-xp">XP ${quest.xp}+</div>
+                    <div class="map-node-status st-done" title="הושלם">✓</div>
                 `;
             } else {
                 const iconHtml = quest.mapIconImg
@@ -159,6 +160,7 @@ function renderQuestMap() {
                     </div>
                     <div class="map-node-label">${quest.name}</div>
                     <div class="map-node-xp">XP ${quest.xp}+</div>
+                    <div class="map-node-status st-done" title="הושלם">✓</div>
                 `;
             }
             node.addEventListener('click', () => openQuest(quest.id));
@@ -173,6 +175,7 @@ function renderQuestMap() {
                 <div class="map-node-label">${quest.name}</div>
                 <div class="map-node-subtitle">${quest.subtitle}</div>
                 <div class="map-node-start">התחל →</div>
+                <div class="map-node-status st-here">כאן!</div>
             `;
             node.addEventListener('click', () => openQuest(quest.id));
         } else {
@@ -191,12 +194,14 @@ function renderQuestMap() {
     // Draw SVG path connecting ALL quests
     drawMapPath(svg, allQuests);
 
-    // Hero Book node if all done
-    if (state.completedQuests.length === QUESTS.length) {
+    // Hero Book node — always available (the map art has a painted "פתח" button,
+    // so it must always respond). The book shows the chapters finished so far
+    // and grows with every completed step. Hotspot covers the painted book + button.
+    {
         const bookNode = document.createElement('div');
         bookNode.className = 'map-node map-node-treasure';
         bookNode.style.left = '78%';
-        bookNode.style.top = '62%';
+        bookNode.style.top = '76%';
         bookNode.innerHTML = `
             <div class="map-node-circle map-node-treasure-circle">
                 <span class="map-node-emoji">📖</span>
@@ -1263,9 +1268,10 @@ function openQuest(questId) {
                     bin.addEventListener('drop', (e) => {
                         e.preventDefault();
                         bin.classList.remove('drag-over');
-                        const dragIdx = e.dataTransfer.getData('text/plain');
-                        const draggedCard = tsPool.querySelector(`.ts-card[data-idx="${dragIdx}"]`) ||
-                                            tsWrap.querySelector(`.ts-card.dragging`);
+                        // Only accept the card that is actually mid-drag from THIS
+                        // stage's pool — a bare data-idx lookup could match a card
+                        // with the same index in the other twin-sort stage.
+                        const draggedCard = tsPool.querySelector('.ts-card.dragging');
                         if (draggedCard) placeCardInBin(draggedCard, bIdx);
                     });
                     // Click fallback for selected card
@@ -1540,6 +1546,19 @@ function openQuest(questId) {
                         medalPool.appendChild(medal);
                     }
                 });
+
+                // Restore the factory-made personal medal on reload (it's added to
+                // the first shelf when produced, but wasn't re-created until now).
+                if (savedResponses['medal_produced'] === true) {
+                    const customMedal = document.createElement('div');
+                    customMedal.className = 'tc-medal placed';
+                    customMedal.dataset.id = 'custom';
+                    customMedal.style.setProperty('--medal-color', '#FFD54F');
+                    customMedal.innerHTML = `<span class="tc-medal-icon">🥇</span><span class="tc-medal-text">המדליה האישית שלי</span>`;
+                    const firstShelf = cabinet.querySelector('.tc-shelf');
+                    if (firstShelf) firstShelf.appendChild(customMedal);
+                }
+
                 tcWrap.appendChild(medalPool);
                 taskEl.appendChild(tcWrap);
                 break;
@@ -1683,9 +1702,15 @@ function openQuest(questId) {
                     });
                 };
 
-                // Wire already-placed medals (from saved state)
+                // Wire already-placed medals (from saved state) and re-mark the
+                // previously chosen proudest medal so the choice survives reload.
                 setTimeout(() => {
-                    document.querySelectorAll('.tc-medal.placed').forEach(m => window._wireProudestClick(m));
+                    document.querySelectorAll('.tc-medal.placed').forEach(m => {
+                        window._wireProudestClick(m);
+                        if (savedProudest && m.querySelector('.tc-medal-text').textContent === savedProudest) {
+                            m.classList.add('proudest');
+                        }
+                    });
                 }, 100);
                 break;
 
@@ -2191,21 +2216,10 @@ function completeQuest() {
     if (!questId || state.completedQuests.includes(questId)) return;
 
     const { valid, missing } = getQuestValidation(questId);
+    // Required text fields are enforced inside getQuestValidation (Quest 2 is
+    // exempt by design — its Kahoot happens live and must never block).
     if (!valid) {
         showToast(`עוד לא סיימת! חסר: ${missing.join(', ')}`);
-        return;
-    }
-
-    // Also check text fields if any
-    const body = document.getElementById('quest-body');
-    const textInputs = body.querySelectorAll('textarea, input[type="text"]');
-    let hasContent = false;
-    textInputs.forEach(el => {
-        if (el.value.trim()) hasContent = true;
-    });
-
-    if (!hasContent && textInputs.length > 0) {
-        showToast('צריך למלא לפחות שדה אחד לפני שממשיכים!');
         return;
     }
 
@@ -2289,9 +2303,197 @@ function showToast(msg) {
 }
 
 // ===== Hero Book =====
+// Per-quest chapter renderers — each returns the HTML for what Guy actually
+// chose/wrote in that quest, so the book reads like a real keepsake (not a
+// dump of raw values). Missing/partial data degrades gracefully.
+const BOOK_RENDERERS = {
+    1(quest, r) {
+        const members = quest.tasks[0].members;
+        const cells = members.map((m, i) => {
+            const word = (r[`member_${i}`] || '').toString().trim();
+            const posStyle = m.photoPos ? `object-position: ${m.photoPos}` : '';
+            return `
+                <div class="bk-family-cell${i === members.length - 1 ? ' bk-family-hero' : ''}">
+                    <div class="bk-family-photo"><img src="${m.photo}" alt="${m.name}" style="${posStyle}" loading="lazy"></div>
+                    <div class="bk-family-name">${m.name}</div>
+                    ${word ? `<div class="bk-family-word">"${word}"</div>` : ''}
+                </div>`;
+        }).join('');
+        return `<div class="bk-family-grid">${cells}</div>`;
+    },
+
+    2(quest, r) {
+        const winner = (r['task_3'] || '').toString().trim();
+        let html = `<p class="bk-line">🎮 העברתי למשפחה חידון Kahoot שהכנתי בעצמי — על כולנו!</p>`;
+        if (winner) html += `<p class="bk-line">🏆 מי זכה בקהוט? <strong>${winner}</strong></p>`;
+        return html;
+    },
+
+    3(quest, r) {
+        const steps = quest.tasks[0].steps;
+        const items = steps.map((s, i) => {
+            const solved = r[`iq_step_${i}`] !== undefined;
+            return `<div class="bk-mystery">
+                        <div class="bk-mystery-title">${solved ? '✅' : '🔍'} ${s.title}</div>
+                        ${solved ? `<div class="bk-mystery-caption">${s.caption}</div>` : ''}
+                    </div>`;
+        }).join('');
+        const reveal = steps[steps.length - 1].revealStory && r[`iq_step_${steps.length - 1}`] !== undefined
+            ? `<p class="bk-quote">${steps[steps.length - 1].revealStory}</p>` : '';
+        return items + reveal;
+    },
+
+    4(quest, r) {
+        const stonesTask = quest.tasks.find(t => t.type === 'power-stones');
+        const bubblesTask = quest.tasks.find(t => t.type === 'message-bubbles');
+        const bubbleTIdx = quest.tasks.indexOf(bubblesTask);
+        let html = '';
+        const chosen = stonesTask.stones.filter((_, i) => r[`power_stone_${i}`] === true);
+        if (chosen.length) {
+            html += `<p class="bk-line">אבני הכוח שהרווחתי מהקרב הראשון שלי:</p>
+                     <div class="bk-chips">${chosen.map(s => `<span class="bk-chip" style="--chip-color:${s.color}">${s.icon} ${s.text}</span>`).join('')}</div>`;
+        }
+        const bIdx = r[`msg_bubble_${bubbleTIdx}`];
+        if (bIdx !== undefined && bubblesTask.bubbles[bIdx]) {
+            html += `<p class="bk-line">המשפט שבחרתי לומר לגיא התינוק שנלחם בפגייה:</p>
+                     <p class="bk-quote">"${bubblesTask.bubbles[bIdx]}"</p>`;
+        }
+        return html;
+    },
+
+    5(quest, r) {
+        const metersTask = quest.tasks.find(t => t.type === 'brain-meters');
+        const cardsTask = quest.tasks.find(t => t.type === 'brain-cards');
+        const dragTask = quest.tasks.find(t => t.type === 'drag-select');
+        const dragTIdx = quest.tasks.indexOf(dragTask);
+        let html = '';
+        const rated = metersTask.traits.filter(t => r[`brain_meter_${t.id}`]);
+        if (rated.length) {
+            const maxLv = metersTask.levels.length;
+            html += `<p class="bk-line">מפת המוח המיוחד שלי:</p><div class="bk-meters">` +
+                rated.map(t => {
+                    const lv = metersTask.levels.indexOf(r[`brain_meter_${t.id}`]) + 1;
+                    return `<div class="bk-meter">
+                                <span class="bk-meter-name">${t.icon} ${t.name}</span>
+                                <span class="bk-meter-bar"><span style="width:${(lv / maxLv) * 100}%;background:${t.color}"></span></span>
+                                <span class="bk-meter-level">${r[`brain_meter_${t.id}`]}</span>
+                            </div>`;
+                }).join('') + `</div>`;
+        }
+        const claimed = cardsTask.cards.filter((_, i) => r[`brain_card_${i}`] === true);
+        if (claimed.length) {
+            html += `<p class="bk-line">הכרטיסים שסימנתי "זה אני!":</p>
+                     <div class="bk-chips">${claimed.map(c => `<span class="bk-chip">${c.front.icon} ${c.front.title}</span>`).join('')}</div>`;
+        }
+        const sentence = r[`drag_${dragTIdx}`];
+        if (sentence) html += `<p class="bk-quote">"${sentence}"</p>`;
+        return html;
+    },
+
+    6(quest, r) {
+        let html = '';
+        quest.tasks.forEach((task, tIdx) => {
+            if (task.type === 'twin-sort') {
+                const sd = r[`twin_sort_${tIdx}`] || {};
+                const anySorted = task.cards.some((c, i) => sd[`card_${i}`] === c.correct);
+                if (!anySorted) return;
+                const cols = task.bins.map((binName, b) => {
+                    const items = task.cards
+                        .filter((c, i) => c.correct === b && sd[`card_${i}`] === c.correct)
+                        .map(c => `<li>${c.text}</li>`).join('');
+                    return `<div class="bk-bin"><div class="bk-bin-title">${binName}</div><ul>${items}</ul></div>`;
+                }).join('');
+                html += `<p class="bk-line">${task.stageIcon} ${task.stageTitle}</p><div class="bk-bins">${cols}</div>`;
+            }
+            if (task.type === 'neta-envelope') {
+                const ne = r[`neta_envelope_${tIdx}`];
+                if (ne && ne.unlocked) {
+                    html += `<p class="bk-line">💌 פתחתי את מעטפת הזהב של נטע:</p>
+                             <p class="bk-quote">${task.greeting}<br><strong>${task.signature}</strong></p>`;
+                }
+            }
+        });
+        return html;
+    },
+
+    7(quest, r) {
+        const cabTask = quest.tasks.find(t => t.type === 'trophy-cabinet');
+        let html = '';
+        const cab = r['cabinet'] || {};
+        const placed = cabTask.medals.filter(m => cab[m.id] !== undefined);
+        if (placed.length) {
+            html += `<p class="bk-line">המדליות שבחרתי לארון הגביעים שלי:</p>
+                     <div class="bk-chips">${placed.map(m => `<span class="bk-chip" style="--chip-color:${m.color}">${m.icon} ${m.text}</span>`).join('')}</div>`;
+        }
+        const f = r['medal_factory'];
+        if (r['medal_produced'] && f) {
+            const parts = [f.proud, f.topic, f.power].filter(Boolean);
+            if (parts.length) {
+                html += `<p class="bk-line">🥇 המדליה האישית שייצרתי במפעל המדליות:</p>
+                         <p class="bk-quote">${parts.join(' • ')}</p>`;
+            }
+        }
+        if (r['proudest_medal']) {
+            html += `<p class="bk-line">🏆 גביע הזהב — ההישג שאני הכי גאה בו: <strong>${r['proudest_medal']}</strong></p>`;
+        }
+        return html;
+    },
+
+    8(quest, r) {
+        const envTask = quest.tasks.find(t => t.type === 'secret-envelopes');
+        const powerTask = quest.tasks.find(t => t.type === 'power-select');
+        const powerTIdx = quest.tasks.indexOf(powerTask);
+        let html = '';
+        const opened = envTask.envelopes.filter((_, i) => r[`envelope_${i}`] === true);
+        if (opened.length) {
+            html += `<p class="bk-line">✉️ המעטפות הסודיות שקיבלתי מאנשים שאוהבים אותי:</p>` +
+                opened.map(env => `
+                    <div class="bk-envelope" style="--chip-color:${env.color}">
+                        <div class="bk-envelope-quote">"${env.quote}"</div>
+                        <div class="bk-envelope-from">— ${env.from}</div>
+                    </div>`).join('');
+        }
+        const power = r[`power_choice_${powerTIdx}`];
+        if (power) html += `<p class="bk-line">⚡ הכוח שבחרתי להשיג השנה: <strong>${power}</strong></p>`;
+        return html;
+    },
+
+    9(quest, r) {
+        const vidTask = quest.tasks.find(t => t.type === 'cinema-videos');
+        const emoTask = quest.tasks.find(t => t.type === 'emotion-board');
+        const emoTIdx = quest.tasks.indexOf(emoTask);
+        let html = '';
+        const watched = vidTask.videos.filter((_, i) => r[`video_watched_${i}`]).length;
+        if (watched) {
+            html += `<p class="bk-line">🎬 צפיתי ב-<span class="bk-num">${watched}</span> סרטוני ברכה מהאנשים שלי:</p>
+                     <div class="bk-chips">${vidTask.videos.filter((_, i) => r[`video_watched_${i}`]).map(v => `<span class="bk-chip">${v.title}</span>`).join('')}</div>`;
+        }
+        const emo = emoTask.emotions[r[`emotion_${emoTIdx}`]];
+        if (emo) html += `<p class="bk-line">איך הרגשתי? <strong>${emo.icon} ${emo.text}</strong></p>`;
+        return html;
+    },
+
+    10(quest, r) {
+        const cbTask = quest.tasks.find(t => t.type === 'card-builder');
+        const card = r['card_builder'];
+        if (!r['card_revealed'] || !card) return '';
+        return `
+            <div class="bk-card">
+                <div class="bk-card-img"><img src="photos/${cbTask.image}" alt="גיא" loading="lazy"></div>
+                <div class="bk-card-body">
+                    <div class="bk-card-title">${card.title || ''}</div>
+                    <p class="bk-line">🗡️ הנשק הסודי שלי: <strong>${card.weapon || ''}</strong></p>
+                    <p class="bk-line">🎯 המטרה שלי לשנה הבאה: <strong>${card.goal || ''}</strong></p>
+                </div>
+            </div>`;
+    }
+};
+
 function openHeroBook() {
     const body = document.getElementById('book-body');
     body.innerHTML = '';
+
+    const doneCount = state.completedQuests.length;
 
     // Title page
     body.innerHTML += `
@@ -2302,33 +2504,49 @@ function openHeroBook() {
         </div>
     `;
 
-    // Each quest becomes a chapter
+    if (doneCount === 0) {
+        body.innerHTML += `
+            <div class="book-page bk-empty">
+                <p>📖 הספר עוד ריק...</p>
+                <p>כל שלב שתסיים במסע יתווסף לכאן — ובסוף יהיה לך ספר גיבור שלם!</p>
+            </div>
+        `;
+    }
+
+    // Each COMPLETED quest becomes a chapter with its real content
     QUESTS.forEach(quest => {
+        if (!state.completedQuests.includes(quest.id)) return;
         const responses = state.responses[quest.id] || {};
         const page = document.createElement('div');
         page.className = 'book-page';
         page.style.borderColor = quest.color;
 
-        let content = `
+        const renderer = BOOK_RENDERERS[quest.id];
+        const inner = renderer ? renderer(quest, responses) : '';
+
+        page.innerHTML = `
             <div class="book-chapter-header" style="background: ${quest.color}">
                 <span class="chapter-icon">${quest.icon}</span>
                 <h3>${quest.artifact.title}</h3>
             </div>
             <p class="book-message"><em>"${quest.message}"</em></p>
-            <div class="book-responses">
+            <div class="book-responses">${inner}</div>
         `;
-
-        // Collect text responses
-        Object.entries(responses).forEach(([key, value]) => {
-            if (typeof value === 'string' && value.trim()) {
-                content += `<p class="book-response">${value}</p>`;
-            }
-        });
-
-        content += '</div>';
-        page.innerHTML = content;
         body.appendChild(page);
     });
+
+    // Progress hint while the journey is still going
+    if (doneCount > 0 && doneCount < QUESTS.length) {
+        body.innerHTML += `
+            <div class="book-page bk-empty">
+                <p>✨ סיימת <span class="bk-num">${doneCount} / ${QUESTS.length}</span> שלבים — הספר ממשיך לגדול!</p>
+            </div>
+        `;
+    }
+
+    // The finale movie unlocks with the full journey
+    const movieBtn = document.getElementById('btn-movie');
+    if (movieBtn) movieBtn.style.display = doneCount === QUESTS.length ? '' : 'none';
 
     showScreen('book');
 }
@@ -2339,9 +2557,38 @@ function exportPDF() {
     setTimeout(() => window.print(), 500);
 }
 
-function exportPresentation() {
-    showToast('המצגת תיפתח בקרוב...');
-    // Future: generate slides from quest data
+// Play the finale highlight movie (finale/Hero-Movie.mp4) in the cinema overlay.
+function playHeroMovie() {
+    const overlay = document.createElement('div');
+    overlay.className = 'cin-overlay';
+    overlay.innerHTML = `
+        <div class="cin-overlay-inner">
+            <div class="cin-overlay-title">🎬 הסרט של המסע שלי</div>
+            <button class="cin-overlay-close" aria-label="סגור">✕</button>
+            <video src="finale/Hero-Movie.mp4" controls playsinline
+                   onerror="this.outerHTML='<div class=\\'cin-placeholder\\'>🎬 הסרט יתווסף בקרוב...</div>'"></video>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+    const video = overlay.querySelector('video');
+    if (video) {
+        video.volume = 1;
+        const p = video.play();
+        if (p) p.catch(() => {});
+    }
+    const onKey = (e) => { if (e.key === 'Escape') closeOverlay(); };
+    const closeOverlay = () => {
+        if (video) video.pause();
+        overlay.classList.remove('visible');
+        document.removeEventListener('keydown', onKey);
+        setTimeout(() => overlay.remove(), 300);
+    };
+    document.addEventListener('keydown', onKey);
+    const closeBtn = overlay.querySelector('.cin-overlay-close');
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeOverlay(); });
+    closeBtn.focus();
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
 }
 
 // ===== Sync Status Indicator =====

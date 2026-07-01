@@ -9,7 +9,7 @@ Gamified Bar Mitzvah identity quest PWA for Guy (12.5, Bar Mitzvah July 19, 2026
 - **Hosted**: https://yaelk-maker.github.io/bar-mitzvah-quest/ (GitHub Pages, `master` branch)
 - **Repo**: https://github.com/yaelk-maker/bar-mitzvah-quest (public)
 - **Fonts**: Heebo (Hebrew body) + Bungee / Frank Ruhl Libre / Baloo 2 (display) from Google Fonts
-- **Cache busting**: JS files use timestamp query params (auto-generated in index.html). `style.css` uses a manual `?v=...` tag — **bump it on every deploy that changes CSS** (currently `?v=20260628live`)
+- **Cache busting**: JS files use timestamp query params (auto-generated in index.html). `style.css` uses a manual `?v=...` tag — **bump it on every deploy that changes CSS** (currently `?v=20260701review`)
 - **Design**: bright "floating islands in the sky" theme (see Design System). UI iterated via claude.ai/design exports + manual integration; design work happens on a `design` branch then merges to `master`.
 
 ## File Structure
@@ -37,7 +37,7 @@ bar-mitzvah-quest/
 │   ├── guy_soccer_video.mp4          # Quest 7 (autoplay loop)
 │   ├── Guy - final step.jpeg         # Quest 10 (Bar Mitzvah card photo)
 │   └── [11 Hebrew-named family photos]
-├── Videos - step 9/    # Quest 9 greeting videos (Hebrew filenames)
+│   └── Videos - step 9/              # Quest 9 greeting videos (Hebrew filenames; app.js prefixes photos/)
 ├── brainrot/           # SAB voxel character PNGs (7 figures, 120px each)
 ├── CLAUDE.md, README.md, STITCH_PROMPT.md
 ```
@@ -63,14 +63,14 @@ bar-mitzvah-quest/
 |--------|---------|
 | `screen-home` | Floating-islands map (`map-v3.jpg`), quest hotspots, rope-bridge trail, brainrot chars, bottom-center XP bar + current-step pink banner |
 | `screen-quest` | Individual quest (height: 100vh; overflow-y: auto) |
-| `screen-book` | Hero Book: all completed quest responses |
+| `screen-book` | Hero Book: per-quest keepsake chapters (`BOOK_RENDERERS` in app.js) for completed quests only; empty/progress pages mid-journey; finale-movie button (`#btn-movie` → `playHeroMovie()`) appears only when all 10 are done |
 
 ### Quest Progression
 - Sequential unlock: Quest N+1 unlocks after Quest N completes
 - Each quest: 100 XP (1000 total for all 10)
 - The whole island map is always visible (an overview). Steps are not hidden.
 - **Completed / current / locked** = clickable / clickable / not-clickable. Clickable steps show a `pointer` (hand) cursor; locked steps and the rest of the map show a plain arrow.
-- **Current step** is indicated by a fixed pink banner `#current-step-banner` ("השלב שלי: <name>") pinned bottom-center above the XP bar — NOT an on-island marker (the baked map's island positions don't align with node coordinates, so on-island overlays float off). Populated from the next quest in the map render.
+- **Current step** is indicated by the fixed pink banner `#current-step-banner` ("השלב שלי: <name>") bottom-center above the XP bar, PLUS a bouncing pink "כאן!" badge (`.map-node-status.st-here`) anchored to the step's hotspot. Completed steps show a green ✓ badge (`.map-node-status.st-done`). Badges reuse the MAP_POSITIONS hotspot centers, so they land on/near each painted island.
 - Completion popup (`showXPGain`): stars + confetti + a **clickable** green "המשימה הבאה נפתחה!" button (`.xp-next`, role=button) → dismisses + returns to map; backdrop click also dismisses; 3s auto-close fallback.
 
 ### Quest Validation & completion
@@ -83,10 +83,10 @@ bar-mitzvah-quest/
 ### Map System
 - Background: `map-v3.jpg` — floating islands in a bright sky. **Island names + scene icons are baked into this image** (so they can't be hidden/recolored via CSS, and node coordinates only approximately align with the painted islands).
 - Title banner: top-center "מסע הגיבורים של גיא" (Bungee/display, white with purple stroke).
-- Nodes: transparent hotspots (`13vw × 15vh`) sized to each island, positioned by `MAP_POSITIONS` (quests.js). DOM `.map-node-label`s are hidden (the baked map shows the names). Locked-step cloud cover was removed.
-- Trail: rope-bridge style drawn as SVG in `drawMapPath()` (replaced the old lava path).
-- `cloud.svg`: decorative drifting sky clouds.
-- Characters: 7 SAB voxel PNGs, 120px, static (BRAINROT_CHARS in app.js).
+- Nodes: transparent hotspots (`13vw × 15vh`) sized to each island, positioned by `MAP_POSITIONS` (quests.js). DOM `.map-node-label`s are hidden (the baked map shows the names). Locked-step cloud cover was removed. Progress badges (`.map-node-status`) are the only visible node UI.
+- **Hero Book node** (`.map-node-treasure`): ALWAYS on the map at (78%, 76%) with an enlarged hotspot (16vw × 28vh) covering the painted book + its painted "פתח" button; opens the book at any stage of the journey.
+- Trail + brainrot chars: `drawMapPath()` / `renderBrainrotChars()` still run, but the final CSS layer hides `#map-path-svg`, `#trail-stones` and `#brainrot-container` — the bridges/characters seen on screen are baked into `map-v3.jpg`.
+- `cloud.svg`: decorative drifting sky clouds (also hidden by the final layer).
 - **XP bar**: compact, pinned **bottom-center** (`.map-xp`, fixed). Current-step pink banner sits just above it.
 - Cursor: arrow across the map; clickable steps (`.map-node-done/-next/-treasure`) show `pointer`.
 - No scrolling: everything fits in 100vh.
@@ -214,13 +214,13 @@ location.reload();
 ```
 
 ## Known Issues / TODO
-- **Hero Book data gaps**: `openHeroBook()` only renders string responses, so Quest 4 (power stones + chosen message) and Quest 10 (card-builder object) and the custom factory medal **don't appear** in the book. To fix with the finale work.
+- **Hero Book data gaps** — ✅ FIXED (2026-07-01). `openHeroBook()` now renders per-quest keepsake chapters via `BOOK_RENDERERS` (family grid with photos+words, power stones, brain-meter bars, twin-sort bins, Neta's greeting, medals + custom medal + trophy, all 8 blessing quotes, watched videos + emotion, and the final Bar Mitzvah card with photo).
 - **Finale / storybook** — ✅ BUILT (2026-06-28). See `finale/` + `storybook.html`:
   - `finale/Hero-Movie.mp4` — ~3:05 highlight reel of the 10 steps set to `Song for the movie.mpeg`, 1080p, Hebrew RTL captions, Ken-Burns zoom + crossfades, audio fade-out.
   - `storybook.html` (+ exported `finale/Hero-Storybook.pdf`) — print-ready A4 (13 pages) "Hero Book": real photos, the family blessing messages, and QR codes to the GitHub-Pages-hosted greeting videos.
   - Reproducible builders: `finale/make_storybook.py`, `finale/make_movie.py` (repo-relative; render HTML scenes via headless Chrome, assemble MP4 with bundled ffmpeg via `imageio-ffmpeg`). See `finale/README.md`.
   - Built from authored journey content + real family photos (NOT Guy's saved responses — test data). Movie trimmed to ~3:05 with the song faded out; ask for a full-song (~3:57) cut if a longer version is wanted.
-- **Quest 9 video path bug**: `quests.js` Quest 9 references `Videos - step 9/…mp4` but the files actually live at `photos/Videos - step 9/…mp4` (where they ARE deployed on Pages) — so in-app playback is broken until the paths are prefixed with `photos/`. (Storybook QR codes already point to the correct `photos/...` URLs.)
+- **Quest 9 video path** — NOT a bug (verified 2026-07-01): `quests.js` stores `Videos - step 9/…mp4` and the `cinema-videos` renderer prefixes `photos/`, matching the on-disk `photos/Videos - step 9/` location (HTTP 200 verified).
 - Quest 9 still has some placeholder greeting videos
 - `map-v3.jpg` bakes in island names/scenes → can't hide/recolor per-step; "Super powers" label is English
 - Hero Book PDF export is basic (browser print)
@@ -228,6 +228,14 @@ location.reload();
 - Firebase config + family passcode (`1907`) are committed in client JS (public repo) — acceptable for this private family use, but not secret
 - `Song for the movie.mpeg` (repo root) is the Suno soundtrack — now **tracked** as the source music for `finale/Hero-Movie.mp4` (used by `finale/make_movie.py`)
 - Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`) are scratch/abandoned assets, not used by the app
+
+## Session log (2026-07-01) — full UI/UX review + fixes (branch `claude/quest-accessibility-review-9ffbjj`)
+- **Hero Book rewritten as a keepsake**: `BOOK_RENDERERS` renders every quest's real content (photos, chips, meter bars, sorting bins, Neta's greeting, the 8 blessing envelopes, the final card with hero photo). Book shows completed chapters only, plus friendly empty/progress pages.
+- **Hero Book always reachable**: the painted "פתח" button on the map now works from day one (treasure hotspot moved to 78%/76% and enlarged to cover the painted book + button).
+- **Map progress at a glance**: green ✓ badge on each completed island, bouncing pink "כאן!" badge on the current one (`.map-node-status`).
+- **Finale movie wired in**: dead "צפייה במצגת" stub replaced by `playHeroMovie()` playing `finale/Hero-Movie.mp4` in the cinema overlay; button appears only when all 10 steps are done.
+- Fixes: removed leftover completion check that could block Quest 2 (must never block); twin-sort drop can no longer grab a same-index card from the other sorting stage; factory-made personal medal + chosen "proudest" highlight now survive reload; PWA theme/background colors updated from the old dark theme to the bright sky palette.
+- Verified end-to-end with headless-browser screenshots (map states, all 10 quests, book, popups); no JS errors. Bumped `style.css?v=20260701review`.
 
 ## Session log (2026-06-27/28) — what shipped to `master`
 - Integrated the bright floating-islands redesign (map-v3.jpg, cloud.svg, restyled style.css, rope-bridge trail, island MAP_POSITIONS)

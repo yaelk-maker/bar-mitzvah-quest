@@ -5025,3 +5025,174 @@ select.task-select option { background: #fff; color: #2E1065; }
 .xp-next { cursor: pointer !important; transition: transform .12s ease, filter .12s ease; }
 .xp-next:hover { transform: scale(1.04); filter: brightness(1.05); }
 .xp-next:active { transform: scale(0.98); }
+
+/* =======================================================================
+   REVIEW FIXES — 2026-07-01 (map progress badges + Hero Book keepsake)
+   ======================================================================= */
+
+/* --- Map: at-a-glance progress ------------------------------------------
+   The islands are painted into map-v3.jpg, so nodes are transparent hotspots.
+   These small badges anchor to the hotspot centers (the same coordinates that
+   already work for clicks) and give clear done / current feedback. */
+.map-node-status {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  transform: translateX(-50%);
+  z-index: 7;
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-weight: 900;
+}
+.map-node-status.st-done {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #34D399, #16A34A);
+  border: 2.5px solid #fff;
+  color: #fff;
+  font-size: 17px;
+  line-height: 26px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(22,163,74,0.45);
+}
+.map-node-status.st-here {
+  background: linear-gradient(180deg, #FF7AB6, #DB2777);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  padding: 3px 14px;
+  font-size: clamp(13px, 1.2vw, 16px);
+  box-shadow: 0 5px 14px rgba(219,39,119,0.5);
+  animation: hereBob 1.6s ease-in-out infinite;
+  white-space: nowrap;
+}
+@keyframes hereBob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-7px); }
+}
+
+/* Hero Book hotspot covers the painted book AND its painted "פתח" button */
+.map-node-treasure .map-node-circle {
+  width: 16vw !important;
+  height: 28vh !important;
+}
+
+/* --- Hero Book: keepsake chapters ---------------------------------------- */
+.book-responses { color: var(--text-dark, #2A2340); }
+.bk-line { margin: 10px 0 6px; font-size: 1.05rem; line-height: 1.5; }
+.bk-num { direction: ltr; unicode-bidi: isolate; font-weight: 800; }
+
+.bk-quote {
+  background: #FFF7EB;
+  border-right: 5px solid #FB8C00;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 8px 0 14px;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: #4A3A20;
+}
+
+.bk-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+.bk-chip {
+  --chip-color: #9333EA;
+  background: #fff;
+  border: 2px solid var(--chip-color);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-dark, #2A2340);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+}
+
+/* Q1 family grid */
+.bk-family-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 10px 0;
+}
+.bk-family-cell {
+  text-align: center;
+  background: #fff;
+  border: 2px solid #E9E2F7;
+  border-radius: 16px;
+  padding: 12px 8px;
+  box-shadow: 0 4px 10px rgba(124,58,237,0.08);
+}
+.bk-family-photo {
+  width: 84px; height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 8px;
+  border: 3px solid #C4B5FD;
+}
+.bk-family-hero .bk-family-photo { border-color: #F59E0B; box-shadow: 0 0 14px rgba(245,158,11,0.55); }
+.bk-family-photo img { width: 100%; height: 100%; object-fit: cover; }
+.bk-family-name { font-weight: 800; font-size: 0.98rem; }
+.bk-family-word { color: #7C3AED; font-weight: 700; font-size: 0.92rem; margin-top: 2px; }
+
+/* Q3 mysteries */
+.bk-mystery { margin: 8px 0; }
+.bk-mystery-title { font-weight: 800; }
+.bk-mystery-caption { color: #5A524D; font-size: 0.95rem; margin: 2px 18px 0 0; }
+
+/* Q5 brain meters */
+.bk-meters { display: flex; flex-direction: column; gap: 7px; margin: 6px 0 14px; }
+.bk-meter { display: flex; align-items: center; gap: 10px; }
+.bk-meter-name { flex: 0 0 190px; font-weight: 700; font-size: 0.95rem; }
+.bk-meter-bar {
+  flex: 1;
+  height: 12px;
+  background: #EFE9F7;
+  border-radius: 999px;
+  overflow: hidden;
+  direction: ltr;
+}
+.bk-meter-bar span { display: block; height: 100%; border-radius: 999px; }
+.bk-meter-level { flex: 0 0 64px; font-weight: 800; font-size: 0.9rem; color: #7C3AED; text-align: center; }
+
+/* Q6 sorting bins */
+.bk-bins { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 14px; }
+.bk-bin { background: #fff; border: 2px solid #E9E2F7; border-radius: 14px; padding: 10px 12px; }
+.bk-bin-title { font-weight: 900; color: #7C3AED; margin-bottom: 6px; text-align: center; }
+.bk-bin ul { margin: 0; padding: 0 18px 0 0; }
+.bk-bin li { font-size: 0.93rem; margin: 3px 0; }
+
+/* Q8 envelopes */
+.bk-envelope {
+  --chip-color: #9333EA;
+  background: #fff;
+  border-right: 6px solid var(--chip-color);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.bk-envelope-quote { line-height: 1.6; font-size: 0.98rem; }
+.bk-envelope-from { margin-top: 6px; font-weight: 800; color: var(--chip-color); }
+
+/* Q10 winning card */
+.bk-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: linear-gradient(135deg, #FFF8E7, #FDEFD2);
+  border: 3px solid #F59E0B;
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin: 10px 0;
+}
+.bk-card-img img {
+  width: 150px; height: 190px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 3px solid #F59E0B;
+}
+.bk-card-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: #B45309; margin-bottom: 6px; }
+
+/* Empty / progress pages */
+.book-page.bk-empty { padding: 28px 32px; text-align: center; font-size: 1.1rem; }
+.book-page.bk-empty p { margin: 6px 0; }
