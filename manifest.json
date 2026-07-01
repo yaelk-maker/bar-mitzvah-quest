@@ -4,8 +4,8 @@
     "description": "מסע גיבוש זהות לקראת בר מצווה",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0f0e17",
-    "theme_color": "#1a1a2e",
+    "background_color": "#FBFAF8",
+    "theme_color": "#8EC9F0",
     "orientation": "portrait",
     "icons": [
         {

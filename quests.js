@@ -597,6 +597,14 @@ const QUESTS = [
                 type: "cinema-videos",
                 label: "סרטוני הברכה שלך:",
                 videos: [
+                    // Closest family first. The two files below are wired but not yet
+                    // uploaded — drop them into photos/Videos - step 9/ with these EXACT
+                    // names and they'll play (until then a friendly placeholder shows).
+                    { src: "Videos - step 9/סרטון - אמא ואבא.mp4", title: "ברכה מאמא ואבא" },
+                    { src: "Videos - step 9/סרטון - האחיות.mp4", title: "ברכה מנטע ומיקה" },
+                    // Placeholders reserved for two more videos — uncomment + rename when they arrive:
+                    // { src: "Videos - step 9/סרטון - נוסף 1.mp4", title: "ברכה מ..." },
+                    // { src: "Videos - step 9/סרטון - נוסף 2.mp4", title: "ברכה מ..." },
                     { src: "Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
                     { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
                     { src: "Videos - step 9/סרטון - משפחת שפירא.mp4", title: "ברכה ממשפחת שפירא" },
@@ -621,7 +629,7 @@ const QUESTS = [
         ],
         artifact: {
             title: "קולנוע ה-VIP שלי",
-            description: "9 סרטוני ברכה + הרגש שבחרת"
+            description: "סרטוני הברכה מהאנשים שלך + הרגש שבחרת"
         }
     },
     {
