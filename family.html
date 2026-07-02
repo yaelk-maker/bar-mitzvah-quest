@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8EC9F0">
+    <title>המסע של גיא — מעקב משפחתי</title>
+    <link rel="icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;900&family=Bungee&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=20260701review">
+    <link rel="stylesheet" href="family.css?v=20260701">
+</head>
+<body class="fam-body">
+    <div id="fam-app">
+        <header class="fam-header">
+            <h1>מסע הגיבורים של גיא</h1>
+            <p class="fam-subtitle">מעקב משפחתי · לצפייה בלבד 👀</p>
+            <div class="fam-status" id="fam-status">☁️ מתחבר...</div>
+        </header>
+
+        <section class="fam-progress" id="fam-progress">
+            <!-- big count + XP bar, rendered by family.js -->
+        </section>
+
+        <section class="fam-steps" id="fam-steps">
+            <!-- 10 step rows, rendered by family.js -->
+        </section>
+
+        <section class="fam-book" id="fam-book">
+            <!-- completed keepsake chapters, rendered by family.js -->
+        </section>
+
+        <footer class="fam-footer">
+            <p>הדף מתעדכן אוטומטית כשגיא מתקדם במסע 💙</p>
+            <a href="index.html">פתיחת האפליקציה המלאה ←</a>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK (compat for vanilla JS) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+    <script>
+        // Cache-busting: append timestamp to script loads (same scheme as index.html)
+        var v = new Date().getTime();
+        document.write('<script src="firebase-sync.js?v=' + v + '"><\/script>');
+        document.write('<script src="quests.js?v=' + v + '"><\/script>');
+        document.write('<script src="app.js?v=' + v + '"><\/script>');
+        document.write('<script src="family.js?v=' + v + '"><\/script>');
+    </script>
+</body>
+</html>

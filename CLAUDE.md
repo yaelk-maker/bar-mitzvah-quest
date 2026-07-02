@@ -16,6 +16,9 @@ Gamified Bar Mitzvah identity quest PWA for Guy (12.5, Bar Mitzvah July 19, 2026
 ```
 bar-mitzvah-quest/
 ├── index.html          # Main HTML: home map, quest, hero book (3 screens)
+├── family.html         # READ-ONLY family progress view (+ family.js, family.css) — mobile-first,
+│                       #   live Firebase subscription, same passcode; never writes state
+
 ├── app.js              # State, navigation, quest rendering, map, validation
 ├── quests.js           # Quest data (10 quests) + MAP_POSITIONS
 ├── firebase-sync.js    # Firebase cloud sync, family passcode, cross-device reset
@@ -228,6 +231,12 @@ location.reload();
 - Firebase config + family passcode (`1907`) are committed in client JS (public repo) — acceptable for this private family use, but not secret
 - `Song for the movie.mpeg` (repo root) is the Suno soundtrack — now **tracked** as the source music for `finale/Hero-Movie.mp4` (used by `finale/make_movie.py`)
 - Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`) are scratch/abandoned assets, not used by the app
+
+## Session log (2026-07-02) — family progress view (branch `claude/quest-accessibility-review-9ffbjj`, restarted from master)
+- **family.html** — read-only, mobile-first "מעקב משפחתי" page at `/family.html`: live progress (X/10, XP bar, current step), a ✓/כאן/🔒 step list, and the completed Hero Book chapters (reuses `BOOK_RENDERERS` + `buildFamilyTreeHTML` + `buildCartoonBrainSVG` from app.js). Subscribes with `dbRef.on('value')` so it updates in real time; NEVER writes to Firebase/localStorage — safe to share with the wider family without risking Guy's saved answers.
+- Same passcode gate (`showPasscodeScreen()` from firebase-sync.js; one unlock per session covers both pages).
+- app.js boot now no-ops on pages without `#screen-home` so family.html can load it just for the shared renderers.
+- Share link: https://yaelk-maker.github.io/bar-mitzvah-quest/family.html
 
 ## Session log (2026-07-01b) — brain image, tree-in-book, new videos, 2-version movie (same branch)
 - **Cartoon brain**: `buildCartoonBrainSVG()` (app.js) draws a colorful cartoon brain whose puffy lobes are colored/sized by Guy's brain-meter answers (grey variant = "typical brain"). Used in the Quest 5 reveal AND Hero Book chapter 5. Replaced the old bubble SVG.

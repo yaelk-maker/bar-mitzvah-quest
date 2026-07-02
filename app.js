@@ -2662,6 +2662,11 @@ document.addEventListener('keydown', (e) => {
 
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', async () => {
+    // family.html loads this file only for the shared builders (BOOK_RENDERERS,
+    // buildFamilyTreeHTML, buildCartoonBrainSVG) — it has no quest screens, so
+    // the app boot must not run there.
+    if (!document.getElementById('screen-home')) return;
+
     renderBrainrotChars();
 
     const fbOk = await initFirebase();

@@ -1,0 +1,157 @@
+/* Family progress view — mobile-first, read-only page.
+   Loads AFTER style.css so it can neutralize app-page rules and adapt the
+   shared .book-page / .bk-* keepsake styles to small screens. */
+
+.fam-body {
+    display: block;
+    min-height: 100vh;
+    background:
+        linear-gradient(180deg, #8EC9F0 0%, #C8E4F7 34%, #F6E3EF 70%, #FBD9E6 100%) fixed;
+    color: #2A2340;
+    font-family: 'Heebo', sans-serif;
+    overflow-y: auto;
+}
+
+#fam-app {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 18px 14px 40px;
+}
+
+/* ---- header ---- */
+.fam-header { text-align: center; margin-bottom: 14px; }
+.fam-header h1 {
+    font-family: 'Bungee', 'Heebo', sans-serif;
+    font-size: clamp(1.5rem, 6vw, 2.4rem);
+    color: #fff;
+    -webkit-text-stroke: 1.5px #6D28D9;
+    text-shadow: 0 3px 10px rgba(109,40,217,0.3);
+    margin: 6px 0 2px;
+}
+.fam-subtitle { font-weight: 700; color: #5B4B8A; margin: 2px 0 8px; }
+.fam-status {
+    display: inline-block;
+    background: rgba(255,255,255,0.85);
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #8A5A12;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+.fam-status.ok { color: #15803D; }
+
+/* ---- progress card ---- */
+.fam-progress {
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 18px 20px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(109,40,217,0.12);
+    margin-bottom: 14px;
+}
+.fam-count { font-size: clamp(1.2rem, 5vw, 1.6rem); font-weight: 900; color: #4C1D95; }
+.fam-num { direction: ltr; unicode-bidi: isolate; }
+.fam-xpbar {
+    height: 16px;
+    background: #EFE9F7;
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 10px auto 6px;
+    max-width: 420px;
+    direction: ltr;
+}
+.fam-xpfill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #FBBF24, #FB8C00);
+    transition: width 0.6s ease;
+}
+.fam-xptext { font-size: 0.95rem; font-weight: 700; color: #96650a; }
+.fam-current {
+    margin-top: 10px;
+    display: inline-block;
+    background: linear-gradient(180deg, #FF7AB6, #DB2777);
+    color: #fff;
+    font-weight: 900;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    padding: 6px 18px;
+    box-shadow: 0 5px 14px rgba(219,39,119,0.4);
+}
+.fam-current.fam-done-all { background: linear-gradient(180deg, #34D399, #15803D); box-shadow: 0 5px 14px rgba(21,128,61,0.35); }
+
+/* ---- steps list ---- */
+.fam-steps {
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 10px 12px;
+    box-shadow: 0 8px 24px rgba(109,40,217,0.12);
+    margin-bottom: 18px;
+}
+.fam-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-bottom: 1.5px dashed #EAE2F5;
+    font-size: 1.02rem;
+}
+.fam-step:last-child { border-bottom: none; }
+.fam-step-no {
+    flex: 0 0 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--step-color, #9333EA);
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.fam-step-icon { flex: 0 0 auto; font-size: 1.2rem; }
+.fam-step-name { flex: 1; font-weight: 700; }
+.fam-step.locked { opacity: 0.55; }
+.fam-step.current .fam-step-name { color: #DB2777; }
+.fam-badge { font-size: 0.82rem; font-weight: 800; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.fam-badge-done { background: #DCFCE7; color: #15803D; }
+.fam-badge-here { background: linear-gradient(180deg, #FF7AB6, #DB2777); color: #fff; animation: famPulse 1.8s ease-in-out infinite; }
+.fam-badge-lock { background: #F1EEF7; color: #968E89; }
+@keyframes famPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+
+/* ---- keepsake chapters (reuse .book-page / .bk-* from style.css) ---- */
+.fam-book-title {
+    text-align: center;
+    font-size: clamp(1.15rem, 5vw, 1.5rem);
+    font-weight: 900;
+    color: #4C1D95;
+    margin: 4px 0 12px;
+}
+.fam-book { display: flex; flex-direction: column; gap: 16px; }
+.fam-book .book-page {
+    background: #fff;
+    border-radius: 18px;
+    border: 2px solid #E9E2F7;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(109,40,217,0.1);
+}
+.fam-book .book-chapter-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #fff; }
+.fam-book .book-chapter-header h3 { margin: 0; font-size: 1.1rem; }
+.fam-book .book-message { text-align: center; color: #5A524D; padding: 8px 14px 0; margin: 0; }
+.fam-book .book-responses { padding: 10px 16px 16px; }
+
+/* ---- footer ---- */
+.fam-footer { text-align: center; margin-top: 24px; color: #5B4B8A; font-weight: 600; }
+.fam-footer a { color: #6D28D9; font-weight: 800; }
+
+/* ---- mobile adjustments for the shared keepsake pieces ---- */
+@media (max-width: 640px) {
+    .bk-bins { grid-template-columns: 1fr; }
+    .bk-meter-name { flex-basis: 128px; font-size: 0.85rem; }
+    .bk-meter-level { flex-basis: 48px; font-size: 0.8rem; }
+    .bk-card { flex-direction: column; text-align: center; }
+    .bk-qr-grid { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
+    .bk-line { font-size: 0.98rem; }
+    .fam-book .ftree-title { font-size: 1rem; }
+}
