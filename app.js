@@ -363,7 +363,7 @@ function buildFamilyTreeHTML(members, responses) {
                 <img src="${m.photo}" alt="${name}" style="${posStyle}">
             </div>
             <div class="ftree-label ${pos.cls}" style="left: ${pos.lx}%; top: ${pos.ly}%;">
-                <div class="ftree-label-name">${name} - ${m.relation}</div>
+                <div class="ftree-label-name">${name}<span class="ftree-label-rel"> - ${m.relation}</span></div>
                 ${word ? `<div class="ftree-label-word">"${word}"</div>` : ''}
             </div>
         `;
