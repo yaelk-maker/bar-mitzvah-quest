@@ -5235,3 +5235,23 @@ select.task-select option { background: #fff; color: #2E1065; }
 }
 .bk-qr img { width: 104px; height: 104px; image-rendering: pixelated; }
 .bk-qr figcaption { font-size: 0.85rem; font-weight: 700; margin-top: 4px; color: var(--text-dark, #2A2340); }
+
+/* =======================================================================
+   FIX 2026-07-02: family-tree labels overlapped on narrow screens.
+   .ftree-map is a size container, so this applies wherever the tree
+   renders small (family.html on phones, narrow app windows) while the
+   wide PC layout keeps the full one-line "name - relation" banners.
+   ======================================================================= */
+@container (max-width: 640px) {
+  .ftree-label-name {
+    white-space: normal;            /* wrap instead of colliding */
+    max-width: 16cqi;               /* columns are ~18-19cqi apart */
+    text-align: center;
+    line-height: 1.12;
+  }
+  .ftree-label-rel { display: none; } /* name only — relation needs the wide banner */
+  .ftree-label-word {
+    max-width: 16cqi;
+    font-size: clamp(0.42rem, 2cqi, 0.6rem);
+  }
+}
