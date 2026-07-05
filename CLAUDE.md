@@ -36,8 +36,8 @@ bar-mitzvah-quest/
 │   ├── placeholder_twins_teens.jpeg  # Quest 6
 │   ├── guy_soccer_video.mp4          # Quest 7 (autoplay loop)
 │   ├── Guy - final step.jpeg         # Quest 10 (Bar Mitzvah card photo)
+│   ├── Videos - step 9/              # Quest 9 greeting videos (11, Hebrew filenames)
 │   └── [11 Hebrew-named family photos]
-├── Videos - step 9/    # Quest 9 greeting videos (Hebrew filenames)
 ├── brainrot/           # SAB voxel character PNGs (7 figures, 120px each)
 ├── CLAUDE.md, README.md, STITCH_PROMPT.md
 ```
@@ -142,7 +142,7 @@ Step names match the island map (`quest.name` is the single source of truth — 
 | 6 - השבט שלי | Complete | 2x drag & drop (twins) + Neta trivia envelope |
 | 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
 | 8 - Super powers | Complete | 8 scattered envelope cards (real messages) + power select |
-| 9 - האנשים שלי | Partial | 10 greeting-video cards + overlay player (some placeholder videos) + emotion board |
+| 9 - האנשים שלי | Complete | 11 greeting-video cards (incl. אבא ואמא + נטע ומיקה, added 2026-07-05) + overlay player + emotion board |
 | 10 - מי אני עכשיו | Complete | `card-builder` — Bar Mitzvah trading card (title / secret weapon / next-year goal) + hero photo |
 
 > Note: step 8's label is **English ("Super powers")** because that's what's painted on `map-v3.jpg`; switch to Hebrew only if the map art is updated too.
@@ -217,11 +217,11 @@ location.reload();
 - **Hero Book data gaps**: `openHeroBook()` only renders string responses, so Quest 4 (power stones + chosen message) and Quest 10 (card-builder object) and the custom factory medal **don't appear** in the book. To fix with the finale work.
 - **Finale / storybook** — ✅ BUILT (2026-06-28). See `finale/` + `storybook.html`:
   - `finale/Hero-Movie.mp4` — ~3:05 highlight reel of the 10 steps set to `Song for the movie.mpeg`, 1080p, Hebrew RTL captions, Ken-Burns zoom + crossfades, audio fade-out.
-  - `storybook.html` (+ exported `finale/Hero-Storybook.pdf`) — print-ready A4 (13 pages) "Hero Book": real photos, the family blessing messages, and QR codes to the GitHub-Pages-hosted greeting videos.
+  - `storybook.html` (+ exported `finale/Hero-Storybook.pdf`) — print-ready A4 (15 pages) "Hero Book": real photos, the family blessing messages, and QR-code greeting cards (photo + QR, 2×2 per page; most greeter photos still placeholders) for all 12 greetings incl. אבא ואמא + נטע ומיקה.
   - Reproducible builders: `finale/make_storybook.py`, `finale/make_movie.py` (repo-relative; render HTML scenes via headless Chrome, assemble MP4 with bundled ffmpeg via `imageio-ffmpeg`). See `finale/README.md`.
   - Built from authored journey content + real family photos (NOT Guy's saved responses — test data). Movie trimmed to ~3:05 with the song faded out; ask for a full-song (~3:57) cut if a longer version is wanted.
-- **Quest 9 video path bug**: `quests.js` Quest 9 references `Videos - step 9/…mp4` but the files actually live at `photos/Videos - step 9/…mp4` (where they ARE deployed on Pages) — so in-app playback is broken until the paths are prefixed with `photos/`. (Storybook QR codes already point to the correct `photos/...` URLs.)
-- Quest 9 still has some placeholder greeting videos
+- ~~Quest 9 video path bug~~ — FIXED 2026-07-05: all Quest 9 video srcs now use `photos/Videos - step 9/…` (verified 200s locally). Also added the last two videos (אבא ואמא, נטע ומיקה) — 11 in-app + the נטע TikTok card in the storybook (12 storybook greeting cards); storybook + PDF rebuilt same day.
+- Storybook greeting cards: most greeter photos are placeholders ("תמונה תתווסף") and `yt` YouTube URLs in `GREETERS` (make_storybook.py) are unfilled — QRs currently fall back to GitHub-Pages mp4 links (preview only).
 - `map-v3.jpg` bakes in island names/scenes → can't hide/recolor per-step; "Super powers" label is English
 - Hero Book PDF export is basic (browser print)
 - Mobile responsive design not supported (PC-first)

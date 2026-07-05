@@ -14,19 +14,33 @@ def qr_datauri(url):
     buf = io.BytesIO(); img.save(buf, format="PNG")
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
 
-GREETINGS = [
-    ("סווטה (סבתא)", "סרטון - סווטה.mp4"),
-    ("מרינה ומישה (סבא וסבתא)", "סרטון - מרינה ומישה.mp4"),
-    ("משפחת שפירא", "סרטון - משפחת שפירא.mp4"),
-    ("אירה ותום", "סרטון - אירה ותום.mp4"),
-    ("רעיה", "סרטון - רעיה.mp4"),
-    ("אליה", "סרטון - אליה.mp4"),
-    ("ציליה", "סרטון - ציליה.mp4"),
-    ("יובל והמשפחה", "סרטון - יובל והמשפחה.mp4"),
-    ("רפי", "סרטון - רפי.mp4"),
+# Quest-9 greeting cards. One card per video: photo of the greeter + QR + name.
+#   name  : caption under the card
+#   photo : repo-relative photo of the greeter (None -> styled "photo coming" placeholder)
+#   yt    : YouTube (unlisted) watch URL — FILL THESE once the videos are uploaded to the
+#           personal Google account. While None, the QR falls back to `gh` for PREVIEW ONLY.
+#   gh    : current GitHub-Pages file path (preview fallback; will be retired with the workplace acct)
+GREETERS = [
+    {"name":"אבא ואמא",              "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - אבא ואמא.mp4"},
+    {"name":"נטע ומיקה",             "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - נטע ומיקה.mp4"},
+    {"name":"סבתא סווטה",            "photo":"photos/סבתא סווטה (מצד אמא).jpeg", "yt":None, "gh":"photos/Videos - step 9/סרטון - סווטה.mp4"},
+    {"name":"סבא מישה וסבתא מרינה",  "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - מרינה ומישה.mp4"},
+    {"name":"משפחת שפירא",           "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - משפחת שפירא.mp4"},
+    {"name":"אירה ותום",            "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - אירה ותום.mp4"},
+    {"name":"רעיה",                 "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - רעיה.mp4"},
+    {"name":"אליה",                 "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - אליה.mp4"},
+    {"name":"ציליה",                "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - ציליה.mp4"},
+    {"name":"יובל והמשפחה",         "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - יובל והמשפחה.mp4"},
+    {"name":"רפי",                  "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - רפי.mp4"},
+    {"name":"נטע — הטיקטוק שלנו",    "photo":"photos/נטע אחות בכורה.jpg",        "yt":None, "gh":"photos/neta_and_guy_video.mp4"},
 ]
-def gurl(fname):
-    return f"{PAGES_BASE}/photos/" + urllib.parse.quote("Videos - step 9/" + fname)
+def qr_target(g):
+    if g.get("yt"): return g["yt"]
+    return f"{PAGES_BASE}/" + urllib.parse.quote(g["gh"])
+def greeter_photo(g):
+    if g.get("photo") and os.path.exists(os.path.join(PROJ, g["photo"])):
+        return f'<div class="gphoto"><img src="{g["photo"]}"></div>'
+    return '<div class="gphoto placeholder"><div class="ph-emoji">🎬</div><div class="ph-txt">תמונה תתווסף</div></div>'
 
 MESSAGES = [  # step 8 — real family/friend messages
     ("אילנה", "אתה אלוף העולם עבורי, אין דבר העומד בפני הרצון שלך. גאה בך על הדרך שאתה עובר, יכולת ההתמדה שלך, והכל מקושט בהומור ציני וחיוך מהמם ❤️"),
@@ -101,20 +115,26 @@ def messages_pages():
   <div class="mcol">{_mcards(MESSAGES)}</div>
 </section>"""
 
-def greetings_page():
-    cells = ""
-    for name, fname in GREETINGS:
-        uri = qr_datauri(gurl(fname))
-        cells += f'<figure class="qrc"><img src="{uri}"><figcaption>{name}</figcaption></figure>'
-    return f"""
-<section class="page light step" style="--accent:#00BCD4">
-  <header class="shead">
-    <div class="sno">9</div><div class="sname">האנשים שלי</div>
-    <div class="smsg">״אני לא לבד במסע״</div>
-  </header>
-  <p class="lead">אנשים שאוהבים אותך הכינו לך סרטוני ברכה. סרקו את הקוד בטלפון כדי לצפות 🎬</p>
-  <div class="qrgrid">{cells}</div>
-</section>"""
+def _gcard(g):
+    return (f'<figure class="gcard">{greeter_photo(g)}'
+            f'<img class="gqr" src="{qr_datauri(qr_target(g))}">'
+            f'<figcaption class="gname">{g["name"]}</figcaption>'
+            f'<div class="gscan">סרקו לצפייה 🎬</div></figure>')
+
+def greetings_pages():
+    chunks=[GREETERS[i:i+4] for i in range(0,len(GREETERS),4)]
+    out=""
+    for idx,ch in enumerate(chunks):
+        if idx==0:
+            head=('<header class="shead"><div class="sno">9</div><div class="sname">האנשים שלי</div>'
+                  '<div class="smsg">״אני לא לבד במסע״</div></header>'
+                  '<p class="lead glead">סרקו כל קוד בטלפון כדי לצפות בברכה 🎬</p>')
+        else:
+            head=('<header class="shead cont"><div class="sname">…האנשים שלי</div>'
+                  '<div class="smsg">עוד ברכות 🎬</div></header>')
+        cards="".join(_gcard(g) for g in ch)
+        out+=f'<section class="page light step" style="--accent:#00BCD4">{head}<div class="ggrid">{cards}</div></section>'
+    return out
 
 def closing():
     return f"""
@@ -123,7 +143,7 @@ def closing():
   <div class="cl-inner">
     <h1 class="booktitle">מזל טוב, גיא!</h1>
     <div class="cl-sub">הגיבור שמוכן לבר המצווה</div>
-    <div class="cl-photo"><img src="photos/Guy - final step.jpeg"></div>
+    <div class="cl-photo"><img src="photos/Guy with Girls.jpg"></div>
     <div class="cl-love">באהבה אינסופית — המשפחה שלך ❤️</div>
     <div class="cover-date">19 ביולי 2026</div>
   </div>
@@ -175,7 +195,7 @@ b7 = (img("photos/Guy - final step.jpeg","tall")
    + '<p class="lead">ארון הגביעים שלך מלא יותר ממה שחשבת:</p>'
    + '<div class="medals">💻 מומחה למחשבים · ⚽ כדורגל · 😁 חיוך שמנצח הכל · 💪 לא מוותר · 🏊 שחייה · 📚 לומד כל יום</div>')
 
-b10 = (img("photos/Guy - final step.jpeg","tall")
+b10 = (img("photos/Guy.jpg","tall")
    + '<div class="card10">'
      '<div class="c10row"><span>הטייטל שלי:</span> גיא הלוחם</div>'
      '<div class="c10row"><span>הנשק הסודי שלי:</span> מוח שלא מוותר</div>'
@@ -192,7 +212,7 @@ PAGES = [
     step("6","השבט שלי","אני תאום — ואני גם אני","#E91E63", b6),
     step("7","הדרך שעשיתי","ראו כמה רחוק הגעתי","#FFC107", b7),
     messages_pages(),
-    greetings_page(),
+    greetings_pages(),
     step("10","מי אני עכשיו","זה אני, בן 13 — ולא מוותר לעצמי","#FF5722", b10),
     closing(),
 ]
@@ -263,10 +283,19 @@ body{background:#FBFAF8}
 .mfrom{font-family:'Baloo 2';font-weight:800;font-size:26px;color:#673AB7;margin-bottom:6px}
 .mtext{font-size:21px;line-height:1.6;font-weight:500}
 /* qr greetings */
-.qrgrid{display:flex;flex-wrap:wrap;gap:7mm;justify-content:center;margin-top:14px}
-.qrc{width:48mm;text-align:center;background:#fff;border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.10);padding:10px}
-.qrc img{width:40mm;height:40mm}
-.qrc figcaption{font-weight:800;font-size:18px;margin-top:6px;color:#5A524D}
+/* greeting cards: photo + big QR, 2x2 per page (sized so 4 fit on one A4 sheet) */
+.ggrid{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:12px}
+.gcard{background:#fff;border-radius:16px;box-shadow:0 8px 22px rgba(0,0,0,.12);padding:10px 12px 12px;
+  text-align:center;border-top:6px solid var(--accent);break-inside:avoid}
+.glead{margin:8px 0 0}
+.gphoto{width:100%;height:34mm;border-radius:12px;overflow:hidden;background:#EBE5E2;margin-bottom:7px}
+.gphoto img{width:100%;height:100%;object-fit:cover;display:block}
+.gphoto.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#968E89;background:linear-gradient(135deg,#F6F3F0,#EBE5E2)}
+.ph-emoji{font-size:40px;line-height:1}.ph-txt{font-weight:700;font-size:16px;margin-top:5px}
+.gqr{width:34mm;height:34mm}
+.gname{font-family:'Baloo 2';font-weight:800;font-size:23px;color:var(--accent);margin-top:6px}
+.gscan{font-size:14px;color:#968E89;margin-top:1px}
 /* card10 */
 .card10{background:#FFF4F8;border-radius:16px;padding:18px 22px;margin-bottom:10px}
 .c10row{font-size:24px;font-weight:700;margin:8px 0}.c10row span{color:#FF5722;font-weight:800}

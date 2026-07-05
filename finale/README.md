@@ -7,8 +7,8 @@ Two keepsake deliverables that summarize Guy's 10-step journey, for the Bar Mitz
   born premature, the special brain, the twins + Neta's blessing, achievements, the family's "super-power"
   messages, the people, who-I-am-now) → "מזל טוב גיא!" Set to `Song for the movie.mpeg` (Suno track),
   1080p, Hebrew RTL captions, Ken-Burns zoom + crossfades. Audio fades out at the end.
-- **`Hero-Storybook.pdf`** — print-ready A4 (13 pages) version of the same journey, with real family photos,
-  the family blessing messages, and **QR codes** that open each greeting video (hosted on GitHub Pages).
+- **`Hero-Storybook.pdf`** — print-ready A4 (15 pages) version of the same journey, with real family photos,
+  the family blessing messages, and **QR-code greeting cards** that open each greeting video (hosted on GitHub Pages).
 - **`../storybook.html`** — the editable source of the storybook (lives in the repo root so `photos/...`
   paths resolve). Open it in a browser and use the "🖨️ הדפס / שמור כ-PDF" button to re-export the PDF.
 
