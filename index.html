@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a1a2e">
+    <meta name="theme-color" content="#8EC9F0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&family=Bungee&family=Frank+Ruhl+Libre:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20260628live">
+    <link rel="stylesheet" href="style.css?v=20260702fam">
 </head>
 <body>
     <div id="app">
@@ -75,7 +75,8 @@
             </div>
             <div class="book-footer">
                 <button class="btn-export" onclick="exportPDF()">📄 ייצוא לPDF</button>
-                <button class="btn-export" onclick="exportPresentation()">🎬 צפייה במצגת</button>
+                <button class="btn-export" id="btn-movie" onclick="playHeroMovie('short')">🎬 הסרט של המסע שלי</button>
+                <button class="btn-export" id="btn-movie-long" onclick="playHeroMovie('long')">🎬 הגרסה המלאה (כל הברכות)</button>
             </div>
         </div>
     </div>

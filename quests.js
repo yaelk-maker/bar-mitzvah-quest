@@ -597,17 +597,18 @@ const QUESTS = [
                 type: "cinema-videos",
                 label: "סרטוני הברכה שלך:",
                 videos: [
-                    { src: "photos/Videos - step 9/סרטון - אבא ואמא.mp4", title: "ברכה מאבא ואמא" },
-                    { src: "photos/Videos - step 9/סרטון - נטע ומיקה.mp4", title: "ברכה מנטע ומיקה" },
-                    { src: "photos/Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
-                    { src: "photos/Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
-                    { src: "photos/Videos - step 9/סרטון - משפחת שפירא.mp4", title: "ברכה ממשפחת שפירא" },
-                    { src: "photos/Videos - step 9/סרטון - אירה ותום.mp4", title: "ברכה מאירה ותום" },
-                    { src: "photos/Videos - step 9/סרטון - רעיה.mp4", title: "ברכה מרעיה" },
-                    { src: "photos/Videos - step 9/סרטון - אליה.mp4", title: "ברכה מאליה" },
-                    { src: "photos/Videos - step 9/סרטון - ציליה.mp4", title: "ברכה מציליה" },
-                    { src: "photos/Videos - step 9/סרטון - יובל והמשפחה.mp4", title: "ברכה מיובל והמשפחה" },
-                    { src: "photos/Videos - step 9/סרטון - רפי.mp4", title: "ברכה מרפי" }
+                    // Closest family first. srcs are relative to photos/ (app.js prepends it).
+                    { src: "Videos - step 9/סרטון - אבא ואמא.mp4", title: "ברכה מאבא ואמא" },
+                    { src: "Videos - step 9/סרטון - נטע ומיקה.mp4", title: "ברכה מנטע ומיקה" },
+                    { src: "Videos - step 9/סרטון - סווטה.mp4", title: "ברכה מסווטה" },
+                    { src: "Videos - step 9/סרטון - מרינה ומישה.mp4", title: "ברכה ממרינה ומישה" },
+                    { src: "Videos - step 9/סרטון - משפחת שפירא.mp4", title: "ברכה ממשפחת שפירא" },
+                    { src: "Videos - step 9/סרטון - אירה ותום.mp4", title: "ברכה מאירה ותום" },
+                    { src: "Videos - step 9/סרטון - רעיה.mp4", title: "ברכה מרעיה" },
+                    { src: "Videos - step 9/סרטון - אליה.mp4", title: "ברכה מאליה" },
+                    { src: "Videos - step 9/סרטון - ציליה.mp4", title: "ברכה מציליה" },
+                    { src: "Videos - step 9/סרטון - יובל והמשפחה.mp4", title: "ברכה מיובל והמשפחה" },
+                    { src: "Videos - step 9/סרטון - רפי.mp4", title: "ברכה מרפי" }
                 ]
             },
             {
@@ -623,7 +624,7 @@ const QUESTS = [
         ],
         artifact: {
             title: "קולנוע ה-VIP שלי",
-            description: "11 סרטוני ברכה + הרגש שבחרת"
+            description: "סרטוני הברכה מהאנשים שלך + הרגש שבחרת"
         }
     },
     {
