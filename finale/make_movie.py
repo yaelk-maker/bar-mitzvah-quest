@@ -61,7 +61,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;font-family:'Heebo','Segoe 
 .grid{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;align-items:center;max-width:1640px}
 .gcell{width:300px;height:330px;border-radius:24px;overflow:hidden;border:10px solid #fff;
   box-shadow:0 18px 40px rgba(0,0,0,.22);background:#ddd;position:relative}
-.gcell img{width:100%;height:100%;object-fit:cover}
+.gcell img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
 .gname{position:absolute;bottom:0;left:0;right:0;background:rgba(109,40,217,.78);color:#fff;
   font-weight:800;font-size:30px;text-align:center;padding:8px 4px}
 .quote{max-width:1400px;background:#fff;border-radius:36px;padding:70px 80px;
@@ -284,11 +284,14 @@ fc = []
 for i,(h,_) in enumerate(S):
     frames = max(2,int(round(durs[i]*FPS)))
     if is_video(h):
-        # real clip: 0.5x slow-motion, full-bleed 1080p, muted; caption overlay on top
+        # real clip: 0.5x slow-motion, muted, centered WITHOUT cropping —
+        # the frame is filled with a blurred copy and the clip sits whole on top
         fc.append(
           f"[{i}:v]setpts=2.0*PTS,fps={FPS},trim=duration={durs[i]:.3f},setpts=PTS-STARTPTS,"
-          f"scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,"
-          f"setsar=1[vv{i}];"
+          f"split[vb{i}][vf{i}];"
+          f"[vb{i}]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,gblur=sigma=20[bg{i}];"
+          f"[vf{i}]scale=1920:1080:force_original_aspect_ratio=decrease[fg{i}];"
+          f"[bg{i}][fg{i}]overlay=(W-w)/2:(H-h)/2,setsar=1[vv{i}];"
           f"[vv{i}][{ov_idx[i]}:v]overlay=0:0:eof_action=repeat,fps={FPS},format=yuv420p[v{i}]"
         )
         continue

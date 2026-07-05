@@ -54,7 +54,7 @@ BLESSINGS = [
     ("רפי",                 "סרטון - רפי.mp4"),
     # Neta's TikTok closes the blessings (path is relative to VIDS; optional 3rd
     # element overrides the lower-third label).
-    ("נטע ומיקה",           "../neta_and_guy_video.mp4", "הטיקטוק של נטע ומיקה 🎵"),
+    ("נטע וגיא",            "../neta_and_guy_video.mp4", "הטיקטוק של נטע וגיא"),
 ]
 
 ENC = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "24", "-pix_fmt", "yuv420p",
@@ -274,7 +274,9 @@ def main():
                   vol=0.35, fade_in=0.6, fade_out=1.2)
 
     outro_png = os.path.join(BUILD, "card-outro.png")
-    make_card("!מזל טוב גיא", "אוהבים אותך עד השמיים", outro_png)
+    # NOTE: author strings in natural logical order — heb()/get_display does the
+    # visual reordering; a hand-flipped "!" ends up on the wrong side.
+    make_card("מזל טוב גיא!", "אוהבים אותך עד השמיים", outro_png)
     outro = os.path.join(BUILD, "card-outro.mp4")
     OUTRO_SECS = 12.0
     song_dur = duration_of(SONG)
