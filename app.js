@@ -98,6 +98,10 @@ function updateXPBar() {
 // ===== Screen Navigation =====
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // A hidden screen keeps its media playing (e.g. Neta's greeting video was still
+    // audible on the map) — pause everything outside the screen being shown.
+    document.querySelectorAll(`.screen:not(#screen-${id}) video, .screen:not(#screen-${id}) audio`)
+        .forEach(v => { try { v.pause(); } catch (e) {} });
     const screen = document.getElementById('screen-' + id);
     screen.classList.add('active');
     // Reset both window scroll and the screen's own scroll container
