@@ -32,6 +32,7 @@ FIN = os.path.join(PROJ, "finale")
 BUILD = os.path.join(FIN, "_build_blessings")
 SEGMENTS_JSON = os.path.join(FIN, "blessing_segments.json")
 BASE_MOVIE = os.path.join(FIN, "Hero-Movie.mp4")
+SONG = os.path.join(PROJ, "Song for the movie.mpeg")
 
 W, H, FPS = 1280, 720, 30
 FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -51,6 +52,9 @@ BLESSINGS = [
     ("ציליה",               "סרטון - ציליה.mp4"),
     ("יובל והמשפחה",        "סרטון - יובל והמשפחה.mp4"),
     ("רפי",                 "סרטון - רפי.mp4"),
+    # Neta's TikTok closes the blessings (path is relative to VIDS; optional 3rd
+    # element overrides the lower-third label).
+    ("נטע ומיקה",           "../neta_and_guy_video.mp4", "הטיקטוק של נטע ומיקה 🎵"),
 ]
 
 ENC = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "24", "-pix_fmt", "yuv420p",
@@ -116,11 +120,11 @@ def make_card(title, sub, out_png):
     img.save(out_png)
 
 
-def make_lower_third(name, out_png):
+def make_lower_third(name, out_png, label=None):
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     f = ImageFont.truetype(FONT_BOLD, 42)
-    t = heb("ברכה מ" + name)
+    t = heb(label or ("ברכה מ" + name))
     w = d.textlength(t, font=f)
     x1, y1 = W - w - 110, H - 118
     d.rounded_rectangle([x1, y1, W - 40, H - 48], radius=26, fill=(255, 122, 182, 225), outline=(255, 255, 255, 255), width=4)
@@ -129,11 +133,21 @@ def make_lower_third(name, out_png):
 
 
 # ---------------- ffmpeg helpers ----------------
-def card_to_video(png, secs, out_mp4):
-    run([FFMPEG, "-y", "-loop", "1", "-t", str(secs), "-i", png,
-         "-f", "lavfi", "-t", str(secs), "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
+def card_to_video(png, secs, out_mp4, song=None, song_start=0.0, vol=1.0, fade_in=0.6, fade_out=0.6):
+    """Card still -> video. With `song`, lays a segment of the soundtrack under the
+    card (volume + fades) instead of silence."""
+    if song:
+        a_in = ["-ss", f"{song_start:.2f}", "-t", str(secs), "-i", song]
+        af = f"volume={vol},aresample=48000,afade=t=in:d={fade_in}"
+        if fade_out > 0:
+            af += f",afade=t=out:st={max(0.0, secs - fade_out):.2f}:d={fade_out}"
+    else:
+        a_in = ["-f", "lavfi", "-t", str(secs), "-i", "anullsrc=channel_layout=stereo:sample_rate=48000"]
+        af = "anull"
+    run([FFMPEG, "-y", "-loop", "1", "-t", str(secs), "-i", png, *a_in,
          "-shortest", *ENC,
          "-vf", f"scale={W}:{H},fade=t=in:d=0.4,fade=t=out:st={secs-0.4:.2f}:d=0.4",
+         "-af", af,
          out_mp4])
 
 
@@ -193,7 +207,7 @@ def transcribe_segments(data):
     the first time, to download the model)."""
     from faster_whisper import WhisperModel
     model = WhisperModel("small", device="cpu", compute_type="int8")
-    for name, fname in BLESSINGS:
+    for name, fname, *_ in BLESSINGS:
         src = os.path.join(VIDS, fname)
         if not os.path.exists(src) or data["segments"].get(fname):
             continue
@@ -225,7 +239,7 @@ def main():
 
     data = load_segments()
     # make sure every configured blessing has a key
-    for _, fname in BLESSINGS:
+    for _, fname, *_x in BLESSINGS:
         data["segments"].setdefault(fname, None)
     save_segments(data)
 
@@ -235,28 +249,38 @@ def main():
         except Exception as e:
             print("transcription unavailable (%s) — using segments file / fallback" % e)
 
-    present = [(n, f) for n, f in BLESSINGS if os.path.exists(os.path.join(VIDS, f))]
-    missing = [f for _, f in BLESSINGS if not os.path.exists(os.path.join(VIDS, f))]
+    present = [b for b in BLESSINGS if os.path.exists(os.path.join(VIDS, b[1]))]
+    missing = [b[1] for b in BLESSINGS if not os.path.exists(os.path.join(VIDS, b[1]))]
     for f in missing:
         print("! missing (skipped for now):", f)
 
-    # shared cards
-    sec_card_png = os.path.join(BUILD, "card-blessings.png")
-    make_card("ברכות מהמשפחה", "האנשים שאוהבים אותך מברכים אותך", sec_card_png)
-    sec_card = os.path.join(BUILD, "card-blessings.mp4")
-    card_to_video(sec_card_png, 3.0, sec_card)
-
-    outro_png = os.path.join(BUILD, "card-outro.png")
-    make_card("!מזל טוב גיא", "אוהבים אותך עד השמיים", outro_png)
-    outro = os.path.join(BUILD, "card-outro.mp4")
-    card_to_video(outro_png, 4.0, outro)
-
     base = None
+    song_off = 0.0
     if not skip_base:
         base = os.path.join(BUILD, "base-720.mp4")
         if not os.path.exists(base):
             print("re-encoding Hero-Movie base...")
             reencode_base(base)
+        song_off = duration_of(base)
+
+    # shared cards. The section card carries a quiet continuation of the soundtrack
+    # (picking up where the reel's fade-out left it) so the hand-off into the
+    # blessings is smooth; the outro card plays the song's actual finale.
+    sec_card_png = os.path.join(BUILD, "card-blessings.png")
+    make_card("ברכות מהמשפחה", "האנשים שאוהבים אותך מברכים אותך", sec_card_png)
+    sec_card = os.path.join(BUILD, "card-blessings.mp4")
+    card_to_video(sec_card_png, 3.0, sec_card,
+                  song=SONG if base else None, song_start=song_off,
+                  vol=0.35, fade_in=0.6, fade_out=1.2)
+
+    outro_png = os.path.join(BUILD, "card-outro.png")
+    make_card("!מזל טוב גיא", "אוהבים אותך עד השמיים", outro_png)
+    outro = os.path.join(BUILD, "card-outro.mp4")
+    OUTRO_SECS = 12.0
+    song_dur = duration_of(SONG)
+    card_to_video(outro_png, OUTRO_SECS, outro,
+                  song=SONG, song_start=max(0.0, song_dur - OUTRO_SECS),
+                  vol=1.0, fade_in=1.0, fade_out=0.3)
 
     long_parts, short_parts = [], []
     if base:
@@ -266,11 +290,11 @@ def main():
     short_parts.append(sec_card)
 
     default_s = float(data.get("default_seconds", 6))
-    for name, fname in present:
+    for name, fname, *rest in present:
         src = os.path.join(VIDS, fname)
         safe = re.sub(r"[^\w]+", "_", fname)
         lt = os.path.join(BUILD, f"lt_{safe}.png")
-        make_lower_third(name, lt)
+        make_lower_third(name, lt, label=rest[0] if rest else None)
 
         full = os.path.join(BUILD, f"full_{safe}.mp4")
         if not os.path.exists(full):

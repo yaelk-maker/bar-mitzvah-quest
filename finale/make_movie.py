@@ -124,6 +124,16 @@ def quote(text, frm, step_chip="", step=""):
       <div class="qfrom">{html.escape(frm)}</div></div>"""
     return page(body)
 
+def videoscene(rel, cap, step_chip="", step=""):
+    """A real video clip scene (muted; the soundtrack keeps playing). Returns a
+    ('VIDEO', abs_path, overlay_html) marker; the overlay (chip + caption) is
+    rendered to a transparent PNG and composited over the clip at assembly."""
+    ov_css = (".stage{background:transparent !important}"
+              ".cloud{display:none}"
+              f".vcap{{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);}}")
+    body = chip(step_chip) + stepno(step) + f'<div class="vcap"><div class="cap">{cap}</div></div>'
+    return ("VIDEO", os.path.join(PROJ, rel), page(body, ov_css))
+
 def finale(title, sub, bg):
     bgs = f".stage{{background:linear-gradient(rgba(8,6,16,.50),rgba(219,39,119,.50)),url('{bg}') center/cover}}"
     body = f'<div class="hero-panel"><div class="title strong">{title}</div><div class="subtitle">{html.escape(sub)}</div><div class="heart">🎉❤️🎉</div></div>'
@@ -158,7 +168,7 @@ S.append((single(P("placeholder_neta_baby.jpg"),
     'קודם הגיעה נטע — האחות הבכורה.<br>היינו שלושה, וחלמנו לגדול', klass="land",
     step_chip="שלב 3 · חקירה משפחתית", step="3"), 9.5))
 S.append((single(P("placeholder_ultrasound.jpg"),
-    'בהתחלה היו שלושה… ואז נשארנו <span style="color:#DB2777">שניים</span>.<br>אני ומיקה — צוות מנצח כבר מהבטן', klass="land",
+    'הפתעה כפולה: <span style="color:#DB2777">שני לבבות פועמים</span> 💕<br>אני ומיקה — צוות מנצח כבר מהבטן', klass="land",
     step_chip="שלב 3 · חקירה משפחתית", step="3"), 10.5))
 
 # Step 4 - hero born
@@ -185,9 +195,9 @@ S.append((quote(
     'אחי הקטן והאלוף חוגג בר מצווה! אין בעולם על הצחוקים והשטויות שלנו יחד. אני מבטיחה תמיד להיות שם בשבילך 😉',
     'אוהבת אותך הכי בעולם, נטע ✨', step_chip="שלב 6 · הברכה של נטע", step="6"), 11))
 
-# Step 7 - the road / achievements
-S.append((single(P("Guy - final step.jpeg"),
-    'ראו כמה רחוק הגעתי 🏆<br>גיא הלוחם — לא מוותר אף פעם', klass="portrait",
+# Step 7 - the road / achievements (real soccer clip, slow-motion loop)
+S.append((videoscene("photos/guy_soccer_video.mp4",
+    'ראו כמה רחוק הגעתי 🏆<br>גיא הלוחם — לא מוותר אף פעם',
     step_chip="שלב 7 · הדרך שעשיתי", step="7"), 10.5))
 
 # Step 8 - super powers (real family messages)
@@ -221,21 +231,27 @@ S.append((textscene('באהבה אינסופית,<br><span class="hl">המשפח
 print(f"{len(S)} scenes, raw sum = {sum(d for _,d in S):.1f}s")
 
 # ---------- render scenes to PNG ----------
-def render(i, htmltext):
+def render(i, htmltext, transparent=False):
     hp = os.path.join(SCENES, f"scene_{i:02d}.html")
     with open(hp, "w", encoding="utf-8") as f: f.write(htmltext)
     op = os.path.join(FRAMES, f"scene_{i:02d}.png")
     if os.path.exists(op): os.remove(op)
+    extra = ["--default-background-color=00000000"] if transparent else []
     subprocess.run([CHROME,"--headless=new","--disable-gpu","--hide-scrollbars","--no-sandbox",
         "--no-first-run","--user-data-dir="+os.path.join(SCRATCH,"cdp_movie"),
         "--force-device-scale-factor=1","--window-size=1920,1080","--virtual-time-budget=6000",
-        f"--screenshot={op}", "file:///"+hp.replace("\\","/")],
+        *extra, f"--screenshot={op}", "file:///"+hp.replace("\\","/")],
         capture_output=True)
     return op
 
+def is_video(h): return isinstance(h, tuple) and h[0] == "VIDEO"
+
 if "--assemble-only" not in sys.argv:
     for i,(h,_) in enumerate(S):
-        render(i, h)
+        if is_video(h):
+            render(i, h[2], transparent=True)   # scene PNG = the transparent overlay
+        else:
+            render(i, h)
         print("rendered", i)
     # verify all frames exist and are right size
     from PIL import Image
@@ -249,13 +265,33 @@ if "--assemble-only" not in sys.argv:
 durs = [d for _,d in S]
 n = len(S)
 inputs = []
-for i in range(n):
-    inputs += ["-loop","1","-t",f"{durs[i]:.3f}","-i",os.path.join(FRAMES,f"scene_{i:02d}.png")]
+for i,(h,d) in enumerate(S):
+    if is_video(h):
+        # loop the clip enough times to survive the 0.5x slow-mo, trim at filter stage
+        inputs += ["-stream_loop","6","-i",h[1]]
+    else:
+        inputs += ["-loop","1","-t",f"{d:.3f}","-i",os.path.join(FRAMES,f"scene_{i:02d}.png")]
 inputs += ["-i", SONG]
 
+# transparent caption overlays for video scenes come after the song input
+ov_idx = {}
+for i,(h,_) in enumerate(S):
+    if is_video(h):
+        ov_idx[i] = n + 1 + len(ov_idx)
+        inputs += ["-i", os.path.join(FRAMES, f"scene_{i:02d}.png")]
+
 fc = []
-for i in range(n):
+for i,(h,_) in enumerate(S):
     frames = max(2,int(round(durs[i]*FPS)))
+    if is_video(h):
+        # real clip: 0.5x slow-motion, full-bleed 1080p, muted; caption overlay on top
+        fc.append(
+          f"[{i}:v]setpts=2.0*PTS,fps={FPS},trim=duration={durs[i]:.3f},setpts=PTS-STARTPTS,"
+          f"scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,"
+          f"setsar=1[vv{i}];"
+          f"[vv{i}][{ov_idx[i]}:v]overlay=0:0:eof_action=repeat,fps={FPS},format=yuv420p[v{i}]"
+        )
+        continue
     # gentle center zoom 1.0 -> 1.06 (Ken Burns), output 1920x1080
     fc.append(
       f"[{i}:v]scale=2112:1188:force_original_aspect_ratio=increase,crop=2112:1188,"
