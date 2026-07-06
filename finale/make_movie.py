@@ -60,9 +60,9 @@ html,body{width:1920px;height:1080px;overflow:hidden;font-family:'Heebo','Segoe 
 .sq{width:430px;height:430px}
 .grid{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;align-items:center;max-width:1640px}
 .gcell{width:300px;height:330px;border-radius:24px;overflow:hidden;border:10px solid #fff;
-  box-shadow:0 18px 40px rgba(0,0,0,.22);background:#ddd;position:relative}
-.gcell img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
-.gname{position:absolute;bottom:0;left:0;right:0;background:rgba(109,40,217,.78);color:#fff;
+  box-shadow:0 18px 40px rgba(0,0,0,.22);background:#ddd;display:flex;flex-direction:column}
+.gcell img{width:100%;flex:1;min-height:0;object-fit:cover;object-position:center 30%}
+.gname{background:rgba(109,40,217,.9);color:#fff;
   font-weight:800;font-size:30px;text-align:center;padding:8px 4px}
 .quote{max-width:1400px;background:#fff;border-radius:36px;padding:70px 80px;
   box-shadow:0 30px 80px rgba(0,0,0,.22);position:relative;border-top:18px solid #FF7AB6}
@@ -83,9 +83,9 @@ CLOUDS = """
 <div class="cloud" style="width:180px;height:80px;bottom:90px;right:160px"></div>
 """
 
-def page(body, bg_style=""):
+def page(body, bg_style="", clouds=True):
     return f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
-<style>{CSS}{bg_style}</style></head><body><div class="stage">{CLOUDS}{body}</div></body></html>"""
+<style>{CSS}{bg_style}</style></head><body><div class="stage">{CLOUDS if clouds else ""}{body}</div></body></html>"""
 
 def chip(t):     return f'<div class="chip">{html.escape(t)}</div>' if t else ""
 def stepno(t):   return f'<div class="step-no">{html.escape(t)}</div>' if t else ""
@@ -94,7 +94,7 @@ def stepno(t):   return f'<div class="step-no">{html.escape(t)}</div>' if t else
 def cover(title, subtitle, bg):
     bgs = f".stage{{background:linear-gradient(rgba(8,6,16,.55),rgba(109,40,217,.55)),url('{bg}') center/cover}}"
     body = f'<div class="hero-panel"><div class="title strong">{title}</div><div class="subtitle">{html.escape(subtitle)}</div></div>'
-    return page(body, bgs)
+    return page(body, bgs, clouds=False)  # the map art has its own clouds — overlay circles interfere
 
 def textscene(stmt, step_chip="", step="", accent="#DB2777"):
     body = chip(step_chip)+stepno(step)+f'<div class="bigstmt">{stmt}</div>'
@@ -137,7 +137,7 @@ def videoscene(rel, cap, step_chip="", step=""):
 def finale(title, sub, bg):
     bgs = f".stage{{background:linear-gradient(rgba(8,6,16,.50),rgba(219,39,119,.50)),url('{bg}') center/cover}}"
     body = f'<div class="hero-panel"><div class="title strong">{title}</div><div class="subtitle">{html.escape(sub)}</div><div class="heart">🎉❤️🎉</div></div>'
-    return page(body, bgs)
+    return page(body, bgs, clouds=False)
 
 # ---------- the narrative ----------
 MAP = furl("map-v3.jpg")
@@ -231,10 +231,64 @@ S.append((textscene('באהבה אינסופית,<br><span class="hl">המשפח
 print(f"{len(S)} scenes, raw sum = {sum(d for _,d in S):.1f}s")
 
 # ---------- render scenes to PNG ----------
-def render(i, htmltext, transparent=False):
-    hp = os.path.join(SCENES, f"scene_{i:02d}.html")
+# ---------- karaoke subtitles ----------
+# (start, end, line) — the song lyrics timed to "Song for the movie.mpeg"
+# (whisper word timestamps + manual review; the singer's "עוצר" transcribes as
+# "רוצה" but the timings are solid). Shown as a strip pinned to the very bottom
+# edge, below every caption/chip, only while that line is sung. The reel uses
+# the song's first ~185.5s; the final chorus lines land past the fade and are
+# clamped/omitted.
+LYRICS = [
+    (36.7, 41.4,  "עוד לפני שהשמש עולה,"),
+    (42.7, 46.0,  "כבר יש לך תוכנית בראש,"),
+    (46.2, 51.2,  "מסך נדלק, משחק מתחיל,"),
+    (51.9, 56.0,  "עולם שלם שאתה רוצה לכבוש."),
+    (57.0, 60.7,  "צחוק מתגלגל בכל הבית,"),
+    (62.2, 66.0,  "תמיד מוצא סיבה לחייך,"),
+    (66.5, 70.7,  "שואל מיליון שאלות בדרך,"),
+    (71.1, 75.2,  "חוקר עולם, רוצה לדעת איך."),
+    (75.9, 78.6,  "ואם נופלים אז קמים,"),
+    (78.8, 81.4,  "יש בך משהו שלא נגמר,"),
+    (81.4, 84.9,  "איזה כוח, איזה דבר."),
+    (84.9, 87.8,  "גיא, גיא"),
+    (87.8, 90.1,  "גיא, אתה לא עוצר,"),
+    (90.4, 95.0,  "ברגע קשה אתה חזק יותר,"),
+    (95.0, 100.6, "ילד של אור, של חלומות,"),
+    (100.6, 104.0, "תזכור - אתה לא עוצר."),
+    (104.0, 106.6, "תזכור! אתה לא עוצר!"),
+    (109.4, 114.0, "תזכור! אתה לא עוצר!"),
+    (125.0, 128.7, "נטע תמיד לידך צוחקת,"),
+    (129.4, 133.6, "מיקה שומרת שלא תיפול,"),
+    (134.3, 141.0, "יובלי, אוריקי ובן אוהבים אותך,"),
+    (141.0, 143.4, "כי אתה פשוט גדול."),
+    (144.3, 147.2, "במים אתה מוצא את הקצב,"),
+    (147.6, 149.4, "על הדשא אתה לא מוותר,"),
+    (149.8, 152.4, "עם חץ וקשת ישר למטרה,"),
+    (152.4, 156.0, "אתה מראה לכול שאפשר יותר."),
+    (157.1, 160.0, "ופתאום שלוש עשרה שנים,"),
+    (160.0, 162.3, "עברו לנו כמו דקה,"),
+    (162.3, 167.2, "אנחנו מסתכלים עליך, גיא,"),
+    (167.2, 170.1, "והלב מתמלא אהבה."),
+    (170.1, 173.3, "גיא, אתה לא עוצר,"),
+    (173.3, 178.1, "ברגע קשה אתה חזק יותר,"),
+    (178.1, 183.0, "ילד של אור, של חלומות,"),
+    (183.8, 185.3, "תזכור - אתה לא עוצר."),
+]
+
+def sub_html(line):
+    css = (".stage{background:transparent !important}"
+           ".cloud{display:none}"
+           ".sub{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);"
+           "font-family:'Heebo',sans-serif;font-weight:800;font-size:36px;color:#fff;"
+           "background:rgba(18,13,14,.55);padding:5px 30px;border-radius:999px;"
+           "text-shadow:0 2px 6px rgba(0,0,0,.65);white-space:nowrap}")
+    return page(f'<div class="sub">{html.escape(line)}</div>', css, clouds=False)
+
+def render(i, htmltext, transparent=False, name=None):
+    stem = name or f"scene_{i:02d}"
+    hp = os.path.join(SCENES, f"{stem}.html")
     with open(hp, "w", encoding="utf-8") as f: f.write(htmltext)
-    op = os.path.join(FRAMES, f"scene_{i:02d}.png")
+    op = os.path.join(FRAMES, f"{stem}.png")
     if os.path.exists(op): os.remove(op)
     extra = ["--default-background-color=00000000"] if transparent else []
     subprocess.run([CHROME,"--headless=new","--disable-gpu","--hide-scrollbars","--no-sandbox",
@@ -260,6 +314,12 @@ if "--assemble-only" not in sys.argv:
         assert os.path.exists(op), f"missing frame {i}"
         assert Image.open(op).size == (1920,1080), f"bad size {i}"
     print("all frames OK")
+
+# subtitle strips render on demand (also under --assemble-only)
+for k, (_s, _e, line) in enumerate(LYRICS):
+    if not os.path.exists(os.path.join(FRAMES, f"sub_{k:02d}.png")):
+        render(0, sub_html(line), transparent=True, name=f"sub_{k:02d}")
+        print("rendered sub", k)
 
 # ---------- assemble with ffmpeg (zoom + xfade + audio) ----------
 durs = [d for _,d in S]
@@ -295,11 +355,9 @@ for i,(h,_) in enumerate(S):
           f"[vv{i}][{ov_idx[i]}:v]overlay=0:0:eof_action=repeat,fps={FPS},format=yuv420p[v{i}]"
         )
         continue
-    # gentle center zoom 1.0 -> 1.06 (Ken Burns), output 1920x1080
+    # static frame (the zoompan Ken-Burns effect produced a visible tremble — removed)
     fc.append(
-      f"[{i}:v]scale=2112:1188:force_original_aspect_ratio=increase,crop=2112:1188,"
-      f"zoompan=z='min(zoom+0.00035,1.06)':d={frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
-      f"s=1920x1080:fps={FPS},setsar=1,format=yuv420p[v{i}]"
+      f"[{i}:v]scale=1920:1080,setsar=1,fps={FPS},format=yuv420p[v{i}]"
     )
 # xfade chain
 prev = "v0"; acc = durs[0]
@@ -310,12 +368,19 @@ for i in range(1,n):
     acc = acc + durs[i] - XF
     prev = out
 total = acc
+# karaoke: overlay each lyric strip on the finished xfade chain during its window
+cur = prev
+for k, (ls, le, _line) in enumerate(LYRICS):
+    idx = n + 1 + len(ov_idx) + k
+    inputs += ["-loop","1","-t",f"{total:.3f}","-i",os.path.join(FRAMES,f"sub_{k:02d}.png")]
+    fc.append(f"[{cur}][{idx}:v]overlay=0:0:enable='between(t,{ls:.2f},{le:.2f})'[sub{k}]")
+    cur = f"sub{k}"
 # audio: trim to video length + 2.5s fade out
 fc.append(f"[{n}:a]atrim=0:{total:.3f},afade=t=out:st={max(0,total-3):.3f}:d=3[aud]")
 filtergraph = ";".join(fc)
 
 cmd = [FFMPEG,"-y",*inputs,"-filter_complex",filtergraph,
-       "-map",f"[{prev}]","-map","[aud]",
+       "-map",f"[{cur}]","-map","[aud]",
        "-c:v","libx264","-pix_fmt","yuv420p","-r",str(FPS),"-preset","medium","-crf","20",
        "-c:a","aac","-b:a","192k","-shortest",OUT]
 print("total video length: %.2fs"%total)

@@ -1,3 +1,8 @@
+// Show the Hero Book button on the quest map? Set to false to keep the book
+// (and the finale movies in its footer) hidden from Guy until the parents
+// choose to reveal them; the painted button on the map art stays inert.
+const HERO_BOOK_ON_MAP = false;
+
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
     // === STEAL A BRAINROT VOXEL CHARACTERS — positioned per user arrows ===
@@ -198,10 +203,11 @@ function renderQuestMap() {
     // Draw SVG path connecting ALL quests
     drawMapPath(svg, allQuests);
 
-    // Hero Book node — always available (the map art has a painted "פתח" button,
-    // so it must always respond). The book shows the chapters finished so far
-    // and grows with every completed step. Hotspot covers the painted book + button.
-    {
+    // Hero Book node. HERO_BOOK_ON_MAP=false hides it (and with it the finale
+    // movies in the book footer) — the parents want to reveal the book and the
+    // movies to Guy at a separate occasion, not during the quest. Flip back to
+    // true (top of app.js) to restore the map button.
+    if (HERO_BOOK_ON_MAP) {
         const bookNode = document.createElement('div');
         bookNode.className = 'map-node map-node-treasure';
         bookNode.style.left = '78%';
