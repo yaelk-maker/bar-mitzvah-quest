@@ -21,18 +21,18 @@ def qr_datauri(url):
 #           personal Google account. While None, the QR falls back to `gh` for PREVIEW ONLY.
 #   gh    : current GitHub-Pages file path (preview fallback; will be retired with the workplace acct)
 GREETERS = [
-    {"name":"אבא ואמא",              "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - אבא ואמא.mp4"},
-    {"name":"נטע ומיקה",             "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - נטע ומיקה.mp4"},
-    {"name":"סבתא סווטה",            "photo":"photos/סבתא סווטה (מצד אמא).jpeg", "yt":None, "gh":"photos/Videos - step 9/סרטון - סווטה.mp4"},
-    {"name":"סבא מישה וסבתא מרינה",  "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - מרינה ומישה.mp4"},
-    {"name":"משפחת שפירא",           "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - משפחת שפירא.mp4"},
-    {"name":"אירה ותום",            "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - אירה ותום.mp4"},
-    {"name":"רעיה",                 "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - רעיה.mp4"},
-    {"name":"אליה",                 "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - אליה.mp4"},
-    {"name":"ציליה",                "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - ציליה.mp4"},
-    {"name":"יובל והמשפחה",         "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - יובל והמשפחה.mp4"},
-    {"name":"רפי",                  "photo":None,                              "yt":None, "gh":"photos/Videos - step 9/סרטון - רפי.mp4"},
-    {"name":"נטע — הטיקטוק שלנו",    "photo":"photos/נטע אחות בכורה.jpg",        "yt":None, "gh":"photos/neta_and_guy_video.mp4"},
+    {"name":"אבא ואמא",              "photo":None,                              "yt":"https://youtu.be/4jHyyvb70Ks",              "gh":"photos/Videos - step 9/סרטון - אבא ואמא.mp4"},
+    {"name":"נטע ומיקה",             "photo":None,                              "yt":"https://youtu.be/Qa4KVhCRpjc",              "gh":"photos/Videos - step 9/סרטון - נטע ומיקה.mp4"},
+    {"name":"סבתא סווטה",            "photo":"photos/סבתא סווטה (מצד אמא).jpeg", "yt":"https://youtu.be/Cf5mnhRm-As",              "gh":"photos/Videos - step 9/סרטון - סווטה.mp4"},
+    {"name":"סבא מישה וסבתא מרינה",  "photo":None,                              "yt":"https://youtu.be/MUYZBT6HUPI",              "gh":"photos/Videos - step 9/סרטון - מרינה ומישה.mp4"},
+    {"name":"משפחת שפירא",           "photo":None,                              "yt":"https://youtu.be/XwWagA9NWfU",              "gh":"photos/Videos - step 9/סרטון - משפחת שפירא.mp4"},
+    {"name":"אירה ותום",            "photo":None,                              "yt":"https://youtu.be/AOkEkL9tOhI",              "gh":"photos/Videos - step 9/סרטון - אירה ותום.mp4"},
+    {"name":"רעיה",                 "photo":None,                              "yt":"https://youtu.be/EMq3iPnrWFM",              "gh":"photos/Videos - step 9/סרטון - רעיה.mp4"},
+    {"name":"אליה",                 "photo":None,                              "yt":"https://youtube.com/shorts/R8SSJwrQb04",    "gh":"photos/Videos - step 9/סרטון - אליה.mp4"},
+    {"name":"ציליה",                "photo":None,                              "yt":"https://youtube.com/shorts/ow_YiF40f_I",    "gh":"photos/Videos - step 9/סרטון - ציליה.mp4"},
+    {"name":"יובל והמשפחה",         "photo":None,                              "yt":"https://youtu.be/YULbuPcMgOQ",              "gh":"photos/Videos - step 9/סרטון - יובל והמשפחה.mp4"},
+    {"name":"רפי",                  "photo":None,                              "yt":"https://youtu.be/WDOedGcOzdM",              "gh":"photos/Videos - step 9/סרטון - רפי.mp4"},
+    {"name":"הטיקטוק של נטע וגיא",   "photo":"photos/נטע אחות בכורה.jpg",        "yt":"https://youtube.com/shorts/Ji0JC1f6ZF0",    "gh":"photos/neta_and_guy_video.mp4"},
 ]
 def qr_target(g):
     if g.get("yt"): return g["yt"]
