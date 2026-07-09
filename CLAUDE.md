@@ -139,12 +139,12 @@ Step names match the island map (`quest.name` is the single source of truth — 
 | Quest | Status | Content |
 |-------|--------|---------|
 | 1 - עץ השורשים | Complete | Family flow + tree |
-| 2 - משחק הכרות | Complete (**optional** — never blocks) | Inspiration cards + checklist + textarea (live Kahoot game) |
+| 2 - משחק הכרות | Complete (**optional** — never blocks) | Inspiration cards + single-checkbox checklist (live Kahoot game; "מי זכה" textarea removed 2026-07-09) |
 | 3 - חקירה משפחתית | Complete | 4-step investigation quiz + images |
 | 4 - הגיבור שנולד | Complete | Accordion + power stones + message bubbles |
 | 5 - המוח המיוחד שלי | Complete | Meters + brain map + flip cards |
 | 6 - השבט שלי | Complete | 2x drag & drop (twins) + Neta trivia envelope |
-| 7 - הדרך שעשיתי | Complete | Cabinet + factory + trophy |
+| 7 - הדרך שעשיתי | Complete | Cabinet + trophy (medal-factory task removed 2026-07-09; its renderer/validation cases remain in app.js, unused) |
 | 8 - Super powers | Complete | 8 scattered envelope cards (real messages) + power select |
 | 9 - האנשים שלי | Complete | 11 greeting-video cards (incl. אבא ואמא + נטע ומיקה, added 2026-07-05) + overlay player + emotion board |
 | 10 - מי אני עכשיו | Complete | `card-builder` — Bar Mitzvah trading card (title / secret weapon / next-year goal) + hero photo |

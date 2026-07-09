@@ -767,7 +767,7 @@ function openQuest(questId) {
                                     value="${flowSaved[mKey] || ''}"
                                     placeholder="מילה אחת...">
                             ` : `
-                                <div class="flow-hero-message">🎉 זה אתה! סיימת להכיר את כל המשפחה!</div>
+                                <div class="flow-hero-message">🎉 איזה יופי אתה מכיר את כל המשפחה!</div>
                                 <label class="flow-input-label">ומילה אחת או שתיים שמתארות אותך?</label>
                                 <input type="text" class="task-input-small flow-word-input"
                                     data-quest="${questId}" data-key="${mKey}"
@@ -1424,6 +1424,13 @@ function openQuest(questId) {
                                     setTimeout(() => {
                                         closeModal();
                                         renderNetaEnvelope();
+                                        neWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        // Brief grace window: an eager Enter/ArrowLeft press right after
+                                        // the reveal (Guy's usual "move to next" gesture elsewhere in the
+                                        // app) must not instantly fire the global complete/back shortcut
+                                        // and whisk him past Neta's video before he's seen it.
+                                        document.body.classList.add('ne-just-revealed');
+                                        setTimeout(() => document.body.classList.remove('ne-just-revealed'), 4000);
                                     }, 1100);
                                 }
                             });
@@ -2631,8 +2638,11 @@ function getActiveScreen() {
 document.addEventListener('keydown', (e) => {
     if (document.getElementById('passcode-overlay')) return;
     // Don't let map/quest shortcuts fire behind a modal/overlay (could orphan it
-    // or complete a quest behind the Neta trivia popup).
-    if (document.querySelector('.ne-modal-overlay') || document.querySelector('.cin-overlay')) return;
+    // or complete a quest behind the Neta trivia popup), or in the few seconds
+    // right after Neta's envelope reveals her video (an eager Enter/ArrowLeft
+    // press there must not auto-complete the quest and jump back to the map
+    // before the video's even been seen).
+    if (document.querySelector('.ne-modal-overlay') || document.querySelector('.cin-overlay') || document.body.classList.contains('ne-just-revealed')) return;
 
     const tag = document.activeElement?.tagName;
     const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
