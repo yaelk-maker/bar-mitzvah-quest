@@ -5255,3 +5255,19 @@ select.task-select option { background: #fff; color: #2E1065; }
     font-size: clamp(0.42rem, 2cqi, 0.6rem);
   }
 }
+
+/* ===== Locked Hero Book (HERO_BOOK_ON_MAP=false): 🔒 badge over the painted
+   button; the hotspot still answers every tap with a gentle toast ===== */
+.map-node-treasure .map-node-status.st-locked {
+  top: auto;
+  bottom: 4%;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #FBBF24, #D97706);
+  border: 2.5px solid #fff;
+  font-size: 17px;
+  line-height: 30px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(217,119,6,0.45);
+}

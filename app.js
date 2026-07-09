@@ -203,25 +203,32 @@ function renderQuestMap() {
     // Draw SVG path connecting ALL quests
     drawMapPath(svg, allQuests);
 
-    // Hero Book node. HERO_BOOK_ON_MAP=false hides it (and with it the finale
-    // movies in the book footer) — the parents want to reveal the book and the
-    // movies to Guy at a separate occasion, not during the quest. Flip back to
-    // true (top of app.js) to restore the map button.
+    // Hero Book node. While HERO_BOOK_ON_MAP=false the book is LOCKED (not
+    // hidden): the painted "פתח" button on map-v3.jpg can't be removed, and a
+    // dead button is confusing — so the hotspot stays clickable, shows a 🔒
+    // badge, and answers every tap with a gentle "opens at the end of the
+    // journey" toast. The parents will reveal the book (and the finale movies
+    // in its footer) at a separate occasion — flip the flag (top of app.js)
+    // and the same button simply starts opening the book.
+    const bookNode = document.createElement('div');
+    bookNode.className = 'map-node map-node-treasure' + (HERO_BOOK_ON_MAP ? '' : ' map-node-treasure-locked');
+    bookNode.style.left = '78%';
+    bookNode.style.top = '76%';
+    bookNode.innerHTML = `
+        <div class="map-node-circle map-node-treasure-circle">
+            <span class="map-node-emoji">📖</span>
+        </div>
+        <div class="map-node-label">ספר הגיבור שלי</div>
+        <div class="map-node-start">פתח →</div>
+        ${HERO_BOOK_ON_MAP ? '' : '<div class="map-node-status st-locked">🔒</div>'}
+    `;
     if (HERO_BOOK_ON_MAP) {
-        const bookNode = document.createElement('div');
-        bookNode.className = 'map-node map-node-treasure';
-        bookNode.style.left = '78%';
-        bookNode.style.top = '76%';
-        bookNode.innerHTML = `
-            <div class="map-node-circle map-node-treasure-circle">
-                <span class="map-node-emoji">📖</span>
-            </div>
-            <div class="map-node-label">ספר הגיבור שלי</div>
-            <div class="map-node-start">פתח →</div>
-        `;
         bookNode.addEventListener('click', () => openHeroBook());
-        map.appendChild(bookNode);
+    } else {
+        bookNode.addEventListener('click', () =>
+            showToast('🎁 ספר הגיבור שלי ייפתח ברגע מיוחד בסוף המסע!'));
     }
+    map.appendChild(bookNode);
 
     // Fixed current-step banner — quest.name now matches the island map names.
     const stepBanner = document.getElementById('current-step-banner');
