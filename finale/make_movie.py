@@ -32,7 +32,7 @@ CSS = """
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:1920px;height:1080px;overflow:hidden;font-family:'Heebo','Segoe UI',Arial,sans-serif}
 .stage{width:1920px;height:1080px;position:relative;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
+  align-items:center;justify-content:center;padding-bottom:135px;
   background:linear-gradient(180deg,#8fd0ec 0%,#b9e4f3 40%,#dff3e8 100%);overflow:hidden}
 .cloud{position:absolute;border-radius:50%;background:rgba(255,255,255,.75);filter:blur(2px)}
 .chip{position:absolute;top:64px;right:64px;font-family:'Baloo 2';font-weight:800;
@@ -64,6 +64,10 @@ html,body{width:1920px;height:1080px;overflow:hidden;font-family:'Heebo','Segoe 
 .gcell img{width:100%;flex:1;min-height:0;object-fit:cover;object-position:center 30%}
 .gname{background:rgba(109,40,217,.9);color:#fff;
   font-weight:800;font-size:30px;text-align:center;padding:8px 4px}
+.grid.wide{max-width:1780px}
+.grid.wide .gcell{width:252px;height:286px;border-width:8px}
+.grid.wide .gname{font-size:25px;padding:6px 4px}
+.gcell.fit-contain img{object-fit:contain;background:#eef3f6}
 .quote{max-width:1400px;background:#fff;border-radius:36px;padding:70px 80px;
   box-shadow:0 30px 80px rgba(0,0,0,.22);position:relative;border-top:18px solid #FF7AB6}
 .qmark{font-family:'Bungee';font-size:150px;color:#FFAFC4;line-height:.2;height:60px}
@@ -88,7 +92,7 @@ def page(body, bg_style="", clouds=True):
 <style>{CSS}{bg_style}</style></head><body><div class="stage">{CLOUDS if clouds else ""}{body}</div></body></html>"""
 
 def chip(t):     return f'<div class="chip">{html.escape(t)}</div>' if t else ""
-def stepno(t):   return f'<div class="step-no">{html.escape(t)}</div>' if t else ""
+def stepno(t):   return ""  # top-left number removed (was a duplicate of the step chip top-right)
 
 # ---------- scene builders ----------
 def cover(title, subtitle, bg):
@@ -113,10 +117,14 @@ def duo(p1, p2, cap, klass="portrait", step_chip="", step=""):
       <div class="cap">{cap}</div></div>"""
     return page(body)
 
-def grid(cells, title, step_chip="", step=""):
-    g = "".join(f'<div class="gcell"><img src="{src}"><div class="gname">{html.escape(n)}</div></div>' for src,n in cells)
-    body = chip(step_chip)+stepno(step)+f'<div class="col"><div class="cap">{title}</div><div class="grid">{g}</div></div>'
-    return page(body)
+def grid(cells, title, step_chip="", step="", grid_cls="", clouds=True):
+    def one(c):
+        src, n = c[0], c[1]
+        cls = c[2] if len(c) > 2 else ""   # optional per-cell class, e.g. "fit-contain"
+        return f'<div class="gcell {cls}"><img src="{src}"><div class="gname">{html.escape(n)}</div></div>'
+    g = "".join(one(c) for c in cells)
+    body = chip(step_chip)+stepno(step)+f'<div class="col"><div class="cap">{title}</div><div class="grid {grid_cls}">{g}</div></div>'
+    return page(body, clouds=clouds)
 
 def quote(text, frm, step_chip="", step=""):
     body = chip(step_chip)+stepno(step)+f"""<div class="quote">
@@ -130,7 +138,7 @@ def videoscene(rel, cap, step_chip="", step=""):
     rendered to a transparent PNG and composited over the clip at assembly."""
     ov_css = (".stage{background:transparent !important}"
               ".cloud{display:none}"
-              f".vcap{{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);}}")
+              f".vcap{{position:absolute;bottom:170px;left:50%;transform:translateX(-50%);}}")
     body = chip(step_chip) + stepno(step) + f'<div class="vcap"><div class="cap">{cap}</div></div>'
     return ("VIDEO", os.path.join(PROJ, rel), page(body, ov_css))
 
@@ -176,7 +184,7 @@ S.append((single(P("placeholder_nicu_twins.jpg"),
     'נולדתי מוקדם, פג קטנטן ולוחם.<br>כבר אז — הייתי גיבור', klass="land",
     step_chip="שלב 4 · הגיבור שנולד", step="4"), 11))
 S.append((textscene(
-    'מהקרב הראשון יצאתי עם כוחות:<br><span class="hl">חוזק · אומץ · עקשנות · נחישות · אמונה</span>',
+    'מהקרב הראשון יצאתי עם כוחות:<br><span class="hl">חוזק פנימי · עקשנות · אומץ<br>יכולת להתמודד · נחישות · אמונה בעצמי</span>',
     step_chip="שלב 4 · הגיבור שנולד", step="4"), 8))
 
 # Step 5 - brain
@@ -214,10 +222,21 @@ S.append((quote(
     'כוח־העל שלך הוא למצוא פתרון טכנולוגי לכל דבר, וזיכרון מדהים. אתה חושב כמו ממציא אמיתי 💡',
     '— אודליה', step_chip="שלב 8 · Super Powers", step="8"), 10))
 
-# Step 9 - my people
-S.append((single(P("Guy with Girls.jpg"),
-    'אני לא לבד במסע —<br>מוקף באנשים שאוהבים אותי', klass="land",
-    step_chip="שלב 9 · האנשים שלי", step="9"), 10))
+# Step 9 - my people (collage of everyone who filmed a greeting — same photos as the PDF QR cards)
+S.append((grid([
+    (P("greeter_mom_dad.jpeg"),     "אבא ואמא"),
+    (P("greeter_netta_mika.png"),   "נטע ומיקה"),
+    (P("greeter_sveta.jpeg"),       "סבתא סווטה"),
+    (P("greeter_marina_misha.jpeg"),"סבא מישה ומרינה"),
+    (P("greeter_shapira.png"),      "משפחת שפירא"),
+    (P("greeter_ira_tom.png"),      "אירה ותום"),
+    (P("greeter_raya.png"),         "רעיה"),
+    (P("greeter_alya.jpg"),         "אליה"),
+    (P("greeter_zilya.png"),        "ציליה"),
+    (P("greeter_yuval_family.png"), "יובל והמשפחה", "fit-contain"),
+    (P("greeter_rafi.png"),         "רפי"),
+], 'אני לא לבד במסע — כל מי שבירך אותי 💌',
+   step_chip="שלב 9 · האנשים שלי", step="9", grid_cls="wide", clouds=False), 11))
 
 # Step 10 - who I am now
 S.append((single(P("Guy - final step.jpeg"),
@@ -278,10 +297,10 @@ LYRICS = [
 def sub_html(line):
     css = (".stage{background:transparent !important}"
            ".cloud{display:none}"
-           ".sub{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);"
-           "font-family:'Heebo',sans-serif;font-weight:800;font-size:36px;color:#fff;"
-           "background:rgba(18,13,14,.55);padding:5px 30px;border-radius:999px;"
-           "text-shadow:0 2px 6px rgba(0,0,0,.65);white-space:nowrap}")
+           ".sub{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);"
+           "font-family:'Heebo',sans-serif;font-weight:900;font-size:58px;color:#3A0A6B;"
+           "text-shadow:0 0 8px #fff,3px 3px 0 #fff,-3px 3px 0 #fff,3px -3px 0 #fff,"
+           "-3px -3px 0 #fff,0 0 16px #fff;white-space:nowrap;letter-spacing:.5px}")
     return page(f'<div class="sub">{html.escape(line)}</div>', css, clouds=False)
 
 def render(i, htmltext, transparent=False, name=None):

@@ -235,6 +235,7 @@ def transcribe_segments(data):
 def main():
     transcribe = "--transcribe" in sys.argv
     skip_base = "--skip-base" in sys.argv
+    short_only = "--short-only" in sys.argv  # build only Hero-Movie-Short.mp4 (skip the long cut)
     os.makedirs(BUILD, exist_ok=True)
 
     data = load_segments()
@@ -298,11 +299,12 @@ def main():
         lt = os.path.join(BUILD, f"lt_{safe}.png")
         make_lower_third(name, lt, label=rest[0] if rest else None)
 
-        full = os.path.join(BUILD, f"full_{safe}.mp4")
-        if not os.path.exists(full):
-            print("encoding full:", fname)
-            encode_clip(src, full, lower_third=lt)
-        long_parts.append(full)
+        if not short_only:
+            full = os.path.join(BUILD, f"full_{safe}.mp4")
+            if not os.path.exists(full):
+                print("encoding full:", fname)
+                encode_clip(src, full, lower_third=lt)
+            long_parts.append(full)
 
         seg = data["segments"].get(fname)
         if seg:
@@ -319,11 +321,13 @@ def main():
 
     out_long = os.path.join(FIN, "Hero-Movie-Long.mp4")
     out_short = os.path.join(FIN, "Hero-Movie-Short.mp4")
-    print("concatenating long version...")
-    concat(long_parts, out_long)
+    if not short_only:
+        print("concatenating long version...")
+        concat(long_parts, out_long)
     print("concatenating short version...")
     concat(short_parts, out_short)
-    for p in (out_long, out_short):
+    written = (out_short,) if short_only else (out_long, out_short)
+    for p in written:
         print("wrote %s (%.1f MB, %.0f sec)" % (os.path.basename(p), os.path.getsize(p) / 1e6, duration_of(p)))
 
 
