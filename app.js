@@ -2573,8 +2573,8 @@ function openHeroBook() {
         `;
     }
 
-    // The finale movies unlock with the full journey
-    ['btn-movie', 'btn-movie-long'].forEach(id => {
+    // The finale movies + the printed book unlock with the full journey
+    ['btn-printed-book', 'btn-movie', 'btn-movie-long'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.style.display = doneCount === QUESTS.length ? '' : 'none';
     });
@@ -2586,6 +2586,15 @@ function openHeroBook() {
 function exportPDF() {
     showToast('פתח את תפריט ההדפסה (Ctrl+P) ובחר "שמור כ-PDF"');
     setTimeout(() => window.print(), 500);
+}
+
+// Open the printed keepsake book (the 24-page designed edition) in a new tab.
+// This is the real print/PDF artifact — exportPDF() above only prints this screen.
+// Source + assets live in design-book/; design-book/Hero-Storybook-24.pdf is the
+// exported print file.
+function openPrintedBook() {
+    const win = window.open('design-book/Hero-Storybook-24.html', '_blank');
+    if (!win) showToast('פתח את החלון הקופץ כדי לראות את הספר המודפס 📖');
 }
 
 // Play a finale movie in the cinema overlay.

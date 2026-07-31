@@ -1,2 +1,15 @@
 # Private: Firebase exports of Guy's real quest answers — repo is PUBLIC, never commit these
 backups/
+
+# Scratch / abandoned working assets (not used by the app)
+Design/
+Photos for PDF/
+Bar Mizvah photos/
+map-v4.jpg
+new.style.bundled.css
+photos/guy_soccer_frame.jpg
+*.docx
+
+# Generated: the self-contained copy of the design book (8.7 MB of inlined duplicates of
+# design-book/assets/). Rebuild any time with:  python design-book/make_selfcontained.py
+design-book/Hero-Storybook-24-FIXED.html

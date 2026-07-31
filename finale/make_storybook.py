@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """Build a print-ready A4 'Hero Book' storybook (storybook.html) for Guy's journey.
 
 v2 (2026-07-11): rebuilt around Guy's REAL answers (source: backups/quest-progress-
@@ -27,6 +27,7 @@ MOVIE_LONG = "https://youtu.be/_-aJujjaz5g"              # 💌 סרט הברכ�
 KAHOOT_URL = "https://guy-quiz-2026.web.app/host.html"
 SONG_URL   = f"{PAGES_BASE}/" + urllib.parse.quote("Song for the movie.mpeg")
 NETA_TIKTOK = "https://youtube.com/shorts/Ji0JC1f6ZF0"    # הטיקטוק של נטע וגיא
+ALIYAH_URL  = "https://youtube.com/shorts/Va3sQpAf9r8"    # 🕍 העלייה לתורה של גיא (YouTube)
 
 # Quest-9 greeting cards (11 — the Neta TikTok moved to the step-6 page).
 #   photo : repo-relative photo of the greeter (None -> styled "photo coming" placeholder)
@@ -211,19 +212,52 @@ def cover():
   </div>
 </section>"""
 
-def intro():
-    return """
-<section class="page light intro">
-  <h2 class="ititle">לגיא היקר 💙</h2>
-  <p class="ibody">
-    כל גיבור מתחיל את המסע שלו במקום אחד — ומגיע רחוק הרבה יותר ממה שחשב.<br><br>
-    הספר הזה מספר את הסיפור שלך: מאיפה באת, את הקרב הראשון שניצחת כשהיית פג קטנטן,
-    את הכוחות המיוחדים שגילית בדרך, ואת כל האנשים שאוהבים אותך ומלווים אותך.<br><br>
-    עברת עשרה שלבים במסע — וכאן הם כולם, במקום אחד, עם התשובות האמיתיות שלך, כדי שתזכור תמיד:
-    <b>אתה גיבור, בדיוק כמו שאתה.</b>
-  </p>
-  <div class="iheart">⭐</div>
+def blessing_pages():
+    # ברכה של אמא ואבא — ported from the claude.ai/design project
+    # "ברכה לגיא - קלאסי.dc.html" (Frank Ruhl Libre serif, cream paper, gold accent).
+    b = lambda t: f'<strong class="bl-strong">{t}</strong>'
+    p1 = f"""
+<section class="page blpage">
+  <div class="bl-titlewrap">
+    <h1 class="bl-title">גיא שלנו</h1>
+    <div class="bl-div"><div class="bl-l bl-l1"></div><div class="bl-diamond"></div><div class="bl-l bl-l2"></div></div>
+  </div>
+  <div class="bl-body">
+    <p>אנחנו מסתכלים עליך היום, עומד כאן בבית הכנסת, וקשה לנו להאמין שהרגע הזה באמת הגיע.</p>
+    <p>אנחנו שומעים אותך קורא את הפרשה, ורואים לא רק ילד שחוגג בר מצווה — אלא ילד {b('שבמשך כל החיים שלו בוחר, פעם אחר פעם, לא לוותר.')}</p>
+    <p>כשנולדת, היו לנו הרבה מאוד חששות. הדרך קדימה לא תמיד הייתה ברורה. אבל אם יש משהו שלימדת אותנו לאורך השנים, זה {b('שהדרך שלך תמיד הייתה רק שלך.')} אתה לא מחפש את הדרך הקלה — אתה פשוט מחליט לאן אתה רוצה להגיע, וממשיך לצעוד.</p>
+    <p class="bl-mid">מי שמכיר אותך יודע בדיוק מי אתה.</p>
+    <p>ילד סקרן, שלא מפסיק לשאול שאלות. ילד עקשן — ולא תמיד פשוט להיות ההורים של ילד עקשן. אבל עם השנים הבנו שהעקשנות הזאת היא אחת המתנות הכי גדולות שלך. היא זו שגורמת לך להאמין בעצמך, להתעקש על מה שחשוב לך, ולהמשיך קדימה גם כשלא קל.</p>
+    <p>ומעל הכול — אתה ילד עם לב ענק, שמעניק כל כך הרבה אהבה לכל מי שסביבו.</p>
+    <p>אחד הדברים שהכי מרגשים אותנו אצלך הוא לראות איך אתה לא נותן לשום דבר לעצור אותך בדרך שלך.</p>
+    <p class="bl-mid">יש סיפור אחד שתמיד יזכיר לנו בדיוק מי אתה.</p>
+    <p>לפני כמה שנים, אחרי הניתוח ברגל, היית עם גבס. הרופא ביקש שתלך עם הליכון, כדי להקל עליך. אנחנו כל כך רצינו שתקשיב לו ותעשה לעצמך את החיים קצת יותר קלים. אבל אתה החלטת אחרת. בכל פעם שביקשנו שתישען על ההליכון, פשוט הרמת אותו בידיים והמשכת ללכת בלעדיו. במקום שהוא יעזור לך — הוא רק הכביד עליך.</p>
+    <p>באותם רגעים, אני מודה, זה גם קצת הוציא אותי מדעתי.</p>
+  </div>
 </section>"""
+    p2 = f"""
+<section class="page blpage">
+  <div class="bl-body">
+    <p>אבל היום אנחנו מבינים שזו בדיוק הדרך שלך. אתה יודע מה אתה רוצה, אתה מאמין בעצמך, ואתה לא מוותר לעצמך. לפעמים התפקיד שלנו כהורים הוא לעזור לך למצוא את הדרך הנכונה — אבל אין לנו ספק שהעקשנות הזאת היא גם מה שמביא אותך לכל כך הרבה הישגים.</p>
+    <p>גם בדרך לבר המצווה ראינו את זה שוב. בהתחלה חשבת שאולי יהיה קל יותר להקליט את הקריאה מראש. זה היה מובן, אפילו טבעי. אבל אז עשית את מה שאתה עושה כל החיים — הסתכלת לאתגר בעיניים ואמרת:</p>
+    <p class="bl-big">״אני יכול!״</p>
+    <p>לאט לאט, בקצב שלך, צברת ביטחון. ובכל פעם ששמענו אותך קורא את הפרשה בבית, התמלאנו גאווה והתרגשות. לא רק בגלל הקריאה עצמה, אלא בגלל שראינו שוב את אותו ילד שבוחר להאמין בעצמו, ולא נותן לחששות לעצור אותו.</p>
+    <p>גיא, אתה תמיד אומר לי שאני האמא הכי טובה בעולם. אבל אם יש מישהו שזכה — זו אני. הזכות להיות אמא שלך מלמדת אותי בכל יום מחדש מה זו נחישות, מה זו אמונה בעצמך, ומה אפשר להשיג כשפשוט מסרבים לוותר.</p>
+    <p>אנחנו רוצים שתמיד תזכור דבר אחד:</p>
+    <p>{b('לא משנה בני כמה נהיה, ולא משנה לאן החיים ייקחו אותך — אנחנו תמיד נהיה שם בשבילך.')} לפעמים כדי לדחוף אותך קדימה, ולפעמים רק כדי לתת לך חיבוק כשצריך.</p>
+    <p>מהרגע הראשון בחיים שלך בחרת ללכת בדרך שלך. היום, כשאנחנו מסתכלים עליך עומד כאן וקורא בתורה בביטחון, אנחנו מבינים שהדרך הזאת תמיד תוביל אותך רחוק.</p>
+    <p>יהיו בה עליות, יהיו בה ירידות — אבל יש דבר אחד שאנחנו יודעים בוודאות: שום דבר לא יגרום לך להפסיק להתקדם.</p>
+    <p>ואנחנו... תמיד נהיה שם. לפעמים כדי לדחוף אותך קדימה, ולפעמים פשוט כדי ללכת לידך.</p>
+    <p>אנחנו גאים בך יותר ממה שמילים יכולות לתאר.</p>
+  </div>
+  <div class="bl-sign">
+    <div class="bl-line"></div>
+    <p class="bl-sign-big">מזל טוב, ילד שלנו.</p>
+    <p class="bl-sign-sub">אנחנו אוהבים אותך עד אין סוף.</p>
+    <p class="bl-sign-who">אמא ואבא</p>
+  </div>
+</section>"""
+    return p1 + p2
 
 def step(no, name, msg, accent, body, cls=""):
     return f"""
@@ -413,6 +447,29 @@ def song_page():
   <div class="lyrics">{p2}</div>
 </section>"""
 
+def celebration_page():
+    # 🕍 the real day: photos from the aliyah + QR to the synagogue video
+    return f"""
+<section class="page light step celebday" style="--accent:#A8873F">
+  <header class="shead">
+    <div class="sno">🕍</div>
+    <div class="sname">העלייה לתורה</div>
+    <div class="smsg">״אני יכול!״ — ועשית את זה</div>
+  </header>
+  <p class="lead">27 ביולי 2026 — עלית לתורה בבית הכנסת, מוקף בכל האנשים שאוהבים אותך, וקראת את הפרשה בקול בטוח. בדיוק כמו שאמרת.</p>
+  <div class="celgrid">
+    <div class="cph"><img src="photos/bm_day_torah.jpg" style="object-position:center 22%"></div>
+    <div class="cph"><img src="photos/bm_day_bimah.jpg" style="object-position:center 35%"></div>
+    <div class="cph"><img src="photos/bm_day_family.jpg" style="object-position:center 30%"></div>
+    <div class="cph short"><img src="photos/bm_day_cake.jpg" style="object-position:center 45%"></div>
+    <div class="cph short wide"><img src="photos/bm_day_minyan.jpg" style="object-position:center 30%"></div>
+  </div>
+  <div class="celqr">
+    <img class="celqr-img" src="{qr_datauri(ALIYAH_URL)}">
+    <div class="celqr-lbl">🎥 הרגע הגדול צולם!<br><b>סרקו לצפייה בעלייה לתורה של גיא</b></div>
+  </div>
+</section>"""
+
 def closing():
     return """
 <section class="page closing">
@@ -427,7 +484,7 @@ def closing():
 </section>"""
 
 PAGES = [
-    cover(), intro(),
+    cover(), blessing_pages(),
     step("1", "עץ השורשים", "אני חלק מסיפור גדול", "#4CAF50", tree_body()),
     step("2", "משחק הכרות", "אני מכיר את המשפחה שלי", "#9C27B0", kahoot_body()),
     step("3", "חקירה משפחתית", "פיצחתי את התעלומות המשפחתיות", "#2196F3", investigation_body()),
@@ -440,11 +497,12 @@ PAGES = [
     greetings_pages(),
     step("10", "מי אני עכשיו", "זה אני, בן 13 — ולא מוותר לעצמי", "#FF5722", card10_body()),
     song_page(),
+    celebration_page(),
     closing(),
 ]
 
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Bungee&family=Baloo+2:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Bungee&family=Baloo+2:wght@600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 html{font-family:'Heebo','Segoe UI',Arial,sans-serif;color:#120D0E}
 body{background:#FBFAF8}
@@ -621,6 +679,39 @@ body{background:#FBFAF8}
 .lyrics{text-align:center;max-width:160mm;margin:0 auto;padding:2mm 0}
 .lyr{font-size:22px;font-weight:600;line-height:1.68}
 .lyr.gap{height:15px}
+/* ---- parents' blessing pages (אמא ואבא) — classic design port: serif, cream paper, gold accent.
+   NOTE: class is .blpage (NOT .blessing — that name is taken by Neta's greeting box on the step-6 page). */
+.blpage{background:#FBF7EF;height:297mm;display:flex;flex-direction:column;
+  padding:15mm 21.5mm 14mm 15.5mm;font-family:'Frank Ruhl Libre','David Libre',Georgia,serif;color:#241F17;text-align:right}
+.bl-titlewrap{display:flex;flex-direction:column;align-items:center;gap:13px;padding:10mm 0 11mm;text-align:center}
+.bl-title{margin:0;font-family:'Frank Ruhl Libre',serif;font-weight:500;font-size:42px;line-height:1.15;letter-spacing:-0.01em;color:#1B1710}
+.bl-div{display:flex;align-items:center;gap:12px;width:190px}
+.bl-l{flex:1;height:1px}
+.bl-l1{background:linear-gradient(to left,transparent,#A8873F)}
+.bl-l2{background:linear-gradient(to right,transparent,#A8873F)}
+.bl-diamond{width:5px;height:5px;transform:rotate(45deg);background:#A8873F}
+.bl-body{flex:1;display:flex;flex-direction:column;justify-content:space-between;font-size:19px;line-height:1.7;font-weight:400}
+.bl-body p{margin:0}
+.bl-strong{font-weight:700;color:#1B1710}
+.bl-mid{font-size:21px;font-weight:700;line-height:1.45;color:#252625}
+.bl-big{text-align:center;font-size:30px;font-weight:500;line-height:1.3;color:#1B1710}
+.bl-sign{display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:20px;text-align:center}
+.bl-sign p{margin:0}
+.bl-line{width:64px;height:1px;background:#A8873F;opacity:.55}
+.bl-sign-big{font-size:30px;font-weight:500;line-height:1.35;color:#1B1710}
+.bl-sign-sub{font-size:19px;font-weight:400;line-height:1.45;color:#4A4034}
+.bl-sign-who{margin-top:8px !important;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3em;color:#A8873F}
+/* ---- celebration day (העלייה לתורה) ---- */
+.celgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4mm;margin-top:6px}
+.cph{grid-column:span 2;height:82mm;border-radius:14px;overflow:hidden;border:5px solid #fff;
+  box-shadow:0 8px 22px rgba(0,0,0,.14);background:#EBE5E2}
+.cph img{width:100%;height:100%;object-fit:cover;display:block}
+.cph.short{height:74mm}
+.cph.wide{grid-column:span 4}
+.celqr{display:flex;align-items:center;justify-content:center;gap:7mm;margin-top:6mm;
+  background:#FBF7EF;border:2px solid #A8873F;border-radius:16px;padding:5mm 10mm}
+.celqr-img{width:30mm;height:30mm}
+.celqr-lbl{font-size:20px;font-weight:600;line-height:1.5}
 /* closing */
 .closing{background:linear-gradient(180deg,#ffd3e3,#bfe6f4);text-align:center;display:flex;align-items:center;justify-content:center}
 .cl-inner{position:relative;z-index:2}

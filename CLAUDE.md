@@ -238,6 +238,49 @@ location.reload();
 - `Song for the movie.mpeg` (repo root) is the Suno soundtrack — now **tracked** as the source music for `finale/Hero-Movie.mp4` (used by `finale/make_movie.py`)
 - Untracked working files in repo root (`Design/`, `map-v4.jpg`, `new.style.bundled.css`, `backups/`) are scratch/abandoned assets, not used by the app
 
+## Session log (2026-07-31b) — `design-book/`: the 24-page Claude-Design edition (PDF pending approval)
+- Claude Design produced a redesigned **24-page** book, delivered as a self-unpacking bundle
+  (`~/Downloads/Hero Storybook - 24 pages.html`: `<script type="__bundler/manifest">` = uuid→asset map,
+  `<script type="__bundler/template">` = the real HTML). Unpacked into **`design-book/`**:
+  - `Hero-Storybook-24.html` + `assets/` (39 photos + woff2 fonts) — the **editable** source
+  - `Hero-Storybook-24-FIXED.html` — same file with every asset inlined as a data URI (8.7 MB, portable)
+  - This edition is SEPARATE from `storybook.html` / `make_storybook.py` (still the 21-page python-built book).
+    There is no generator for the design edition — edit the HTML directly.
+- Bug fixes applied (all verified by measuring real rendered geometry in headless Chrome, not by eye):
+  - **Step 9** photo frames were `width/height:auto`, so every photo was a different size AND every QR
+    landed at a different x. Now a fixed `80x68mm` `.gphoto` frame + `object-fit:cover` → 1 distinct frame
+    size, 1 distinct QR x. `.gphoto.fit` (contain) is an escape hatch used ONLY for יובל's 1363x700 shot,
+    where a centred crop cut the mother out of the group.
+  - **Step 10** hero photo 49.5x88mm → **68.6x121.9mm** (card 100→108mm). 122mm is the max the page fits.
+  - **Pages 22-23** were cropping badly (a 844x1500 portrait in a 180x104mm `cover` box showed ~1/3 of it).
+    Replaced with `.cfr` frames carrying each photo's own ratio via `--ar`, so `contain` trims nothing.
+    Page 22 = torah (tall) + bimah/cake stacked; page 23 = the minyan group + the QR card.
+  - **Closing page** photo is now the synagogue family photo (moved off page 22); the old hike photo
+    (`assets/6c1edd5b.jpg`) is now unused.
+  - **Step 3** had the identical intrinsic-sizing bug (`.iqimg` height-only): 4 photos of ratios
+    0.75–1.50 each got their own width and shifted the text column. Now a fixed `46x36mm` frame +
+    `cover` → 1 frame size, text column at a single x (20mm).
+  - **Cover QR cards** were sized by their own labels, so the one-line card was visibly smaller.
+    `.cqr` is now a fixed `50x45mm` flex box (3x50 + 2x8mm gap = 166mm inside the 180mm content width).
+  - **Cover** gained a 3rd QR → the quest app itself (`https://yaelk-maker.github.io/bar-mitzvah-quest/`).
+    All 3 cover QRs decode-verified. NOTE: the app is passcode-gated (`1907`), not printed on the card.
+- Verification helpers used (scratchpad, not committed): a headless-Chrome `--dump-dom` probe that measures
+  frame sizes / QR offsets / frame-vs-photo aspect ratios / per-page overflow. Re-create it if these pages
+  change again — `.page` is `overflow:hidden`, so overflowing content is clipped SILENTLY.
+- The design PDF the user attached (`Bar mitzvah quest design insights updated.pdf`) is just the rendered
+  24-page book, not an annotated design-rules document — it constrains nothing.
+
+## Session log (2026-07-31) — storybook: parents' blessing + aliyah page
+- **Parents' blessing** — storybook page 2 ("לגיא היקר" intro) replaced by the real two-page blessing
+  "גיא שלנו" written by אמא ואבא, ported from the claude.ai/design project (`ברכה לגיא - קלאסי.dc.html`,
+  project cd1dabe5-6325-4617-834c-c5d6273355e1): Frank Ruhl Libre serif, cream paper `#FBF7EF`, gold accent `#A8873F`.
+  CSS class is `.blpage` — **`.blessing` is already taken** by Neta's greeting box (step 6b); reusing it leaks
+  a pink border-right onto the pages.
+- **העלייה לתורה page** — new celebration page (between the song and the closing page): 5 photos from the
+  synagogue day (`photos/bm_day_*.jpg`, copied from `Bar Mizvah photos/`) + QR to the aliyah video on YouTube
+  (`ALIYAH_URL` = https://youtube.com/shorts/Va3sQpAf9r8). Ceremony date 27.07.2026 (embroidered on the kippah).
+- Storybook is now 21 pages; `storybook.html` + `finale/Hero-Storybook.pdf` rebuilt via `make_storybook.py --pdf`.
+
 ## Session log (2026-07-02) — family progress view (branch `claude/quest-accessibility-review-9ffbjj`, restarted from master)
 - **family.html** — read-only, mobile-first "מעקב משפחתי" page at `/family.html`: live progress (X/10, XP bar, current step), a ✓/כאן/🔒 step list, and the completed Hero Book chapters (reuses `BOOK_RENDERERS` + `buildFamilyTreeHTML` + `buildCartoonBrainSVG` from app.js). Subscribes with `dbRef.on('value')` so it updates in real time; NEVER writes to Firebase/localStorage — safe to share with the wider family without risking Guy's saved answers.
 - Same passcode gate (`showPasscodeScreen()` from firebase-sync.js; one unlock per session covers both pages).

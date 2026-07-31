@@ -68,6 +68,10 @@ html,body{width:1920px;height:1080px;overflow:hidden;font-family:'Heebo','Segoe 
 .grid.wide .gcell{width:252px;height:286px;border-width:8px}
 .grid.wide .gname{font-size:25px;padding:6px 4px}
 .gcell.fit-contain img{object-fit:contain;background:#eef3f6}
+.gcell.blur-fill{position:relative}
+.gcell.blur-fill .gbg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) saturate(1.15) brightness(.92);transform:scale(1.18);z-index:0}
+.gcell.blur-fill img{position:relative;z-index:1;object-fit:contain}
+.gcell.blur-fill .gname{position:relative;z-index:2}
 .quote{max-width:1400px;background:#fff;border-radius:36px;padding:70px 80px;
   box-shadow:0 30px 80px rgba(0,0,0,.22);position:relative;border-top:18px solid #FF7AB6}
 .qmark{font-family:'Bungee';font-size:150px;color:#FFAFC4;line-height:.2;height:60px}
@@ -120,8 +124,9 @@ def duo(p1, p2, cap, klass="portrait", step_chip="", step=""):
 def grid(cells, title, step_chip="", step="", grid_cls="", clouds=True):
     def one(c):
         src, n = c[0], c[1]
-        cls = c[2] if len(c) > 2 else ""   # optional per-cell class, e.g. "fit-contain"
-        return f'<div class="gcell {cls}"><img src="{src}"><div class="gname">{html.escape(n)}</div></div>'
+        cls = c[2] if len(c) > 2 else ""   # optional per-cell class, e.g. "blur-fill"
+        bg = f"<div class='gbg' style=\"background-image:url('{src}')\"></div>" if "blur-fill" in cls else ""
+        return f'<div class="gcell {cls}">{bg}<img src="{src}"><div class="gname">{html.escape(n)}</div></div>'
     g = "".join(one(c) for c in cells)
     body = chip(step_chip)+stepno(step)+f'<div class="col"><div class="cap">{title}</div><div class="grid {grid_cls}">{g}</div></div>'
     return page(body, clouds=clouds)
@@ -231,9 +236,9 @@ S.append((grid([
     (P("greeter_shapira.png"),      "משפחת שפירא"),
     (P("greeter_ira_tom.png"),      "אירה ותום"),
     (P("greeter_raya.png"),         "רעיה"),
-    (P("greeter_alya.jpg"),         "אליה"),
+    (P("greeter_alya_family.jpg"),  "אליה"),
     (P("greeter_zilya.png"),        "ציליה"),
-    (P("greeter_yuval_family.png"), "יובל והמשפחה", "fit-contain"),
+    (P("greeter_yuval_family.png"), "יובל והמשפחה", "blur-fill"),
     (P("greeter_rafi.png"),         "רפי"),
 ], 'אני לא לבד במסע — כל מי שבירך אותי 💌',
    step_chip="שלב 9 · האנשים שלי", step="9", grid_cls="wide", clouds=False), 11))
