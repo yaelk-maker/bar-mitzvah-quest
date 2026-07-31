@@ -1,7 +1,9 @@
 // Show the Hero Book button on the quest map? Set to false to keep the book
 // (and the finale movies in its footer) hidden from Guy until the parents
 // choose to reveal them; the painted button on the map art stays inert.
-const HERO_BOOK_ON_MAP = false;
+// Revealed 2026-07-31: the book, the printed 24-page edition and the finale
+// movies are all open to Guy now.
+const HERO_BOOK_ON_MAP = true;
 
 // ===== Brainrot Characters - actual images on the map =====
 const BRAINROT_CHARS = [
